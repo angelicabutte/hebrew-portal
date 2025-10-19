@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hebrew Portal Scripts — Updateable Reference (v2)</title>
+<style>
+  :root{
+    --bg:#f8f5ee; --paper:#fffaf0; --ink:#2d241b; --accent:#7a5d2e; --muted:#6b6b6b;
+    --link:#22577A; --green:#2F855A; --shadow:rgba(0,0,0,.08);
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+  .wrap{max-width:1100px;margin:24px auto;padding:0 16px 64px}
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:12px}
+  h1{font-size:28px;margin:0}
+  .sub{color:var(--muted);font-size:13px}
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  nav a{font-size:13px;color:var(--link);text-decoration:none;background:#eee;padding:4px 8px;border-radius:8px}
+  nav a:hover{text-decoration:underline}
+  .card{background:var(--paper);border:1px solid #e9dec5;border-radius:16px;box-shadow:0 4px 12px var(--shadow);padding:16px;margin:14px 0}
+  .card h2{margin:4px 0 4px;font-size:20px}
+  .helper-text{color:var(--muted);font-size:12px;margin-bottom:8px}
+  .wizard-step{margin-bottom:20px;padding:12px;border-left:3px solid var(--accent);background:#fffaf0;border-radius:8px}
+  .wizard-step h3{margin:0 0 4px;font-size:18px}
+  .copy-box{background:#f0ede5;border:1px solid #d8d0b3;border-radius:8px;padding:8px;margin-top:4px;cursor:pointer;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+  .copy-box:hover{background:#eae4d3}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;align-items:center;margin:4px 0}
+  .checklist input{margin-right:8px}
+  textarea,input[type="text"]{width:100%;box-sizing:border-box;border:1px solid #e1d6bf;border-radius:10px;padding:10px;background:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#fff;border:1px solid #e1d6bf;border-radius:12px;padding:10px;white-space:pre;overflow:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#wizard">Workflow</a>
+    <a href="#main">Main Script</a>
+    <a href="#support">Supporting Script</a>
+    <a href="#input">Input Format</a>
+    <a href="#templates">Templates</a>
+    <a href="#checklist">Checklist</a>
+  </nav>
+
+  <header>
+    <div>
+      <h1>Hebrew Portal Scripts — Updateable Reference</h1>
+      <div class="sub">Step-by-step workflow with copy buttons and checklist. All offline.</div>
+    </div>
+  </header>
+
+  <!-- Wizard Section -->
+  <section id="wizard" class="card">
+    <h2>Order of Operations</h2>
+    <div class="helper-text">Your daily workflow, step by step.</div>
+    <div class="wizard-step">
+      <h3>Step 1: Prepare Vocabulary</h3>
+      <p>Make sure your vocab file is formatted correctly and saved in the proper folder.</p>
+    </div>
+    <div class="wizard-step">
+      <h3>Step 2: Run Main Script</h3>
+      <div class="copy-box" onclick="copyText('cd ~/Downloads\\npython3 hebrew_anki_CLEAN_FINAL.py')">cd ~/Downloads<br>python3 hebrew_anki_CLEAN_FINAL.py</div>
+    </div>
+    <div class="wizard-step">
+      <h3>Step 3: Choose/Replace Media</h3>
+      <p>Use the preview script to select your preferred image/audio options.</p>
+      <div class="copy-box" onclick="copyText('python3 image_preview_no_dupes_v2.py')">python3 image_preview_no_dupes_v2.py</div>
+    </div>
+    <div class="wizard-step">
+      <h3>Step 4: Copy Media to Anki</h3>
+      <div class="copy-box" onclick="copyText('cp ~/Downloads/Hebrew_Week01/Week01_Day01_MEDIA/* \\\\\n~/Library/Application\\\\ Support/Anki2/User\\\\ 1/collection.media/')">cp media to Anki collection</div>
+    </div>
+    <div class="wizard-step">
+      <h3>Step 5: Verify Deck in Anki</h3>
+      <p>Open Anki, check that media loads correctly on cards, then start studying.</p>
+    </div>
+  </section>
+
+  <!-- Checklist -->
+  <section id="checklist" class="card">
+    <h2>Daily Pre-Flight Checklist</h2>
+    <ul class="checklist">
+      <li><input type="checkbox">Vocab file verified</li>
+      <li><input type="checkbox">Main script executed</li>
+      <li><input type="checkbox">Media reviewed and replaced</li>
+      <li><input type="checkbox">Media copied to Anki folder</li>
+      <li><input type="checkbox">Deck verified in Anki</li>
+    </ul>
+  </section>
+
+  <!-- Main Script -->
+  <section id="main" class="card">
+    <h2>Main Script</h2>
+    <div class="helper-text">Primary script to generate daily decks and media folders.</div>
+    <textarea rows="5" readonly>cd ~/Downloads
+python3 hebrew_anki_CLEAN_FINAL.py
+# Paste data, then Ctrl+D</textarea>
+  </section>
+
+  <!-- Supporting Script -->
+  <section id="support" class="card">
+    <h2>Supporting Script</h2>
+    <div class="helper-text">Use this to preview and select new images without duplicates.</div>
+    <textarea rows="3" readonly>python3 image_preview_no_dupes_v2.py
+# Enter words, type 'done' when finished</textarea>
+  </section>
+
+  <!-- Input Format -->
+  <section id="input" class="card">
+    <h2>Input Format</h2>
+    <div class="helper-text">Format for vocab files fed into the main script.</div>
+    <p>Day|Type|Hebrew|English|Transliteration|Example|ExampleTranslation</p>
+    <div class="copy-box" onclick="copyText('Day|Type|Hebrew|English|Transliteration|Example|ExampleTranslation')">Copy Schema</div>
+  </section>
+
+  <!-- Templates -->
+  <section id="templates" class="card">
+    <h2>ANKI Templates</h2>
+    <div class="helper-text">These define how your cards appear in Anki.</div>
+    <details>
+      <summary>Front</summary>
+      <textarea rows="16" class="mono" readonly>&lt;div style=&quot;text-align: center; font-size: 60px; font-family: Arial;&quot;&gt;
+{{FrontHebrew}}
+&lt;/div&gt;
+&lt;br&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+{{Image}}
+&lt;/div&gt;
+&lt;br&gt;
+&lt;div style=&quot;font-size: 22px; direction: rtl; text-align: center; padding: 10px;&quot;&gt;
+{{Example}}
+&lt;/div&gt;
+&lt;br&gt;
+&lt;div&gt;{{Audio}}&lt;/div&gt;</textarea>
+    </details>
+    <details>
+      <summary>Back</summary>
+      <textarea rows="22" class="mono" readonly>&lt;style&gt;
+.card img {
+  max-width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+}
+&lt;/style&gt;
+&lt;div style=&quot;text-align: center; font-size: 36px; font-family: Arial;&quot;&gt;
+{{FrontHebrew}}
+&lt;/div&gt;
+&lt;div style=&quot;text-align: center;&quot;&gt;
+{{Image}}
+&lt;/div&gt;
+&lt;div&gt;{{Audio}}&lt;/div&gt;
+&lt;hr style=&quot;margin: 5px 0;&quot;&gt;
+&lt;div style=&quot;font-size: 18px; color: blue; font-weight: bold; text-align: center;&quot;&gt;{{Transliteration}}&lt;/div&gt;
+&lt;div style=&quot;font-size: 20px; color: green; font-weight: bold; text-align: center; margin: 3px 0;&quot;&gt;{{English}}&lt;/div&gt;
+&lt;div style=&quot;font-size: 15px; color: #666; text-align: center; padding: 3px;&quot;&gt;
+{{ExampleTranslation}}
+&lt;/div&gt;
+&lt;div style=&quot;font-size: 16px; direction: rtl; text-align: center; padding: 3px;&quot;&gt;
+{{Example}}
+&lt;/div&gt;</textarea>
+    </details>
+  </section>
+
+</div>
+<script>
+function copyText(txt){navigator.clipboard.writeText(txt)}
+</script>
+</body>
+</html>
