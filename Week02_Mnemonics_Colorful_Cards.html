@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2 Hebrew Mnemonics - Colorful Cards!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .chunk-section {
+            margin-bottom: 40px;
+        }
+        
+        .chunk-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        @media (max-width: 700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mnemonic-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 6px solid;
+        }
+        
+        .mnemonic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        /* Color variations */
+        .mnemonic-card:nth-child(6n+1) { border-left-color: #ef4444; }
+        .mnemonic-card:nth-child(6n+2) { border-left-color: #f59e0b; }
+        .mnemonic-card:nth-child(6n+3) { border-left-color: #10b981; }
+        .mnemonic-card:nth-child(6n+4) { border-left-color: #3b82f6; }
+        .mnemonic-card:nth-child(6n+5) { border-left-color: #8b5cf6; }
+        .mnemonic-card:nth-child(6n+6) { border-left-color: #ec4899; }
+        
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .word-hebrew {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .word-info {
+            text-align: right;
+        }
+        
+        .word-translit {
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .word-english {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .mnemonic-hook {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        
+        .mnemonic-hook::before {
+            content: "💡 ";
+            font-size: 20px;
+        }
+        
+        .connection {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            padding-left: 10px;
+            border-left: 3px solid #e5e7eb;
+        }
+        
+        .pronunciation {
+            display: inline-block;
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Week 2 Hebrew Mnemonics</h1>
+            <p>Colorful Memory Hooks for Quick Learning!</p>
+        </div>
+        
+        <!-- CHUNK 1 -->
+        <div class="chunk-section">
+            <div class="chunk-title">🏠 Home / Classroom Objects</div>
+            <div class="cards-grid">
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">עֵט</div>
+                        <div class="word-info">
+                            <div class="word-translit">et</div>
+                            <div class="word-english">pen</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">EAT with a pen!</div>
+                    <div class="connection">Like signing your name before you eat at camp</div>
+                    <div class="pronunciation">🔊 Sounds like: ET (the alien)</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">דַּף</div>
+                        <div class="word-info">
+                            <div class="word-translit">daf</div>
+                            <div class="word-english">page</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">DUFF-y flips pages</div>
+                    <div class="connection">Imagine Duffy Duck flipping pages. You know "daf yomi" (page of the day)!</div>
+                    <div class="pronunciation">🔊 Sounds like: DAHF</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">תִּיק</div>
+                        <div class="word-info">
+                            <div class="word-translit">tik</div>
+                            <div class="word-english">bag</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">TEEK-ing my bag everywhere!</div>
+                    <div class="connection">Camp chant: "Tik, tik, bag, bag — Ivrit chaver Ivrit!"</div>
+                    <div class="pronunciation">🔊 Sounds like: TEEK</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">שִׁעוּר</div>
+                        <div class="word-info">
+                            <div class="word-translit">shiur</div>
+                            <div class="word-english">lesson/class</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">You already know this one!</div>
+                    <div class="connection">Jewish school shiurim! "Time for shiur!" — heard it 1000x</div>
+                    <div class="pronunciation">🔊 Sounds like: shee-OOR</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">הַפְסָקָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">hafsaka</div>
+                            <div class="word-english">break</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Half-SOCCER = break time!</div>
+                    <div class="connection">Break time = soccer time at camp!</div>
+                    <div class="pronunciation">🔊 Sounds like: haf-sah-KAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">סַפָּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">sapa</div>
+                            <div class="word-english">sofa</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SAPPY sits on sofa</div>
+                    <div class="connection">SAPPY the couch potato! Like Chad's graphic</div>
+                    <div class="pronunciation">🔊 Sounds like: sah-PAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">אֲרוֹן</div>
+                        <div class="word-info">
+                            <div class="word-translit">aron</div>
+                            <div class="word-english">closet</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ah, RONNIE's closet!</div>
+                    <div class="connection">Ronnie stores everything. Also: Aron HaKodesh (Holy Ark) is a cabinet!</div>
+                    <div class="pronunciation">🔊 Sounds like: ah-ROHN</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מְנוֹרָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">menora</div>
+                            <div class="word-english">lamp</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">You KNOW this one!</div>
+                    <div class="connection">Chanukah menorah = lamp with flames! Menorah → light source → lamp</div>
+                    <div class="pronunciation">🔊 Sounds like: meh-noh-RAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">קִיר</div>
+                        <div class="word-info">
+                            <div class="word-translit">kir</div>
+                            <div class="word-english">wall</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">KEER-ash into wall!</div>
+                    <div class="connection">Running into walls. Like "clear" but with K</div>
+                    <div class="pronunciation">🔊 Sounds like: KEER</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">רִצְפָּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">ritzpa</div>
+                            <div class="word-english">floor</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">RITZ crackers on FLOOR!</div>
+                    <div class="connection">Chad's mnemonic worked! RITZ-pah</div>
+                    <div class="pronunciation">🔊 Sounds like: reets-PAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">תִּקְרָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">tikra</div>
+                            <div class="word-english">ceiling</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">TICK-rah clock on ceiling</div>
+                    <div class="connection">Ticking clock up there. Opposite: Ritzpa (floor) / Tikra (ceiling)</div>
+                    <div class="pronunciation">🔊 Sounds like: teek-RAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מַחְשֵׁב</div>
+                        <div class="word-info">
+                            <div class="word-translit">machshev</div>
+                            <div class="word-english">computer</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ma SHAVE = My computer shaves time</div>
+                    <div class="connection">Root: חשב (think/calculate) — computer = thinking machine!</div>
+                    <div class="pronunciation">🔊 Sounds like: makh-SHEV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מָסָךְ</div>
+                        <div class="word-info">
+                            <div class="word-translit">masach</div>
+                            <div class="word-english">screen</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ma-SOCK covers screen</div>
+                    <div class="connection">Sock puppet show on the screen!</div>
+                    <div class="pronunciation">🔊 Sounds like: mah-SAKH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מִקְלֶדֶת</div>
+                        <div class="word-info">
+                            <div class="word-translit">mikledet</div>
+                            <div class="word-english">keyboard</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">MICK-led-it = Mick typed it!</div>
+                    <div class="connection">Mick typed it on the keyboard</div>
+                    <div class="pronunciation">🔊 Sounds like: mik-LEH-det</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">עַכְבָּר</div>
+                        <div class="word-info">
+                            <div class="word-translit">achbar</div>
+                            <div class="word-english">mouse</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ach! Mouse on BAR!</div>
+                    <div class="connection">Mouse on the bar counter. Also means real mouse (the animal)</div>
+                    <div class="pronunciation">🔊 Sounds like: akh-BAR</div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- CHUNK 2 -->
+        <div class="chunk-section">
+            <div class="chunk-title">🌆 City / Places / Transportation</div>
+            <div class="cards-grid">
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">חֲנוּת</div>
+                        <div class="word-info">
+                            <div class="word-translit">chanut</div>
+                            <div class="word-english">store</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Cha-NUT store sells nuts!</div>
+                    <div class="connection">Nut store!</div>
+                    <div class="pronunciation">🔊 Sounds like: cha-NOOT</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">עִיר</div>
+                        <div class="word-info">
+                            <div class="word-translit">ir</div>
+                            <div class="word-english">city</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">EAR the city sounds</div>
+                    <div class="connection">Short word for big place! Hear all those city sounds</div>
+                    <div class="pronunciation">🔊 Sounds like: EER</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">רְחוֹב</div>
+                        <div class="word-info">
+                            <div class="word-translit">rechov</div>
+                            <div class="word-english">street</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Reh-HOVE down the street</div>
+                    <div class="connection">Like shoving through crowds. You'll see this on every street sign in Israel!</div>
+                    <div class="pronunciation">🔊 Sounds like: reh-KHOV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">כְּבִישׁ</div>
+                        <div class="word-info">
+                            <div class="word-translit">kvish</div>
+                            <div class="word-english">road</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Car VROOM-vish on road!</div>
+                    <div class="connection">Like the sound of a car whooshing by</div>
+                    <div class="pronunciation">🔊 Sounds like: kuh-VEESH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">תַּחֲנָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">tachana</div>
+                            <div class="word-english">station</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ta-HA-na = Aha! The station!</div>
+                    <div class="connection">Tachana merkazit = central station</div>
+                    <div class="pronunciation">🔊 Sounds like: tah-khah-NAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מְכוֹנִית</div>
+                        <div class="word-info">
+                            <div class="word-translit">mechonit</div>
+                            <div class="word-english">car</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Meh-cho-NEAT car!</div>
+                    <div class="connection">That's a neat car! Root: מכונה = machine</div>
+                    <div class="pronunciation">🔊 Sounds like: meh-kho-NEET</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מוֹנִית</div>
+                        <div class="word-info">
+                            <div class="word-translit">monit</div>
+                            <div class="word-english">taxi</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">MONEY for taxi!</div>
+                    <div class="connection">Taxis cost money! Sounds like "money" + rhymes with mechonit</div>
+                    <div class="pronunciation">🔊 Sounds like: moh-NEET</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">אוֹפַנַּיִם</div>
+                        <div class="word-info">
+                            <div class="word-translit">ofanayim</div>
+                            <div class="word-english">bicycle</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Oh FUN! Bike time!</div>
+                    <div class="connection">Dual form: -ayim = two (two wheels!)</div>
+                    <div class="pronunciation">🔊 Sounds like: oh-fah-NAH-yeem</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מָטוֹס</div>
+                        <div class="word-info">
+                            <div class="word-translit">matos</div>
+                            <div class="word-english">airplane</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">TOES up in plane!</div>
+                    <div class="connection">Put your toes up when flying!</div>
+                    <div class="pronunciation">🔊 Sounds like: mah-TOHS</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">הַר</div>
+                        <div class="word-info">
+                            <div class="word-translit">har</div>
+                            <div class="word-english">mountain</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">HAR-d to climb!</div>
+                    <div class="connection">Mountains are hard to climb!</div>
+                    <div class="pronunciation">🔊 Sounds like: HAR</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">יַעַר</div>
+                        <div class="word-info">
+                            <div class="word-translit">ya'ar</div>
+                            <div class="word-english">forest</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">You ARE in forest!</div>
+                    <div class="connection">You are here = in the forest</div>
+                    <div class="pronunciation">🔊 Sounds like: yah-AR</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מִדְבָּר</div>
+                        <div class="word-info">
+                            <div class="word-translit">midbar</div>
+                            <div class="word-english">desert</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">MID of nowhere desert bar</div>
+                    <div class="connection">A bar in the middle of the desert</div>
+                    <div class="pronunciation">🔊 Sounds like: meed-BAR</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">כּוֹכָב</div>
+                        <div class="word-info">
+                            <div class="word-translit">kochav</div>
+                            <div class="word-english">star</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Co-HAVE a star!</div>
+                    <div class="connection">Share the stars! "Kochav mezamer, numi numi"</div>
+                    <div class="pronunciation">🔊 Sounds like: koh-KHAHV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">אֲוִיר</div>
+                        <div class="word-info">
+                            <div class="word-translit">avir</div>
+                            <div class="word-english">air</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ah! VERY fresh air!</div>
+                    <div class="connection">Breathe that fresh air!</div>
+                    <div class="pronunciation">🔊 Sounds like: ah-VEER</div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div style="text-align: center; padding: 30px; color: #666;">
+            <p>✨ Scroll through colorful cards • Save for offline study • Print if needed!</p>
+        </div>
+        
+    </div>
+</body>
+</html>

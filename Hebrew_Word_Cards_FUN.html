@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Word Checker - Fun Cards!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #22c55e 0%, #10b981 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 500px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .word-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: relative;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            user-select: none;
+        }
+        
+        .word-card:active {
+            transform: scale(0.95);
+        }
+        
+        .word-card.checked {
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+            color: white;
+        }
+        
+        .word-card.checked .word-english,
+        .word-card.checked .word-translit {
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .word-number {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 11px;
+            color: #999;
+            font-weight: bold;
+        }
+        
+        .word-card.checked .word-number {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .checkmark {
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            font-size: 20px;
+            display: none;
+        }
+        
+        .word-card.checked .checkmark {
+            display: block;
+        }
+        
+        .word-hebrew {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        
+        .word-translit {
+            font-size: 13px;
+            color: #667eea;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .word-english {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* Color variations */
+        .word-card:nth-child(6n+1) { border-top: 4px solid #ef4444; }
+        .word-card:nth-child(6n+2) { border-top: 4px solid #f59e0b; }
+        .word-card:nth-child(6n+3) { border-top: 4px solid #10b981; }
+        .word-card:nth-child(6n+4) { border-top: 4px solid #3b82f6; }
+        .word-card:nth-child(6n+5) { border-top: 4px solid #8b5cf6; }
+        .word-card:nth-child(6n+6) { border-top: 4px solid #ec4899; }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇮🇱 Hebrew Word Checker</h1>
+            <p>Tap any word you already know!</p>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="knownCount">0</div>
+                    <div class="stat-label">Known</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">508</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="percentKnown">0%</div>
+                    <div class="stat-label">Progress</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="exportWords()">📥 Export List</button>
+            <button class="btn btn-secondary" onclick="saveProgress()">💾 Save</button>
+            <button class="btn btn-secondary" onclick="clearAll()">🔄 Clear</button>
+        </div>
+        
+        <div class="cards-grid" id="cardsGrid"></div>
+        
+        <div class="footer">
+            ✨ Tap cards to mark words you know • Auto-saves every 30 seconds
+        </div>
+    </div>
+
+    <script>
+        const hebrewWords = [
+            ["אני", "ani", "I"],
+            ["את", "et", "you (f) / object marker"],
+            ["של", "shel", "of"],
+            ["זה", "ze", "this/it"],
+            ["לא", "lo", "no/not"],
+            ["על", "al", "on/about"],
+            ["הוא", "hu", "he"],
+            ["היא", "hi", "she"],
+            ["אתה", "ata", "you (m)"],
+            ["מה", "ma", "what"],
+            ["כל", "kol", "all/every"],
+            ["אם", "im", "if/mother"],
+            ["יש", "yesh", "there is/have"],
+            ["עם", "im", "with"],
+            ["רק", "rak", "only"],
+            ["אבל", "aval", "but"],
+            ["גם", "gam", "also"],
+            ["עוד", "od", "more/still"],
+            ["או", "o", "or"],
+            ["כן", "ken", "yes"],
+            ["אין", "ein", "there isn't"],
+            ["מי", "mi", "who"],
+            ["איך", "eich", "how"],
+            ["למה", "lama", "why"],
+            ["איפה", "eifo", "where"],
+            ["כאן", "kan", "here"],
+            ["שם", "sham", "there"],
+            ["עכשיו", "achshav", "now"],
+            ["היום", "hayom", "today"],
+            ["מחר", "machar", "tomorrow"],
+            ["אתמול", "etmol", "yesterday"],
+            ["טוב", "tov", "good"],
+            ["רע", "ra", "bad"],
+            ["גדול", "gadol", "big"],
+            ["קטן", "katan", "small"],
+            ["הרבה", "harbe", "a lot"],
+            ["מעט", "meat", "little/few"],
+            ["כמה", "kama", "how much"],
+            ["פעם", "paam", "time/once"],
+            ["יום", "yom", "day"],
+            ["שנה", "shana", "year"],
+            ["שעה", "shaa", "hour"],
+            ["דקה", "daka", "minute"],
+            ["בית", "bayit", "house"],
+            ["איש", "ish", "man"],
+            ["אישה", "isha", "woman"],
+            ["ילד", "yeled", "boy/child"],
+            ["ילדה", "yalda", "girl"],
+            ["אב", "av", "father"],
+            ["אם", "em", "mother"],
+            ["בן", "ben", "son"],
+            ["בת", "bat", "daughter"],
+            ["משפחה", "mishpacha", "family"],
+            ["חבר", "chaver", "friend (m)"],
+            ["חברה", "chavera", "friend (f)"],
+            ["אנשים", "anashim", "people"],
+            ["עבודה", "avoda", "work"],
+            ["כסף", "kesef", "money"],
+            ["זמן", "zman", "time"],
+            ["דבר", "davar", "thing"],
+            ["מקום", "makom", "place"],
+            ["עיר", "ir", "city"],
+            ["ארץ", "eretz", "land/country"],
+            ["עולם", "olam", "world"],
+            ["חיים", "chayim", "life"],
+            ["מים", "mayim", "water"],
+            ["אוכל", "ochel", "food"],
+            ["לחם", "lechem", "bread"],
+            ["יין", "yayin", "wine"],
+            ["בוקר", "boker", "morning"],
+            ["ערב", "erev", "evening"],
+            ["לילה", "layla", "night"],
+            ["ראש", "rosh", "head"],
+            ["יד", "yad", "hand"],
+            ["רגל", "regel", "foot/leg"],
+            ["עין", "ayin", "eye"],
+            ["אוזן", "ozen", "ear"],
+            ["פה", "pe", "mouth"],
+            ["לב", "lev", "heart"],
+            ["דלת", "delet", "door"],
+            ["חלון", "chalon", "window"],
+            ["שולחן", "shulchan", "table"],
+            ["כיסא", "kise", "chair"],
+            ["מיטה", "mita", "bed"],
+            ["ספר", "sefer", "book"],
+            ["עט", "et", "pen"],
+            ["נייר", "neyar", "paper"],
+            ["מכתב", "michtav", "letter"],
+            ["מילה", "mila", "word"],
+            ["שם", "shem", "name"],
+            ["מספר", "mispar", "number"],
+            ["צבע", "tzeva", "color"],
+            ["לבן", "lavan", "white"],
+            ["שחור", "shachor", "black"],
+            ["אדום", "adom", "red"],
+            ["כחול", "kachol", "blue"],
+            ["ירוק", "yarok", "green"]
+        ];
+        
+        let checkedWords = new Set();
+        const totalWords = hebrewWords.length;
+        
+        function init() {
+            renderCards();
+            loadProgressFromStorage();
+            updateStats();
+        }
+        
+        function renderCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+            
+            hebrewWords.forEach((word, index) => {
+                const [hebrew, translit, english] = word;
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.onclick = () => toggleWord(index);
+                
+                card.innerHTML = `
+                    <div class="word-number">#${index + 1}</div>
+                    <div class="checkmark">✓</div>
+                    <div class="word-hebrew">${hebrew}</div>
+                    <div class="word-translit">${translit}</div>
+                    <div class="word-english">${english}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function toggleWord(index) {
+            if (checkedWords.has(index)) {
+                checkedWords.delete(index);
+            } else {
+                checkedWords.add(index);
+            }
+            
+            updateCardDisplay(index);
+            updateStats();
+            saveProgressToStorage();
+        }
+        
+        function updateCardDisplay(index) {
+            const cards = document.querySelectorAll('.word-card');
+            if (checkedWords.has(index)) {
+                cards[index].classList.add('checked');
+            } else {
+                cards[index].classList.remove('checked');
+            }
+        }
+        
+        function updateStats() {
+            const knownCount = checkedWords.size;
+            const percentage = Math.round((knownCount / totalWords) * 100);
+            
+            document.getElementById('knownCount').textContent = knownCount;
+            document.getElementById('percentKnown').textContent = percentage + '%';
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').textContent = percentage + '%';
+        }
+        
+        function exportWords() {
+            const masteredWords = Array.from(checkedWords)
+                .sort((a, b) => a - b)
+                .map(index => {
+                    const [hebrew, translit, english] = hebrewWords[index];
+                    return `${hebrew}\t${translit}\t${english}`;
+                });
+            
+            const header = `# Mastered Hebrew Words\n# Total: ${masteredWords.length}\n\nHebrew\tTranslit\tEnglish\n`;
+            const content = header + masteredWords.join('\n');
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Mastered_Words_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert(`✅ Exported ${masteredWords.length} words!`);
+        }
+        
+        function saveProgress() {
+            saveProgressToStorage();
+            alert('✅ Progress saved!');
+        }
+        
+        function saveProgressToStorage() {
+            localStorage.setItem('hebrewCards', JSON.stringify(Array.from(checkedWords)));
+        }
+        
+        function loadProgressFromStorage() {
+            const saved = localStorage.getItem('hebrewCards');
+            if (saved) {
+                checkedWords = new Set(JSON.parse(saved));
+                checkedWords.forEach(index => updateCardDisplay(index));
+                updateStats();
+            }
+        }
+        
+        function clearAll() {
+            if (confirm('⚠️ Clear all checked words?')) {
+                checkedWords.clear();
+                document.querySelectorAll('.word-card').forEach(card => {
+                    card.classList.remove('checked');
+                });
+                updateStats();
+                saveProgressToStorage();
+            }
+        }
+        
+        // Auto-save every 30 seconds
+        setInterval(saveProgressToStorage, 30000);
+        
+        init();
+    </script>
+</body>
+</html>
