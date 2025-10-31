@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Learning Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;700&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+        
+        body {
+            font-family: 'Noto Sans Hebrew', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        /* Header */
+        /* Auto-save indicator */
+        .auto-save {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .auto-save.show {
+            opacity: 1;
+        }
+        
+        /* Gamification Bar */
+        .gamification-bar {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .level-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+        
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.3);
+            stroke-width: 6;
+        }
+        
+        .progress-ring-fill {
+            fill: none;
+            stroke: white;
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .level-details h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 3px;
+        }
+        
+        .level-details .cefr {
+            opacity: 0.9;
+            font-size: 0.85em;
+        }
+        
+        .xp-info {
+            text-align: right;
+        }
+        
+        .xp-value {
+            font-size: 1.6em;
+            font-weight: bold;
+        }
+        
+        .xp-label {
+            opacity: 0.9;
+            font-size: 0.85em;
+        }
+        
+        /* Badges */
+        .badges-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            backdrop-filter: blur(10px);
+        }
+        
+        .badge.earned {
+            background: rgba(255,255,255,0.9);
+            color: #ff6a88;
+            font-weight: 600;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        /* Word Progress */
+        .progress-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            border-radius: 15px;
+        }
+        
+        #progressText {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 30px;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.9em;
+            z-index: 1;
+            left: 0;
+            top: 0;
+        }
+        
+        /* THREE PILLARS - STATUS ONLY */
+        .pillars-status {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .pillars-status h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: white;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .pillar-status {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .pillar-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .pillar-name {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .pillar-minimum {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .pillar-bar-container {
+            background: rgba(0,0,0,0.2);
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .pillar-bar-fill {
+            width: 100%;
+            background: linear-gradient(to top, #4CAF50 0%, #8BC34A 100%);
+            transition: height 0.5s ease;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .pillar-bar-fill.complete {
+            background: linear-gradient(to top, #FFD700 0%, #FFA500 100%);
+            animation: glow 1s ease-in-out;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+            50% { box-shadow: 0 0 20px rgba(255,215,0,0.8); }
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .section-header:hover {
+            opacity: 0.9;
+        }
+        
+        .section-content {
+            padding: 20px;
+            display: none;
+        }
+        
+        .section-content.show {
+            display: block;
+        }
+        
+        .collapse-icon {
+            transition: transform 0.3s;
+        }
+        
+        .collapse-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        /* Activities - Pillar Grouped Style */
+        .pillar-group {
+            margin-bottom: 30px;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .pillar-group-header {
+            padding: 15px 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pillar-group-header:hover {
+            opacity: 0.9;
+        }
+        
+        .pillar-group-header .pillar-title-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pillar-collapse-icon {
+            transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+        
+        .pillar-collapse-icon.rotated {
+            transform: rotate(-180deg);
+        }
+        
+        .pillar-group-header.input {
+            background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);
+        }
+        
+        .pillar-group-header.output {
+            background: linear-gradient(135deg, #F57C00 0%, #FFB74D 100%);
+        }
+        
+        .pillar-group-header.review {
+            background: linear-gradient(135deg, #7B1FA2 0%, #BA68C8 100%);
+        }
+        
+        .pillar-group-content {
+            padding: 15px;
+            background: #f8f9fa;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s;
+        }
+        
+        .pillar-group-content.collapsed {
+            max-height: 0;
+            padding: 0 15px;
+        }
+        
+        .activity-subgroup {
+            margin-bottom: 20px;
+        }
+        
+        .activity-subgroup-title {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            padding: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        
+        .activity {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+        
+        .activity.input-activity {
+            border-left-color: #1976D2;
+        }
+        
+        .activity.output-activity {
+            border-left-color: #F57C00;
+        }
+        
+        .activity.review-activity {
+            border-left-color: #7B1FA2;
+        }
+        
+        .activity:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .activity-label {
+            flex: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .activity input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        
+        .activity-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .activity input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1em;
+        }
+        
+        .timer-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .timer-btn:hover {
+            background: #764ba2;
+        }
+        
+        .timer-btn.active {
+            background: #e74c3c;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Quick Entry */
+        .quick-entry-note {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .quick-activity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+        
+        .quick-activity input[type="number"] {
+            width: 70px;
+            padding: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        /* Notes */
+        .notes-area {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Noto Sans Hebrew', Arial, sans-serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+        
+        .notes-area:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Bonus Ratings */
+        .bonus-item {
+            margin: 15px 0;
+        }
+        
+        .bonus-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .star {
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        
+        .star.filled {
+            color: #ffd700;
+        }
+        
+        .star:hover {
+            color: #ffc107;
+        }
+        
+        /* Buttons */
+        .button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 140px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #218838;
+        }
+        
+        .btn-reset {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background: #dc2626;
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .gamification-bar {
+                grid-template-columns: 1fr;
+                padding: 12px;
+            }
+            
+            .level-details h2 {
+                font-size: 1.3em;
+            }
+            
+            .badges-row {
+                margin-top: 8px;
+            }
+            
+            .badge {
+                font-size: 0.75em;
+                padding: 4px 8px;
+            }
+            
+            .xp-info {
+                text-align: left;
+            }
+            
+            .xp-value {
+                font-size: 1.4em;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .stat-card {
+                padding: 12px 8px;
+            }
+            
+            .stat-card .label {
+                font-size: 0.75em;
+            }
+            
+            .stat-card .value {
+                font-size: 1.5em;
+            }
+            
+            .progress-section {
+                margin-bottom: 15px;
+            }
+            
+            .progress-section h3 {
+                font-size: 0.9em;
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .activity-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Auto-save Indicator -->
+        <div class="auto-save" id="autoSaveIndicator">✓ Auto-saved</div>
+        
+        <!-- Week Info Collapsible Section (serves as header) -->
+        <div class="section" style="margin-bottom: 20px;">
+            <div class="section-header" onclick="toggleSection('weekinfo')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; padding: 15px 20px; border-radius: 10px; margin-bottom: 0;">
+                <span style="font-size: 1.3em; font-weight: bold;">HEBREW LEARNING</span>
+                <span class="collapse-icon" id="weekinfo-icon">▼</span>
+            </div>
+            <div class="section-content show" id="weekinfo-content" style="padding: 15px; background: #f0f4ff; border-radius: 0 0 10px 10px;">
+                <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <label style="font-weight: 600; color: #667eea; margin-right: 5px;">Week #:</label>
+                        <input type="number" id="weekNumber" min="1" placeholder="3" style="padding: 8px 12px; border: 2px solid #667eea; border-radius: 8px; font-size: 1em; width: 70px;" onchange="saveWeekInfo()">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: #667eea; margin-right: 5px;">Start:</label>
+                        <input type="date" id="weekStart" style="padding: 8px 12px; border: 2px solid #667eea; border-radius: 8px; font-size: 1em;" onchange="saveWeekInfo()">
+                    </div>
+                    <div>
+                        <label style="font-weight: 600; color: #667eea; margin-right: 5px;">End:</label>
+                        <input type="date" id="weekEnd" style="padding: 8px 12px; border: 2px solid #667eea; border-radius: 8px; font-size: 1em;" onchange="saveWeekInfo()">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current Date Display -->
+        <div style="text-align: center; color: #666; font-size: 1em; margin-bottom: 20px; font-weight: 500;">
+            <div id="weekInfoDisplay" style="font-size: 1.1em; margin-bottom: 5px;"></div>
+            <div id="currentDate"></div>
+        </div>
+        
+        <!-- Gamification Bar -->
+        <div class="gamification-bar">
+            <div class="level-info">
+                <div class="progress-ring">
+                    <svg width="60" height="60">
+                        <circle class="progress-ring-bg" cx="30" cy="30" r="24"/>
+                        <circle class="progress-ring-fill" cx="30" cy="30" r="24" 
+                                id="progressCircle"
+                                stroke-dasharray="151 151"
+                                stroke-dashoffset="50"/>
+                    </svg>
+                </div>
+                <div class="level-details">
+                    <h2 id="levelName">Alephling</h2>
+                    <div class="cefr" id="cefrLevel">CEFR: A1</div>
+                    <div class="badges-row" id="badgesRow">
+                        <span class="badge">Streakling</span>
+                        <span class="badge">Deck Diver</span>
+                        <span class="badge">Song Loop</span>
+                    </div>
+                </div>
+            </div>
+            <div class="xp-info">
+                <div class="xp-value" id="xpValue">0</div>
+                <div class="xp-label">XP Earned</div>
+            </div>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="label">Words</div>
+                <div class="value" id="wordCount" style="cursor: pointer;" title="Click to edit" onclick="editWordCount()">168</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Streak</div>
+                <div class="value" id="streakCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Minutes</div>
+                <div class="value" id="todayMinutes">0</div>
+            </div>
+        </div>
+        
+        <!-- Word Progress -->
+        <div class="progress-section">
+            <h3>Progress to 1,500 Words Goal</h3>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                <span id="progressText">0 / 1500</span>
+            </div>
+        </div>
+        
+        <!-- THREE PILLARS - STATUS ONLY -->
+        <div class="pillars-status">
+            <h2>⭐ Three Pillars - Daily Minimum</h2>
+            <div class="pillars-grid">
+                <!-- INPUT Pillar -->
+                <div class="pillar-status">
+                    <div class="pillar-icon">📖</div>
+                    <div class="pillar-name">INPUT</div>
+                    <div class="pillar-minimum">Bare Minimum: 15 min</div>
+                    <div class="pillar-bar-container">
+                        <div class="pillar-bar-fill" id="inputBar" style="height: 0%">
+                            <span id="inputMinutes">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OUTPUT Pillar -->
+                <div class="pillar-status">
+                    <div class="pillar-icon">🗣️</div>
+                    <div class="pillar-name">OUTPUT</div>
+                    <div class="pillar-minimum">Bare Minimum: 5 min</div>
+                    <div class="pillar-bar-container">
+                        <div class="pillar-bar-fill" id="outputBar" style="height: 0%">
+                            <span id="outputMinutes">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- REVIEW Pillar -->
+                <div class="pillar-status">
+                    <div class="pillar-icon">🔄</div>
+                    <div class="pillar-name">REVIEW</div>
+                    <div class="pillar-minimum">Bare Minimum: 10 min</div>
+                    <div class="pillar-bar-container">
+                        <div class="pillar-bar-fill" id="reviewBar" style="height: 0%">
+                            <span id="reviewMinutes">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ALL ACTIVITIES GROUPED BY THREE PILLARS -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('activities')" style="justify-content: center;">
+                <span>📚 ALL ACTIVITIES 📚</span>
+                <span class="collapse-icon" id="activities-icon">▼</span>
+            </div>
+            <div class="section-content show" id="activities-content">
+                
+                <!-- INPUT PILLAR GROUP -->
+                <div class="pillar-group">
+                    <div class="pillar-group-header input" onclick="togglePillarGroup('input')">
+                        <div class="pillar-title-left" style="width: 100%; justify-content: center; text-align: center;">
+                            <span style="font-size: 1.5em;">📖</span>
+                            <div style="flex: 1;">
+                                <div>INPUT ACTIVITIES</div>
+                                <div style="font-size: 0.65em; opacity: 0.8; font-weight: 400;">Bare Minimum: 15 min</div>
+                            </div>
+                            <span style="font-size: 1.5em;">📖</span>
+                        </div>
+                        <span class="pillar-collapse-icon" id="input-pillar-icon">▼</span>
+                    </div>
+                    <div class="pillar-group-content" id="input-pillar-content">
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">📚 Study Activities 📚</div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Mnemonics Study</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Root Sheet Study</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Sentence Listening</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Reading with Audio</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">📱 Apps & Tools 📱</div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Rosetta Stone</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Lingopix</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Pimsleur</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Bluebird</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>50 Languages</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Other App</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">🎧 Immersion 🎧</div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Music</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Movies/TV</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>YouTube</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Podcasts</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity input-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>App Audio Mode</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- OUTPUT PILLAR GROUP -->
+                <div class="pillar-group">
+                    <div class="pillar-group-header output" onclick="togglePillarGroup('output')">
+                        <div class="pillar-title-left" style="width: 100%; justify-content: center; text-align: center;">
+                            <span style="font-size: 1.5em;">🗣️</span>
+                            <div style="flex: 1;">
+                                <div>OUTPUT ACTIVITIES</div>
+                                <div style="font-size: 0.65em; opacity: 0.8; font-weight: 400;">Bare Minimum: 5 min</div>
+                            </div>
+                            <span style="font-size: 1.5em;">🗣️</span>
+                        </div>
+                        <span class="pillar-collapse-icon" id="output-pillar-icon">▼</span>
+                    </div>
+                    <div class="pillar-group-content" id="output-pillar-content">
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">🗣️ Speaking Practice 🗣️</div>
+                            
+                            <div class="activity output-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>ChatGPT Conversation</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity output-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Singing in Hebrew</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity output-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Shadowing</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity output-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Reading Aloud</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity output-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Recording Myself</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- REVIEW PILLAR GROUP -->
+                <div class="pillar-group">
+                    <div class="pillar-group-header review" onclick="togglePillarGroup('review')">
+                        <div class="pillar-title-left" style="width: 100%; justify-content: center; text-align: center;">
+                            <span style="font-size: 1.5em;">🔄</span>
+                            <div style="flex: 1;">
+                                <div>REVIEW ACTIVITIES</div>
+                                <div style="font-size: 0.65em; opacity: 0.8; font-weight: 400;">Bare Minimum: 10 min</div>
+                            </div>
+                            <span style="font-size: 1.5em;">🔄</span>
+                        </div>
+                        <span class="pillar-collapse-icon" id="review-pillar-icon">▼</span>
+                    </div>
+                    <div class="pillar-group-content" id="review-pillar-content">
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">🔄 Vocabulary & Flashcards 🔄</div>
+                            
+                            <div class="activity review-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Anki Flashcards</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity review-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Quiz Myself</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-subgroup">
+                            <div class="activity-subgroup-title">🎮 Apps & Games 🎮</div>
+                            
+                            <div class="activity review-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Memrise</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity review-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>Drops</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="activity review-activity">
+                                <label class="activity-label">
+                                    <input type="checkbox" onchange="updateStats()">
+                                    <span>App Games</span>
+                                </label>
+                                <div class="activity-controls">
+                                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                                    <button class="timer-btn" onclick="toggleTimer(this)">⏱️</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- QUICK ENTRY (collapsed by default) -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('quick')">
+                <span>⚡ Quick Entry (Busy Days)</span>
+                <span class="collapse-icon" id="quick-icon">▼</span>
+            </div>
+            <div class="section-content" id="quick-content">
+                <div class="quick-entry-note">
+                    <strong>Busy today?</strong> Just enter the bare minimum times here and skip the detailed sections above.
+                </div>
+                
+                <div class="quick-activity">
+                    <span><strong>INPUT</strong> (15 min minimum)</span>
+                    <input type="number" min="0" placeholder="min" data-pillar="input" onchange="updatePillars()">
+                </div>
+                
+                <div class="quick-activity">
+                    <span><strong>OUTPUT</strong> (5 min minimum)</span>
+                    <input type="number" min="0" placeholder="min" data-pillar="output" onchange="updatePillars()">
+                </div>
+                
+                <div class="quick-activity">
+                    <span><strong>REVIEW</strong> (10 min minimum)</span>
+                    <input type="number" min="0" placeholder="min" data-pillar="review" onchange="updatePillars()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- BONUS CONTENT RATINGS -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('bonus')">
+                <span>⭐ Weekly Materials Rating</span>
+                <span class="collapse-icon" id="bonus-icon">▼</span>
+            </div>
+            <div class="section-content" id="bonus-content">
+                <div class="bonus-item">
+                    <label>Anki Vocabulary Deck</label>
+                    <div class="rating-stars" data-rating-id="anki">
+                        <span class="star" onclick="setRating('anki', 1)">★</span>
+                        <span class="star" onclick="setRating('anki', 2)">★</span>
+                        <span class="star" onclick="setRating('anki', 3)">★</span>
+                        <span class="star" onclick="setRating('anki', 4)">★</span>
+                        <span class="star" onclick="setRating('anki', 5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="bonus-item">
+                    <label>Mnemonic Study Guide</label>
+                    <div class="rating-stars" data-rating-id="mnemonic">
+                        <span class="star" onclick="setRating('mnemonic', 1)">★</span>
+                        <span class="star" onclick="setRating('mnemonic', 2)">★</span>
+                        <span class="star" onclick="setRating('mnemonic', 3)">★</span>
+                        <span class="star" onclick="setRating('mnemonic', 4)">★</span>
+                        <span class="star" onclick="setRating('mnemonic', 5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="bonus-item">
+                    <label>Synonyms List</label>
+                    <div class="rating-stars" data-rating-id="synonyms">
+                        <span class="star" onclick="setRating('synonyms', 1)">★</span>
+                        <span class="star" onclick="setRating('synonyms', 2)">★</span>
+                        <span class="star" onclick="setRating('synonyms', 3)">★</span>
+                        <span class="star" onclick="setRating('synonyms', 4)">★</span>
+                        <span class="star" onclick="setRating('synonyms', 5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="bonus-item">
+                    <label>Weekly Song Packet</label>
+                    <div class="rating-stars" data-rating-id="song">
+                        <span class="star" onclick="setRating('song', 1)">★</span>
+                        <span class="star" onclick="setRating('song', 2)">★</span>
+                        <span class="star" onclick="setRating('song', 3)">★</span>
+                        <span class="star" onclick="setRating('song', 4)">★</span>
+                        <span class="star" onclick="setRating('song', 5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="bonus-item">
+                    <label>Hebrew Tracker Tool</label>
+                    <div class="rating-stars" data-rating-id="tracker">
+                        <span class="star" onclick="setRating('tracker', 1)">★</span>
+                        <span class="star" onclick="setRating('tracker', 2)">★</span>
+                        <span class="star" onclick="setRating('tracker', 3)">★</span>
+                        <span class="star" onclick="setRating('tracker', 4)">★</span>
+                        <span class="star" onclick="setRating('tracker', 5)">★</span>
+                    </div>
+                </div>
+                
+                <div class="bonus-item">
+                    <label>Immersion Exposure</label>
+                    <div class="rating-stars" data-rating-id="immersion">
+                        <span class="star" onclick="setRating('immersion', 1)">★</span>
+                        <span class="star" onclick="setRating('immersion', 2)">★</span>
+                        <span class="star" onclick="setRating('immersion', 3)">★</span>
+                        <span class="star" onclick="setRating('immersion', 4)">★</span>
+                        <span class="star" onclick="setRating('immersion', 5)">★</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DAILY NOTES -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('notes')">
+                <span>📝 Daily Notes</span>
+                <span class="collapse-icon" id="notes-icon">▼</span>
+            </div>
+            <div class="section-content" id="notes-content">
+                <textarea class="notes-area" id="dailyNotes" placeholder="How did today's study go? Any challenges or wins?"></textarea>
+            </div>
+        </div>
+        
+        <!-- Buttons -->
+        <div class="button-row">
+            <button class="btn btn-primary" onclick="saveData()">SAVE</button>
+            <button class="btn btn-secondary" onclick="exportData()">EXPORT</button>
+            <button class="btn btn-reset" onclick="resetWeek()">RESET</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let timers = {};
+        let autoSaveTimeout = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateStats();
+            updatePillars();
+        });
+        
+        // Update current date
+        function updateDate() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const now = new Date();
+            const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+        
+        // Toggle section
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const icon = document.getElementById(sectionId + '-icon');
+            content.classList.toggle('show');
+            icon.classList.toggle('rotated');
+            scheduleAutoSave();
+        }
+        
+        // Toggle pillar group
+        function togglePillarGroup(pillarId) {
+            const content = document.getElementById(pillarId + '-pillar-content');
+            const icon = document.getElementById(pillarId + '-pillar-icon');
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('rotated');
+        }
+        
+        // Update pillars from all inputs
+        function updatePillars() {
+            let inputTotal = 0;
+            let outputTotal = 0;
+            let reviewTotal = 0;
+            
+            // Sum up all time inputs by pillar type
+            document.querySelectorAll('input[type="number"][data-pillar]').forEach(input => {
+                const value = parseInt(input.value) || 0;
+                const pillar = input.getAttribute('data-pillar');
+                
+                if (pillar === 'input') inputTotal += value;
+                else if (pillar === 'output') outputTotal += value;
+                else if (pillar === 'review') reviewTotal += value;
+            });
+            
+            // Update pillar bars
+            updatePillarBar('input', inputTotal, 15);
+            updatePillarBar('output', outputTotal, 5);
+            updatePillarBar('review', reviewTotal, 10);
+            
+            // Update total minutes
+            const totalMinutes = inputTotal + outputTotal + reviewTotal;
+            document.getElementById('todayMinutes').textContent = totalMinutes;
+            
+            // Calculate XP
+            let xp = 0;
+            xp += Math.floor(inputTotal / 5) * 10;  // 10 XP per 5 min input
+            xp += Math.floor(outputTotal / 5) * 15; // 15 XP per 5 min output
+            xp += Math.floor(reviewTotal / 5) * 10; // 10 XP per 5 min review
+            document.getElementById('xpValue').textContent = xp;
+            
+            scheduleAutoSave();
+        }
+        
+        // Update individual pillar bar
+        function updatePillarBar(pillarType, minutes, target) {
+            const bar = document.getElementById(pillarType + 'Bar');
+            const minutesSpan = document.getElementById(pillarType + 'Minutes');
+            
+            const percentage = Math.min((minutes / target) * 100, 100);
+            bar.style.height = percentage + '%';
+            minutesSpan.textContent = minutes;
+            
+            // Add complete class and confetti if target reached
+            if (percentage >= 100) {
+                if (!bar.classList.contains('complete')) {
+                    bar.classList.add('complete');
+                    createConfetti();
+                }
+            } else {
+                bar.classList.remove('complete');
+            }
+        }
+        
+        // Update stats
+        function updateStats() {
+            let checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            
+            // Update progress bar based on word count
+            const wordCount = parseInt(document.getElementById('wordCount').textContent) || 0;
+            const goalWords = 1500;
+            const percentage = Math.min((wordCount / goalWords) * 100, 100);
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${wordCount} / ${goalWords}`;
+            
+            // Update streak logic would go here
+            scheduleAutoSave();
+        }
+        
+        // Edit word count
+        function editWordCount() {
+            const currentValue = document.getElementById('wordCount').textContent;
+            const newValue = prompt('Enter total words learned:', currentValue);
+            if (newValue !== null && !isNaN(newValue)) {
+                document.getElementById('wordCount').textContent = parseInt(newValue);
+                updateStats();
+                saveData();
+            }
+        }
+        
+        // Timer functionality
+        function toggleTimer(button) {
+            const activity = button.closest('.activity, .quick-activity');
+            const input = activity.querySelector('input[type="number"]');
+            const timerId = activity.querySelector('label, span').textContent.trim();
+            
+            if (button.classList.contains('active')) {
+                // Stop timer
+                clearInterval(timers[timerId]);
+                delete timers[timerId];
+                button.classList.remove('active');
+                button.textContent = '⏱️';
+            } else {
+                // Start timer
+                button.classList.add('active');
+                button.textContent = '⏸️';
+                
+                timers[timerId] = setInterval(() => {
+                    const currentValue = parseInt(input.value) || 0;
+                    input.value = currentValue + 1;
+                    updatePillars();
+                }, 60000); // Update every minute
+            }
+        }
+        
+        // Rating system
+        function setRating(itemId, rating) {
+            const stars = document.querySelector(`[data-rating-id="${itemId}"]`).querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+            scheduleAutoSave();
+        }
+        
+        // Confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = ['#667eea', '#764ba2', '#ff6a88', '#ffd700', '#4CAF50'][Math.floor(Math.random() * 5)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+        
+        // Auto-save functionality
+        function scheduleAutoSave() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                saveData();
+                showAutoSaveIndicator();
+            }, 1000); // Save 1 second after last change
+        }
+        
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autoSaveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const data = {
+                date: new Date().toISOString(),
+                activities: {},
+                pillars: {
+                    input: parseInt(document.getElementById('inputMinutes').textContent) || 0,
+                    output: parseInt(document.getElementById('outputMinutes').textContent) || 0,
+                    review: parseInt(document.getElementById('reviewMinutes').textContent) || 0
+                },
+                xp: parseInt(document.getElementById('xpValue').textContent) || 0,
+                streak: parseInt(document.getElementById('streakCount').textContent) || 0,
+                notes: document.getElementById('dailyNotes').value,
+                ratings: {}
+            };
+            
+            // Save all checkboxes and time inputs
+            document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+                const label = activity.querySelector('label, span');
+                if (label) {
+                    const name = label.textContent.trim();
+                    const checkbox = activity.querySelector('input[type="checkbox"]');
+                    const timeInput = activity.querySelector('input[type="number"]');
+                    
+                    data.activities[name] = {
+                        checked: checkbox ? checkbox.checked : false,
+                        minutes: timeInput ? (parseInt(timeInput.value) || 0) : 0
+                    };
+                }
+            });
+            
+            // Save ratings
+            document.querySelectorAll('[data-rating-id]').forEach(ratingDiv => {
+                const id = ratingDiv.getAttribute('data-rating-id');
+                const filled = ratingDiv.querySelectorAll('.star.filled').length;
+                data.ratings[id] = filled;
+            });
+            
+            localStorage.setItem('hebrewTrackerWeek03_Integrated', JSON.stringify(data));
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('hebrewTrackerWeek03_Integrated');
+            if (!saved) return;
+            
+            try {
+                const data = JSON.parse(saved);
+                
+                // Restore activities
+                if (data.activities) {
+                    document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+                        const label = activity.querySelector('label, span');
+                        if (label) {
+                            const name = label.textContent.trim();
+                            const activityData = data.activities[name];
+                            
+                            if (activityData) {
+                                const checkbox = activity.querySelector('input[type="checkbox"]');
+                                const timeInput = activity.querySelector('input[type="number"]');
+                                
+                                if (checkbox) checkbox.checked = activityData.checked;
+                                if (timeInput) timeInput.value = activityData.minutes || '';
+                            }
+                        }
+                    });
+                }
+                
+                // Restore ratings
+                if (data.ratings) {
+                    Object.keys(data.ratings).forEach(id => {
+                        setRating(id, data.ratings[id]);
+                    });
+                }
+                
+                // Restore notes
+                if (data.notes) {
+                    document.getElementById('dailyNotes').value = data.notes;
+                }
+                
+                // Restore streak
+                if (data.streak) {
+                    document.getElementById('streakCount').textContent = data.streak;
+                }
+                
+            } catch (e) {
+                console.error('Error loading saved data:', e);
+            }
+        }
+        
+        // Export data as JSON
+        function exportData() {
+            const data = JSON.parse(localStorage.getItem('hebrewTrackerWeek03_Integrated') || '{}');
+            const weekNum = document.getElementById('weekNumber').value || 'X';
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `hebrew-tracker-week${weekNum}-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        // Save week info
+        function saveWeekInfo() {
+            const weekInfo = {
+                weekNumber: document.getElementById('weekNumber').value,
+                weekStart: document.getElementById('weekStart').value,
+                weekEnd: document.getElementById('weekEnd').value
+            };
+            localStorage.setItem('hebrewTrackerWeekInfo', JSON.stringify(weekInfo));
+            updateWeekInfoDisplay();
+            showAutoSave();
+        }
+        
+        // Load week info
+        function loadWeekInfo() {
+            const saved = localStorage.getItem('hebrewTrackerWeekInfo');
+            if (saved) {
+                const weekInfo = JSON.parse(saved);
+                document.getElementById('weekNumber').value = weekInfo.weekNumber || '';
+                document.getElementById('weekStart').value = weekInfo.weekStart || '';
+                document.getElementById('weekEnd').value = weekInfo.weekEnd || '';
+            }
+            updateWeekInfoDisplay();
+        }
+        
+        // Update week info display below title
+        function updateWeekInfoDisplay() {
+            const weekNum = document.getElementById('weekNumber').value;
+            const weekStart = document.getElementById('weekStart').value;
+            const weekEnd = document.getElementById('weekEnd').value;
+            
+            let displayText = '';
+            if (weekNum) {
+                displayText = `Week ${weekNum}`;
+            }
+            if (weekStart && weekEnd) {
+                const startDate = new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const endDate = new Date(weekEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                displayText += displayText ? ` • ${startDate} - ${endDate}` : `${startDate} - ${endDate}`;
+            }
+            
+            document.getElementById('weekInfoDisplay').textContent = displayText;
+        }
+        
+        // Reset for new week
+        function resetWeek() {
+            const weekNum = document.getElementById('weekNumber').value;
+            const confirmed = confirm(
+                `⚠️ RESET TRACKER FOR NEW WEEK?\n\n` +
+                `This will:\n` +
+                `• Clear all checkboxes\n` +
+                `• Reset all timers and minutes\n` +
+                `• Clear notes\n` +
+                `• Reset streak to 0\n` +
+                `• Clear week ${weekNum} data\n\n` +
+                `⚠️ EXPORT YOUR DATA FIRST! ⚠️\n\n` +
+                `Are you SURE you want to reset?`
+            );
+            
+            if (confirmed) {
+                // Clear all data
+                localStorage.removeItem('hebrewTrackerWeek03_Integrated');
+                localStorage.removeItem('hebrewTrackerWeekInfo');
+                
+                // Show confirmation
+                alert('✅ Tracker reset! Ready for new week.');
+                
+                // Reload page
+                location.reload();
+            }
+        }
+        
+        // Add listeners to all inputs for auto-save
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('change', scheduleAutoSave);
+            input.addEventListener('input', scheduleAutoSave);
+        });
+        
+        // Load week info on page load
+        loadWeekInfo();
+    </script>
+</body>
+</html>
