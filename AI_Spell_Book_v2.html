@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Spell Book</title>
+  <style>
+    body {
+      font-family: 'Garamond', serif;
+      background: #f6f0d8 url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      color: #2d1b0e;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    details {
+      background: rgba(255,255,240,0.85);
+      border: 2px solid #bfa87a;
+      border-radius: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    }
+    summary {
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .prompt {
+      margin: 8px 0;
+      padding: 6px;
+      background: #fffaf0;
+      border: 1px dashed #bfa87a;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .prompt:hover {
+      background: #f9f2d6;
+    }
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ AI Spell Book ✨</h1>
+
+  <details>
+    <summary>Accuracy Mode 📚</summary>
+    <div class="prompt">Be precise and cite sources when relevant.</div>
+    <div class="prompt">Use structured explanations with minimal fluff.</div>
+  </details>
+
+  <details>
+    <summary>Creative Mode 🎨</summary>
+    <div class="prompt">Lean into imaginative phrasing and lateral thinking.</div>
+    <div class="prompt">Offer several inventive takes on the idea.</div>
+  </details>
+
+  <details>
+    <summary>Learning Mode 🧠</summary>
+    <div class="prompt">Break the concept down in simple language.</div>
+    <div class="prompt">Suggest mnemonics, flashcards, and examples.</div>
+  </details>
+
+  <details>
+    <summary>Writing Mode ✍️</summary>
+    <div class="prompt">Refine my draft but preserve my voice.</div>
+    <div class="prompt">Offer variations in tone and rhythm.</div>
+  </details>
+
+  <details>
+    <summary>Organizing Mode 🗂️</summary>
+    <div class="prompt">Structure the mess into clear lists and timelines.</div>
+    <div class="prompt">Highlight key actions and dependencies.</div>
+  </details>
+
+  <details>
+    <summary>Self-Improvement Mode 🌿</summary>
+    <div class="prompt">Suggest mindful, practical steps to make progress.</div>
+    <div class="prompt">Offer habit-building tips and realistic strategies.</div>
+  </details>
+
+  <footer>
+    Mischief Managed 🪄
+  </footer>
+
+  <script>
+    document.querySelectorAll('.prompt').forEach(p => {
+      p.addEventListener('click', () => {
+        navigator.clipboard.writeText(p.innerText);
+        p.style.background = '#e5deb3';
+        setTimeout(() => p.style.background = '#fffaf0', 500);
+      });
+    });
+  </script>
+</body>
+</html>
