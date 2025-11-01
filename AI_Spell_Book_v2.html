@@ -46,6 +46,13 @@
       font-style: italic;
     }
   </style>
+  <link rel="apple-touch-icon" href="ai-spellbook1.jpg">
+  <link rel="icon" type="image/jpeg" href="ai-spellbook1.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <h1>✨ AI Spell Book ✨</h1>
@@ -90,14 +97,96 @@
     Mischief Managed 🪄
   </footer>
 
-  <script>
-    document.querySelectorAll('.prompt').forEach(p => {
-      p.addEventListener('click', () => {
-        navigator.clipboard.writeText(p.innerText);
-        p.style.background = '#e5deb3';
-        setTimeout(() => p.style.background = '#fffaf0', 500);
-      });
+  
+<script>
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrhdCqStc8k5Jyajz5vfDVBqvowEn35OU",
+        authDomain: "ang-adventure-portal.firebaseapp.com",
+        projectId: "ang-adventure-portal",
+        storageBucket: "ang-adventure-portal.firebasestorage.app",
+        messagingSenderId: "874083824263",
+        appId: "1:874083824263:web:6bd7cba944c5228fec3e22",
+        measurementId: "G-0NWLQ8TG2H"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const spellBookDoc = db.collection('aiSpellBook').doc('userSpells');
+
+    // Load custom spells from Firestore
+    async function loadCustomSpells() {
+        try {
+            const doc = await spellBookDoc.get();
+            if (doc.exists && doc.data().customSpells) {
+                const customSpells = doc.data().customSpells;
+                // Add custom spells section if doesn't exist
+                let customSection = document.querySelector('.custom-spells-section');
+                if (!customSection) {
+                    customSection = document.createElement('details');
+                    customSection.className = 'custom-spells-section';
+                    customSection.innerHTML = '<summary>My Custom Spells âœ¨</summary>';
+                    document.querySelector('body').insertBefore(customSection, document.querySelector('footer'));
+                }
+                
+                // Clear and rebuild
+                const existingPrompts = customSection.querySelectorAll('.prompt');
+                existingPrompts.forEach(p => p.remove());
+                
+                customSpells.forEach(spell => {
+                    const div = document.createElement('div');
+                    div.className = 'prompt';
+                    div.innerText = spell;
+                    div.addEventListener('click', () => {
+                        navigator.clipboard.writeText(spell);
+                        div.style.background = '#e5deb3';
+                        setTimeout(() => div.style.background = '#fffaf0', 500);
+                    });
+                    customSection.appendChild(div);
+                });
+            }
+        } catch (err) {
+            console.error('Error loading custom spells:', err);
+        }
+    }
+
+    // Save custom spell
+    async function saveCustomSpell(spellText) {
+        try {
+            const doc = await spellBookDoc.get();
+            const customSpells = doc.exists && doc.data().customSpells ? doc.data().customSpells : [];
+            customSpells.push(spellText);
+            await spellBookDoc.set({
+                customSpells: customSpells,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            await loadCustomSpells();
+            alert('âœ… Spell saved!');
+        } catch (err) {
+            console.error('Error saving spell:', err);
+            alert('â�� Failed to save spell');
+        }
+    }
+
+    // Add button to save custom spells
+    window.addEventListener('load', () => {
+        const addButton = document.createElement('button');
+        addButton.innerText = 'âž• Add Custom Spell';
+        addButton.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#764ba2;color:white;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;box-shadow:2px 2px 6px rgba(0,0,0,0.3);';
+        addButton.onclick = () => {
+            const spell = prompt('Enter your custom spell/prompt:');
+            if (spell && spell.trim()) {
+                saveCustomSpell(spell.trim());
+            }
+        };
+        document.body.appendChild(addButton);
+        
+        // Load existing spells
+        loadCustomSpells();
     });
-  </script>
+</script>
+
 </body>
 </html>
