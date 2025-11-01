@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shrek 1 Word Frequency Checker</title>
+    <link rel="apple-touch-icon" href="shrek4_image.jpg">
+    <link rel="icon" type="image/jpeg" href="shrek4_image.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .stats {
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #764ba2;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .search-box {
+            padding: 12px;
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            font-size: 16px;
+            min-width: 300px;
+        }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .word-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #764ba2;
+        }
+        .word-card.known {
+            background: #f8f9fa;
+            border-color: #6c757d;
+            opacity: 0.6;
+        }
+        .word-card.already-done {
+            background: #e9ecef;
+            border-color: #adb5bd;
+            opacity: 0.4;
+            cursor: default;
+        }
+        .word-hebrew {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 8px;
+            direction: rtl;
+        }
+        .word-english {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+        }
+        .word-trans {
+            font-size: 0.8em;
+            color: #999;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Shrek 1 Word Checker</h1>
+        <div class="subtitle">Top 100 Words from Shrek Hebrew Dub</div>
+        
+        <div class="stats">
+            <strong id="available-count">0</strong> words available to learn
+        </div>
+        
+        <div class="controls">
+            <input type="text" class="search-box" id="search" placeholder="Search Hebrew or English...">
+            <button onclick="selectNext20()">Select Next 20</button>
+            <button onclick="clearAll()">Clear All</button>
+            <button onclick="saveProgress()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">💾 Save</button>
+            <button onclick="loadProgress()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">📂 Load</button>
+            <button onclick="exportAvailable()">📤 Export Available</button>
+            <button onclick="exportKnown()">📥 Export Known</button>
+        </div>
+        
+        <div class="word-grid" id="word-grid"></div>
+    </div>
+
+    <script>
+        const words = [
+        {
+                "rank": 1,
+                "hebrew": "אני",
+                "english": "I / me",
+                "trans": "ani",
+                "done": false
+        },
+        {
+                "rank": 2,
+                "hebrew": "לא",
+                "english": "no / not",
+                "trans": "lo",
+                "done": false
+        },
+        {
+                "rank": 3,
+                "hebrew": "את",
+                "english": "you (fem. sing.)",
+                "trans": "at",
+                "done": false
+        },
+        {
+                "rank": 4,
+                "hebrew": "זה",
+                "english": "this / it",
+                "trans": "ze",
+                "done": false
+        },
+        {
+                "rank": 5,
+                "hebrew": "אתה",
+                "english": "you (masc. sing.)",
+                "trans": "ata",
+                "done": false
+        },
+        {
+                "rank": 6,
+                "hebrew": "מה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 7,
+                "hebrew": "לי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 8,
+                "hebrew": "שרק",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 9,
+                "hebrew": "לך",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 10,
+                "hebrew": "יש",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 11,
+                "hebrew": "אבל",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 12,
+                "hebrew": "כן",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 13,
+                "hebrew": "הוא",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 14,
+                "hebrew": "טוב",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 15,
+                "hebrew": "על",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 16,
+                "hebrew": "אותי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 17,
+                "hebrew": "היא",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 18,
+                "hebrew": "שלי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 19,
+                "hebrew": "יודע",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 20,
+                "hebrew": "חמור",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 21,
+                "hebrew": "נסיכה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 22,
+                "hebrew": "בסדר",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 23,
+                "hebrew": "אותך",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 24,
+                "hebrew": "של",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 25,
+                "hebrew": "אל",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 26,
+                "hebrew": "באמת",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 27,
+                "hebrew": "רוצה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 28,
+                "hebrew": "עם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 29,
+                "hebrew": "רק",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 30,
+                "hebrew": "כל",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 31,
+                "hebrew": "שלך",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 32,
+                "hebrew": "אותו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 33,
+                "hebrew": "עוג",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 34,
+                "hebrew": "הנסיכה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 35,
+                "hebrew": "פה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 36,
+                "hebrew": "פיונה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 37,
+                "hebrew": "אם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 38,
+                "hebrew": "למה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 39,
+                "hebrew": "הם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 40,
+                "hebrew": "להיות",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 41,
+                "hebrew": "עוד",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 42,
+                "hebrew": "זו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 43,
+                "hebrew": "רגע",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 44,
+                "hebrew": "מי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 45,
+                "hebrew": "פרקוואד",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 46,
+                "hebrew": "הזה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 47,
+                "hebrew": "כך",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 48,
+                "hebrew": "אז",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 49,
+                "hebrew": "אין",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 50,
+                "hebrew": "משהו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 51,
+                "hebrew": "כי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 52,
+                "hebrew": "עליי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 53,
+                "hebrew": "אוקיי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 54,
+                "hebrew": "אותה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 55,
+                "hebrew": "אולי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 56,
+                "hebrew": "היה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 57,
+                "hebrew": "אתם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 58,
+                "hebrew": "לו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 59,
+                "hebrew": "שאני",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 60,
+                "hebrew": "אוהב",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 61,
+                "hebrew": "איפה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 62,
+                "hebrew": "יכול",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 63,
+                "hebrew": "שם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 64,
+                "hebrew": "ככה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 65,
+                "hebrew": "אחד",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 66,
+                "hebrew": "כמו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 67,
+                "hebrew": "איזה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 68,
+                "hebrew": "עד",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 69,
+                "hebrew": "הביצה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 70,
+                "hebrew": "לספר",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 71,
+                "hebrew": "לדבר",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 72,
+                "hebrew": "תראה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 73,
+                "hebrew": "דולוק",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 74,
+                "hebrew": "בבקשה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 75,
+                "hebrew": "איש",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 76,
+                "hebrew": "עושה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 77,
+                "hebrew": "שכבות",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 78,
+                "hebrew": "לפני",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 79,
+                "hebrew": "בא",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 80,
+                "hebrew": "חברים",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 81,
+                "hebrew": "שאתה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 82,
+                "hebrew": "עכשיו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 83,
+                "hebrew": "גם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 84,
+                "hebrew": "זמן",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 85,
+                "hebrew": "הנה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 86,
+                "hebrew": "יותר",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 87,
+                "hebrew": "הרבה",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 88,
+                "hebrew": "נכון",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 89,
+                "hebrew": "חושב",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 90,
+                "hebrew": "לורד",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 91,
+                "hebrew": "כולם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 92,
+                "hebrew": "כדי",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 93,
+                "hebrew": "ממש",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 94,
+                "hebrew": "אנחנו",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 95,
+                "hebrew": "פעם",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 96,
+                "hebrew": "ואז",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 97,
+                "hebrew": "דרקון",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 98,
+                "hebrew": "קטן",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 99,
+                "hebrew": "מספיק",
+                "english": "—",
+                "trans": "",
+                "done": false
+        },
+        {
+                "rank": 100,
+                "hebrew": "המאפינס",
+                "english": "—",
+                "trans": "",
+                "done": false
+        }
+];
+
+        let knownWords = new Set();
+
+        function renderWords() {
+            const grid = document.getElementById('word-grid');
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            grid.innerHTML = '';
+            
+            let availableCount = 0;
+            
+            words.forEach(word => {
+                const isDone = word.done;
+                const isKnown = knownWords.has(word.hebrew);
+                
+                // Filter by search
+                const matchesSearch = !searchTerm || 
+                    word.hebrew.includes(searchTerm) ||
+                    word.english.toLowerCase().includes(searchTerm) ||
+                    (word.trans && word.trans.toLowerCase().includes(searchTerm));
+                
+                if (!matchesSearch) return;
+                
+                if (!isDone && !isKnown) availableCount++;
+                
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                if (isDone) card.className += ' already-done';
+                else if (isKnown) card.className += ' known';
+                
+                card.innerHTML = `
+                    <div class="word-hebrew">${word.hebrew}</div>
+                    <div class="word-english">${word.english}</div>
+                    ${word.trans ? `<div class="word-trans">${word.trans}</div>` : ''}
+                `;
+                
+                if (!isDone) {
+                    card.onclick = () => toggleKnown(word.hebrew);
+                }
+                
+                grid.appendChild(card);
+            });
+            
+            document.getElementById('available-count').textContent = availableCount;
+        }
+
+        function toggleKnown(hebrew) {
+            if (knownWords.has(hebrew)) knownWords.delete(hebrew);
+            else knownWords.add(hebrew);
+            renderWords();
+        }
+
+        function selectNext20() {
+            let count = 0;
+            for (let word of words) {
+                if (!word.done && !knownWords.has(word.hebrew)) {
+                    knownWords.add(word.hebrew);
+                    if (++count >= 20) break;
+                }
+            }
+            renderWords();
+        }
+
+        function clearAll() {
+            knownWords.clear();
+            renderWords();
+        }
+
+        function saveProgress() {
+            const knownArray = Array.from(knownWords);
+            localStorage.setItem('shrek1FrequencyKnown', JSON.stringify(knownArray));
+            alert('✅ Progress saved!');
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('shrek1FrequencyKnown');
+            if (saved) {
+                knownWords = new Set(JSON.parse(saved));
+                renderWords();
+                alert('✅ Progress loaded!');
+            } else {
+                alert('No saved progress found.');
+            }
+        }
+
+        function exportAvailable() {
+            const available = words.filter(w => !w.done && !knownWords.has(w.hebrew));
+            const text = available.map(w => w.hebrew).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Shrek1_Available_Words.txt';
+            a.click();
+        }
+
+        function exportKnown() {
+            const text = Array.from(knownWords).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Shrek1_Known_Words.txt';
+            a.click();
+        }
+
+        // Auto-load and search functionality
+        document.getElementById('search').addEventListener('input', renderWords);
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('shrek1FrequencyKnown');
+            if (saved) {
+                knownWords = new Set(JSON.parse(saved));
+            }
+            renderWords();
+        });
+    </script>
+</body>
+</html>
