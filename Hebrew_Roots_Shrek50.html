@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Root Families - Shrek</title>
+    <link rel="icon" type="image/png" href="Shrek_Mnemonics_image.png">
+    <link rel="apple-touch-icon" href="Shrek_Mnemonics_image.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="Shrek_Mnemonics_image.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #6b4423 0%, #4a7c59 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #faf8f3;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6b4423 0%, #8b6f47 100%);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1em;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #f5f1e8;
+            border-bottom: 2px solid #d4c4a8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 18px;
+            font-size: 15px;
+            border: 2px solid #d4c4a8;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .search-box input:focus {
+            border-color: #6b4423;
+            box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #6b4423;
+            background: white;
+            color: #6b4423;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: #6b4423;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #6b4423 0%, #4a7c59 100%);
+            color: white;
+            border-color: #6b4423;
+        }
+
+        .content {
+            padding: 20px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .root-family {
+            margin-bottom: 15px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .root-header {
+            font-size: 1.4em;
+            color: white;
+            background: linear-gradient(135deg, #6b4423 0%, #8b6f47 100%);
+            padding: 12px 20px;
+            margin-bottom: 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+        }
+
+        .root-header:hover {
+            background: linear-gradient(135deg, #7b5433 0%, #9b7f57 100%);
+            transform: translateX(3px);
+        }
+
+        .root-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .root-letters {
+            font-size: 1.6em;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .root-meaning {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .word-count {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .root-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .root-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            background: #f5f1e8;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .root-content.collapsed {
+            display: none;
+        }
+
+        .word-card {
+            background: white;
+            border-left: 4px solid #4a7c59;
+            padding: 15px;
+            border-radius: 6px;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 124, 89, 0.2);
+        }
+
+        .word-card.favorited {
+            border-left-color: #FFD700;
+            background: #fffdf7;
+        }
+
+        .hebrew {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .transliteration {
+            font-size: 1.1em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+
+        .english {
+            font-size: 1em;
+            color: #6b4423;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pos-badge {
+            display: inline-block;
+            background: #4a7c59;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .example-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px dashed #d4c4a8;
+        }
+
+        .example-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #6b4423;
+            margin-bottom: 4px;
+        }
+
+        .example {
+            background: #f5f1e8;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .hebrew-text {
+            direction: rtl;
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .translit-text {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .english-text {
+            color: #555;
+        }
+
+        .synonyms-section {
+            margin-top: 10px;
+            padding: 8px;
+            background: #fffef8;
+            border-radius: 4px;
+            border-left: 3px solid #4a7c59;
+        }
+
+        .synonyms-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #4a7c59;
+            margin-bottom: 4px;
+        }
+
+        .synonyms-text {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .note-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px dashed #d4c4a8;
+        }
+
+        .note-textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #d4c4a8;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 50px;
+            background: white;
+        }
+
+        .note-textarea:focus {
+            outline: none;
+            border-color: #6b4423;
+        }
+
+        .note-label {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.9em;
+        }
+
+        .saved-note {
+            background: #e8f5e8;
+            padding: 6px;
+            border-radius: 4px;
+            color: #2d5016;
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #d4c4a8;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn {
+            border-color: #FFD700;
+        }
+
+        .favorite-btn.active {
+            background: #FFD700;
+        }
+
+        .note-btn {
+            border-color: #6b4423;
+        }
+
+        .note-btn.active {
+            background: #6b4423;
+            color: white;
+        }
+
+        .stats {
+            background: #e8f5e8;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #6b4423;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .no-root-section {
+            margin-bottom: 15px;
+        }
+
+        .no-root-header {
+            font-size: 1.2em;
+            color: white;
+            background: linear-gradient(135deg, #8b7355 0%, #6b5d4f 100%);
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .root-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hebrew {
+                font-size: 1.4em;
+            }
+
+            .transliteration {
+                font-size: 1em;
+            }
+
+            .root-header {
+                font-size: 1.2em;
+                padding: 10px 15px;
+            }
+
+            .root-letters {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌳 Hebrew Root Families</h1>
+            <p>Shrek Vocabulary - 50 Words by 3-Letter Roots</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search Hebrew, English, or root...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Roots</button>
+                <button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+                <button class="filter-btn" data-filter="with-notes">📝 With Notes</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalWords">50</div>
+                    <div class="stat-label">Total Words</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="rootCount">34</div>
+                    <div class="stat-label">Root Families</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="favoriteCount">0</div>
+                    <div class="stat-label">Favorites</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="noteCount">0</div>
+                    <div class="stat-label">With Notes</div>
+                </div>
+            </div>
+
+            <div id="rootsContainer"></div>
+            <div id="noResults" class="no-results hidden">
+                No results found. Try a different search term.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rootMeanings = {
+            "ט-ו-ב": "Good, Pleasant",
+            "י-ד-ע": "Know, Knowledge",
+            "נ-ס-ך": "Pour, Prince/Princess",
+            "ס-ד-ר": "Order, Arrange",
+            "א-מ-ת": "Truth, Truly",
+            "ר-צ-ה": "Want, Desire",
+            "ה-י-ה": "Be, Exist",
+            "ר-ג-ע": "Moment, Rest",
+            "א-ה-ב": "Love, Like",
+            "י-כ-ל": "Can, Able",
+            "א-ח-ד": "One, Unite",
+            "ב-צ-ה": "Swamp, Marsh",
+            "ב-ק-ש": "Request, Seek",
+            "ד-ב-ר": "Speak, Word",
+            "ח-ב-ר": "Connect, Friend",
+            "ב-ו-א": "Come, Enter",
+            "ר-א-ה": "See, Look",
+            "ש-כ-ב": "Lie Down, Layer",
+            "ע-ש-ה": "Do, Make",
+            "ס-פ-ר": "Tell, Count",
+            "פ-ע-ם": "Time, Beat",
+            "ח-ש-ב": "Think, Calculate",
+            "ק-ד-ם": "Forward, Progress",
+            "ק-ט-ן": "Small, Diminish",
+            "פ-ש-ט": "Simple, Strip",
+            "ס-פ-ק": "Suffice, Doubt",
+            "כ-ל-ל": "Include, General",
+            "ז-מ-ן": "Time, Invite",
+            "מ-ש-ש": "Feel, Touch",
+            "כ-ו-ן": "Direct, Correct",
+            "י-ת-ר": "More, Remain",
+            "ר-ב-ה": "Many, Increase",
+            "פ-נ-ה": "Turn, Face",
+            "י-ר-א": "Fear, See"
+        };
+
+        const rootsData = {"ט-ו-ב":[{"hebrew":"טוֹב","translit":"tov","english":"good; pleasant; appropriate","pos":"adjective","example_heb":"היה טוב לראות את זה","example_translit":"haya tov lirot et ze","example_eng":"That really made me feel good to see that","synonyms":"יָפֶה (yafe) – nice; נֶהֱדָר (nehedar) – wonderful; מְצֻיָּן (metzuyan) – excellent","root":"ט-ו-ב"}],"י-ד-ע":[{"hebrew":"יוֹדֵעַ","translit":"yodea","english":"know; understand","pos":"verb","example_heb":"אתה יודע מה הוא עלול לעשות","example_translit":"ata yodea ma hu alul la'asot","example_eng":"Do you know what that thing can do to you","synonyms":"מַכִּיר (makir) – recognize; מֵבִין (mevin) – understand","root":"י-ד-ע"}],"נ-ס-ך":[{"hebrew":"נְסִיכָה","translit":"nesicha","english":"princess","pos":"noun","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"בַּת מֶלֶךְ (bat melech) – daughter of a king","root":"נ-ס-ך"},{"hebrew":"הַנְּסִיכָה","translit":"hanesicha","english":"the princess","pos":"noun","example_heb":"אבל על הנסיכה הוטל כישוף מסוג נורא ואיום,","example_translit":"aval al hanesicha hutal kishuf misogg nora ve'ayom,","example_eng":"But she had an enchantment upon her of a fearful sort","synonyms":"בַּת הַמֶּלֶךְ (bat hamelech) – the king's daughter","root":"נ-ס-ך"}],"ס-ד-ר":[{"hebrew":"בְּסֵדֶר","translit":"beseder","english":"okay; alright; in order","pos":"expression","example_heb":"בסדר","example_translit":"beseder","example_eng":"Right","synonyms":"הֵיטֵב (heytev) – well; טוֹב (tov) – good","root":"ס-ד-ר"}],"א-מ-ת":[{"hebrew":"בֶּאֱמֶת","translit":"be'emet","english":"really; truly","pos":"adverb","example_heb":"כאילו שזה באמת יקרה","example_translit":"ke'ilu she'ze be'emet yikre","example_eng":"Like that's ever gonna happen","synonyms":"מַמָּשׁ (mamash) – really; אָכֵן (achen) – indeed; בִּמְצִיאוּת (bimetsiut) – in reality","root":"א-מ-ת"}],"ר-צ-ה":[{"hebrew":"רוֹצֶה","translit":"rotse","english":"want; wish","pos":"verb","example_heb":"מי היה רוצה לגור בחור כזה","example_translit":"mi haya rotse lagur be'chor kaze","example_eng":"Who'd want to live in a place like that","synonyms":"מְבַקֵּשׁ (mevakesh) – request; חָפֵץ (chafets) – desire","root":"ר-צ-ה"}],"ה-י-ה":[{"hebrew":"לִהְיוֹת","translit":"lihiyot","english":"to be","pos":"verb infinitive","example_heb":"טוב להיות חופשי","example_translit":"tov lihiyot chofshi","example_eng":"Good to be free","synonyms":"לְהִתְקַיֵּם (lehitkayem) – to exist; לְהִמָּצֵא (lehimatse) – to be found","root":"ה-י-ה"},{"hebrew":"הָיָה","translit":"haya","english":"was; were","pos":"verb (past tense)","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"הִתְקַיֵּם (hitkayem) – existed; נִמְצָא (nimtsa) – was found","root":"ה-י-ה"}],"ר-ג-ע":[{"hebrew":"רֶגַע","translit":"rega","english":"moment; wait a moment","pos":"noun","example_heb":"רגע! אתה יודע מה הוא עלול לעשות","example_translit":"rega! ata yodea ma hu alul la'asot","example_eng":"Whoa, hold on! Do you know what that thing can do to you","synonyms":"שְׁנִיָּה (shniya) – second; עֵת (et) – time; רֶגַע קַל (rega kal) – brief moment","root":"ר-ג-ע"}],"א-ה-ב":[{"hebrew":"אוֹהֵב","translit":"ohev","english":"love; like","pos":"verb","example_heb":"אני מדבר. אני אוהב לדבר","example_translit":"ani medaber. ani ohev ledaber","example_eng":"He does. I can talk. I love to talk","synonyms":"חוֹבֵב (chovev) – to like; מְאַהֵב (me'ahev) – loving","root":"א-ה-ב"}],"י-כ-ל":[{"hebrew":"יָכוֹל","translit":"yachol","english":"can; to be able","pos":"verb","example_heb":"אני יכול להגיד לך משהו?","example_translit":"ani yachol lehagid lecha mashehu?","example_eng":"Can I say something to you?","synonyms":"מְסוּגָּל (mesugal) – capable; מֻכְשָׁר (muchshar) – able","root":"י-כ-ל"}],"א-ח-ד":[{"hebrew":"אֶחָד","translit":"echad","english":"one","pos":"numeral","example_heb":"אוקיי! אבל רק ללילה אחד","example_translit":"okay! aval rak lelayla echad","example_eng":"Okay! Okay! But one night only","synonyms":"יָחִיד (yachid) – single; רִאשׁוֹן (rishon) – first","root":"א-ח-ד"}],"ב-צ-ה":[{"hebrew":"הַבִּיצָה","translit":"habitza","english":"the swamp","pos":"noun","example_heb":"והיא להחזיר את הביצה שלי לרשותי","example_translit":"vehi lehachzir et habitza sheli lirshuti","example_eng":"a quest to get my swamp back","synonyms":"אֲגַם (agam) – marsh; רֶפֶשׁ (refesh) – mire","root":"ב-צ-ה"}],"ב-ק-ש":[{"hebrew":"בְּבַקָּשָׁה","translit":"bevakasha","english":"please; you're welcome","pos":"expression","example_heb":"בבקשה, אל תמסרי אותי","example_translit":"bevakasha, al timseri oti","example_eng":"Please don't turn me in","synonyms":"אָנָּא (ana) – please; נָא (na) – please","root":"ב-ק-ש"}],"ד-ב-ר":[{"hebrew":"לְדַבֵּר","translit":"ledaber","english":"to speak; to talk","pos":"verb infinitive","example_heb":"אני אוהב לדבר","example_translit":"ani ohev ledaber","example_eng":"I love to talk","synonyms":"לְסַפֵּר (lesaper) – to tell; לְהַגִּיד (lehagid) – to say","root":"ד-ב-ר"},{"hebrew":"מְדַבֵּר","translit":"medaber","english":"speaking; speaks; speaker","pos":"verb/noun","example_heb":"יש לי חמור מדבר.","example_translit":"yesh li chamor medaber.","example_eng":"What have you got?","synonyms":"אוֹמֵר (omer) – saying; מְשׂוֹחֵחַ (mesoache'ach) – conversing","root":"ד-ב-ר"}],"ח-ב-ר":[{"hebrew":"חֲבֵרִים","translit":"chaverim","english":"friends","pos":"noun","example_heb":"אין לי חברים","example_translit":"ein li chaverim","example_eng":"But, uh, I don't have any friends","synonyms":"יְדִידִים (yedidim) – friends; רֵעִים (re'im) – companions","root":"ח-ב-ר"}],"ב-ו-א":[{"hebrew":"בָּא","translit":"ba","english":"come; enter","pos":"verb","example_heb":"כאילו שזה באמת יקרה","example_translit":"ke'ilu she'ze be'emet yikre","example_eng":"Like that's ever gonna happen","synonyms":"מַגִּיעַ (magia) – arrive; נִכְנָס (nichnas) – enter","root":"ב-ו-א"},{"hebrew":"בּוֹא","translit":"bo","english":"come (imperative)","pos":"verb","example_heb":"בוא כבר. קדימה.","example_translit":"bo kvar. kadima.","example_eng":"Get up! Come on!","synonyms":"תָּבוֹא (tavo) – you will come; לְכָה (lecha) – come here","root":"ב-ו-א"}],"ר-א-ה":[{"hebrew":"תִּרְאֶה","translit":"tir'e","english":"you will see; look","pos":"verb","example_heb":"תראה, לא כולם אוהבים בצלים","example_translit":"tir'e, lo kulam ohavim betsalim","example_eng":"Oh, you both have layers. Oh.","synonyms":"תִּסְתַּכֵּל (tistakkel) – you will look; תַּבִּיט (tabit) – you will glance","root":"ר-א-ה"}],"ש-כ-ב":[{"hebrew":"שְׁכָבוֹת","translit":"shchavot","english":"layers","pos":"noun","example_heb":"לא! שכבות! לבצלים יש שכבות","example_translit":"lo! shchavot! labetsalim yesh shchavot","example_eng":"No! Layers! Onions have layers!","synonyms":"רְבָדִים (revadim) – strata; דַּרְגּוֹת (dargot) – levels","root":"ש-כ-ב"}],"ע-ש-ה":[{"hebrew":"עוֹשֶׂה","translit":"oseh","english":"do; make","pos":"verb","example_heb":"מה אתה עושה?","example_translit":"ma ata oseh?","example_eng":"What are you doing?","synonyms":"מְבַצֵּעַ (mevatse'a) – execute; עוֹרֵךְ (orech) – arrange","root":"ע-ש-ה"}],"ס-פ-ר":[{"hebrew":"לְסַפֵּר","translit":"lesaper","english":"to tell; to relate","pos":"verb infinitive","example_heb":"רווקה מספר אחת","example_translit":"ravaka mispar achat","example_eng":"Bachelorette number one","synonyms":"לְהוֹדִיעַ (lehodi'a) – to inform; לְהַגִּיד (lehagid) – to say","root":"ס-פ-ר"}],"פ-ע-ם":[{"hebrew":"פַּעַם","translit":"pa'am","english":"time; once","pos":"noun","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"זְמַן (zman) – time; מָקוֹם (makom) – occasion","root":"פ-ע-ם"}],"ח-ש-ב":[{"hebrew":"חוֹשֵׁב","translit":"choshev","english":"think","pos":"verb","example_heb":"אני חושב שהוא שם בפנים","example_translit":"ani choshev shehu sham bifnim","example_eng":"Think it's in there?","synonyms":"סוֹבֵר (sover) – suppose; מַאֲמִין (ma'amin) – believe","root":"ח-ש-ב"}],"ק-ד-ם":[{"hebrew":"קָדִימָה","translit":"kadima","english":"forward; come on; onward","pos":"adverb","example_heb":"בוא כבר. קדימה.","example_translit":"bo kvar. kadima.","example_eng":"Get up! Come on!","synonyms":"הָלְאָה (hal'ah) – onward; קוֹדֵם (kodem) – forward","root":"ק-ד-ם"}],"ק-ט-ן":[{"hebrew":"קָטָן","translit":"katan","english":"small","pos":"adjective","example_heb":"הכלוב הזה קטן מדי.","example_translit":"hakaluv haze katan midai.","example_eng":"This cage is too small.","synonyms":"זָעִיר (za'ir) – tiny; קְטַנְטָן (ketantan) – very small; צָנוּם (tzanum) – petite","root":"ק-ט-ן"}],"פ-ש-ט":[{"hebrew":"פָּשׁוּט","translit":"pashut","english":"simple; plain; just","pos":"adjective","example_heb":"והוא מהמם! פשוט מקסים. איזה עיצוב.","example_translit":"vehu mehamem! pashut maksim. eize itzuv.","example_eng":"That would be my home.","synonyms":"קָל (kal) – easy; פְּשִׁיטָא (peshita) – obvious","root":"פ-ש-ט"}],"ס-פ-ק":[{"hebrew":"מַסְפִּיק","translit":"maspik","english":"enough; sufficient","pos":"adjective/adverb","example_heb":"שמעתי מספיק. שומרים!","example_translit":"shama'ti maspik. shomrim!","example_eng":"That's it. I've heard enough. Guards!","synonyms":"דַּי (dai) – enough; מָלֵא (male) – full","root":"ס-פ-ק"}],"כ-ל-ל":[{"hebrew":"כּוּלָם","translit":"kulam","english":"everyone; all of them","pos":"pronoun","example_heb":"אתה לא יודע איך זה להיות שונה מכולם.","example_translit":"ata lo yodea eich ze lihiyot shone mikulam.","example_eng":"You don't know what it's like to be considered a freak.","synonyms":"כֻּלָּנוּ (kulanu) – all of us; הַכֹּל (hakol) – everyone","root":"כ-ל-ל"}],"ז-מ-ן":[{"hebrew":"זְמַן","translit":"zman","english":"time","pos":"noun","example_heb":"אז קח פסק זמן והירגע, אדוני הלורד,","example_translit":"az kach pesek zman vehiragea, adoni halord,","example_eng":"So, just sit back and relax, my Lord,","synonyms":"עֵת (et) – time; שָׁעָה (sha'ah) – hour","root":"ז-מ-ן"}],"מ-ש-ש":[{"hebrew":"מַמָּשׁ","translit":"mamash","english":"really; very","pos":"adverb","example_heb":"זה היה ממש מפחיד. ואם זה לא יעבוד, הריח מהפה שלך יעשה את העבודה.","example_translit":"ze haya mamash mafchid. ve'im ze lo ya'avod, hare'ach mehappe shelcha ya'ase et ha'avoda.","example_eng":"That really made me feel good to see that. And if you see a long tunnel, stay away from the light!","synonyms":"בֶּאֱמֶת (be'emet) – really; מְאוֹד (me'od) – very","root":"מ-ש-ש"}],"כ-ו-ן":[{"hebrew":"נָכוֹן","translit":"nachon","english":"right; correct; true","pos":"adjective","example_heb":"הוא יודע לדבר! -נכון, מטומטם!","example_translit":"hu yodea ledaber! -nachon, metumtam!","example_eng":"He can talk! Right, yeah","synonyms":"צוֹדֵק (tzodek) – correct; אֱמֶת (emet) – true","root":"כ-ו-ן"}],"י-ת-ר":[{"hebrew":"יוֹתֵר","translit":"yoter","english":"more","pos":"adverb","example_heb":"בבקשה, אל תמסרי אותי. אני לא אהיה עקשן יותר! תני לי עוד צ'אנס!","example_translit":"bevakasha, al timseri oti. ani lo ehiye akshan yoter! tni li od chans!","example_eng":"Please don't turn me in. I'll never be stubborn again. I can change. Please! Give me another chance!","synonyms":"נוֹסָף (nosaf) – additional; עוֹד (od) – more","root":"י-ת-ר"}],"ר-ב-ה":[{"hebrew":"הַרְבֵּה","translit":"harbe","english":"a lot; many; much","pos":"adverb","example_heb":"עשית כל כך הרבה עם תקציב כל כך צנוע.","example_translit":"asita kol kach harbe im taktsiv kol kach tsanua.","example_eng":"You've done so much with such a modest budget.","synonyms":"רַב (rav) – much; הֲמוֹן (hamon) – multitude","root":"ר-ב-ה"}],"פ-נ-ה":[{"hebrew":"לִפְנֵי","translit":"lifnei","english":"before; in front of","pos":"preposition","example_heb":"תזהיר אותי לפני שאתה משחרר אחד כזה. הפה שלי היה פתוח.","example_translit":"tazhir oti lifnei she'ata meshacher echad kaze. happe sheli haya patuach.","example_eng":"Warn me before you crack one off. My mouth was open.","synonyms":"קוֹדֶם (kodem) – prior to; טֶרֶם (terem) – before","root":"פ-נ-ה"}],"י-ר-א":[{"hebrew":"נוֹרָא","translit":"nora","english":"terrible; awful; very (colloquial)","pos":"adjective/adverb","example_heb":"שנשמרה על-ידי דרקון נורא, יורק להבות.","example_translit":"shenishmera al-yedei drakon nora, yorek lehavot.","example_eng":"guarded by a terrible fire-breathing dragon","synonyms":"אָיֹם (ayom) – terrible; מַפְחִיד (mafchid) – scary; רַע (ra) – bad","root":"י-ר-א"}]};
+
+        const wordsWithoutRoots = [
+            {"hebrew":"חֲמוֹר","translit":"chamor","english":"donkey","pos":"noun","example_heb":"יש לי חמור מדבר","example_translit":"yesh li chamor medaber","example_eng":"I've got a talking donkey","synonyms":"פֶּרֶד (pered) – mule"},
+            {"hebrew":"עוֹג","translit":"og","english":"ogre","pos":"noun","example_heb":"זהירות - עוג","example_translit":"zehirut - og","example_eng":"Beware - Ogre","synonyms":"N/A"},
+            {"hebrew":"מַשֶּׁהוּ","translit":"mashehu","english":"something","pos":"pronoun","example_heb":"אני יכול להגיד לך משהו?","example_translit":"ani yachol lehagid lecha mashehu?","example_eng":"Can I say something to you?","synonyms":"דָּבָר (davar) – thing; דָּבָר מַה (davar ma) – something"},
+            {"hebrew":"אוּלַי","translit":"ulay","english":"maybe; perhaps","pos":"adverb","example_heb":"אולי ראית זבוב עף","example_translit":"ulay ra'ita zvuv af","example_eng":"You might have seen a house fly, maybe even a super fly","synonyms":"אֶפְשָׁר (efshar) – possible; יִתָּכֵן (yitachen) – it's possible; יֵשׁ סִכּוּי (yesh sikuy) – there's a chance"},
+            {"hebrew":"אוֹקֵי","translit":"okay","english":"okay; alright","pos":"interjection","example_heb":"אוקיי! אבל רק ללילה אחד","example_translit":"okay! aval rak lelayla echad","example_eng":"Okay! Okay! But one night only","synonyms":"בְּסֵדֶר (beseder) – alright; טוֹב (tov) – good"},
+            {"hebrew":"אֵיזֶה","translit":"eize","english":"which; what kind of; some","pos":"interrogative","example_heb":"כאילו שזה באמת יקרה. איזה בוכטה של","example_translit":"ke'ilu she'ze be'emet yikre. eize buchta shel","example_eng":"Like that's ever gonna happen. What a load of","synonyms":"מַה (ma) – what; אֵיזוֹ (eizo) – which (fem)"},
+            {"hebrew":"אִישׁ","translit":"ish","english":"man; person","pos":"noun","example_heb":"אך איש מהם לא הצליח","example_translit":"ach ish mehem lo hitzliach","example_eng":"but none prevailed","synonyms":"גֶּבֶר (gever) – man; אָדָם (adam) – person; בֶּן אָדָם (ben adam) – human"},
+            {"hebrew":"עַכְשָׁיו","translit":"achshav","english":"now","pos":"adverb","example_heb":"עכשיו אנחנו מתקדמים","example_translit":"achshav anachnu mitkadmim","example_eng":"Oh, now we're getting somewhere","synonyms":"כָּעֵת (ka'et) – now; עַתָּה (ata) – now"},
+            {"hebrew":"לוֹרְד","translit":"lord","english":"lord","pos":"noun (loanword)","example_heb":"בפקודת הלורד פרקוואד,","example_translit":"befkudat halord farkwad,","example_eng":"Aye?","synonyms":"אָדוֹן (adon) – lord; אֲדוֹנִי (adoni) – my lord"},
+            {"hebrew":"כְּדֵי","translit":"kedei","english":"in order to; so that","pos":"preposition","example_heb":"מה אני צריך לעשות כדי לקבל קצת פרטיות?","example_translit":"ma ani tsarich la'asot kedei lekabel ktsat pratiyut?","example_eng":"What do I have to do to get a little privacy?","synonyms":"לְמַעַן (lema'an) – for the sake of; בִּשְׁבִיל (bishvil) – for"},
+            {"hebrew":"דְּרָקוֹן","translit":"drakon","english":"dragon","pos":"noun (loanword)","example_heb":"שנשמרה על-ידי דרקון נורא, יורק להבות.","example_translit":"shenishmera al-yedei drakon nora, yorek lehavot.","example_eng":"guarded by a terrible fire-breathing dragon","synonyms":"תַּנִּין (tanin) – dragon/serpent"},
+            {"hebrew":"הַכִּי","translit":"hakhi","english":"the most","pos":"superlative adverb","example_heb":"שרק? אתה יודע מה אני הכי אוהב אצלך, שרק?","example_translit":"Shrek? ata yodea ma ani hakhi ohev etslecha, Shrek?","example_eng":"Shrek? You know what I like about you, Shrek?","synonyms":"בְּיוֹתֵר (beyoter) – the most"}
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('hebrewRootsFavorites') || '{}');
+        let notes = JSON.parse(localStorage.getItem('hebrewRootsNotes') || '{}');
+        let currentFilter = 'all';
+
+        function getWordId(hebrew, translit) {
+            return `${hebrew}-${translit}`;
+        }
+
+        function renderRoots() {
+            const container = document.getElementById('rootsContainer');
+            container.innerHTML = '';
+
+            // Render root families
+            Object.keys(rootsData).sort().forEach(root => {
+                const words = rootsData[root];
+                const meaning = rootMeanings[root] || "Root Family";
+                
+                const rootDiv = document.createElement('div');
+                rootDiv.className = 'root-family';
+                rootDiv.dataset.root = root;
+
+                const header = document.createElement('div');
+                header.className = 'root-header collapsed';
+                header.innerHTML = `
+                    <div class="root-info">
+                        <span class="root-letters">${root}</span>
+                        <span class="root-meaning">${meaning}</span>
+                        <span class="word-count">${words.length} word${words.length > 1 ? 's' : ''}</span>
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                `;
+                header.onclick = () => toggleRoot(root);
+
+                const content = document.createElement('div');
+                content.className = 'root-content collapsed';
+                content.dataset.rootContent = root;
+
+                words.forEach(word => {
+                    const wordId = getWordId(word.hebrew, word.translit);
+                    const isFavorite = favorites[wordId];
+                    const hasNote = notes[wordId];
+
+                    const card = document.createElement('div');
+                    card.className = 'word-card';
+                    card.dataset.wordId = wordId;
+                    if (isFavorite) card.classList.add('favorited');
+
+                    const actions = document.createElement('div');
+                    actions.className = 'card-actions';
+                    actions.innerHTML = `
+                        <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${wordId}')">
+                            ${isFavorite ? '⭐' : '☆'}
+                        </button>
+                        <button class="action-btn note-btn ${hasNote ? 'active' : ''}" onclick="toggleNote('${wordId}')">
+                            📝
+                        </button>
+                    `;
+
+                    card.innerHTML = `
+                        <div class="pos-badge">${word.pos}</div>
+                        <div class="hebrew">${word.hebrew}</div>
+                        <div class="transliteration">${word.translit}</div>
+                        <div class="english">${word.english}</div>
+                        ${word.example_heb ? `
+                            <div class="example-section">
+                                <div class="example-label">Shrek Example:</div>
+                                <div class="example">
+                                    <span class="hebrew-text">${word.example_heb}</span>
+                                    <span class="translit-text">${word.example_translit}</span>
+                                    <span class="english-text">"${word.example_eng}"</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${word.synonyms && word.synonyms !== 'N/A' ? `
+                            <div class="synonyms-section">
+                                <div class="synonyms-label">Synonyms:</div>
+                                <div class="synonyms-text">${word.synonyms}</div>
+                            </div>
+                        ` : ''}
+                        <div class="note-section" id="note-${wordId}" style="display: none;">
+                            <label class="note-label">Personal Notes:</label>
+                            <textarea class="note-textarea" placeholder="Add your notes here..." onblur="saveNote('${wordId}', this.value)">${notes[wordId] || ''}</textarea>
+                            ${notes[wordId] ? `<div class="saved-note">💾 Note saved</div>` : ''}
+                        </div>
+                    `;
+
+                    card.insertBefore(actions, card.firstChild);
+                    content.appendChild(card);
+                });
+
+                rootDiv.appendChild(header);
+                rootDiv.appendChild(content);
+                container.appendChild(rootDiv);
+            });
+
+            // Render words without roots
+            if (wordsWithoutRoots.length > 0) {
+                const noRootSection = document.createElement('div');
+                noRootSection.className = 'no-root-section';
+                
+                const noRootHeader = document.createElement('div');
+                noRootHeader.className = 'no-root-header';
+                noRootHeader.textContent = `Words Without Hebrew Roots (${wordsWithoutRoots.length})`;
+                
+                const noRootContent = document.createElement('div');
+                noRootContent.className = 'root-content';
+                noRootContent.style.display = 'none';
+                noRootContent.dataset.rootContent = 'no-root';
+                
+                noRootHeader.onclick = () => {
+                    noRootContent.style.display = noRootContent.style.display === 'none' ? 'grid' : 'none';
+                };
+
+                wordsWithoutRoots.forEach(word => {
+                    const wordId = getWordId(word.hebrew, word.translit);
+                    const isFavorite = favorites[wordId];
+                    const hasNote = notes[wordId];
+
+                    const card = document.createElement('div');
+                    card.className = 'word-card';
+                    card.dataset.wordId = wordId;
+                    if (isFavorite) card.classList.add('favorited');
+
+                    const actions = document.createElement('div');
+                    actions.className = 'card-actions';
+                    actions.innerHTML = `
+                        <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${wordId}')">
+                            ${isFavorite ? '⭐' : '☆'}
+                        </button>
+                        <button class="action-btn note-btn ${hasNote ? 'active' : ''}" onclick="toggleNote('${wordId}')">
+                            📝
+                        </button>
+                    `;
+
+                    card.innerHTML = `
+                        <div class="pos-badge">${word.pos}</div>
+                        <div class="hebrew">${word.hebrew}</div>
+                        <div class="transliteration">${word.translit}</div>
+                        <div class="english">${word.english}</div>
+                        ${word.example_heb ? `
+                            <div class="example-section">
+                                <div class="example-label">Shrek Example:</div>
+                                <div class="example">
+                                    <span class="hebrew-text">${word.example_heb}</span>
+                                    <span class="translit-text">${word.example_translit}</span>
+                                    <span class="english-text">"${word.example_eng}"</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${word.synonyms && word.synonyms !== 'N/A' ? `
+                            <div class="synonyms-section">
+                                <div class="synonyms-label">Synonyms:</div>
+                                <div class="synonyms-text">${word.synonyms}</div>
+                            </div>
+                        ` : ''}
+                        <div class="note-section" id="note-${wordId}" style="display: none;">
+                            <label class="note-label">Personal Notes:</label>
+                            <textarea class="note-textarea" placeholder="Add your notes here..." onblur="saveNote('${wordId}', this.value)">${notes[wordId] || ''}</textarea>
+                            ${notes[wordId] ? `<div class="saved-note">💾 Note saved</div>` : ''}
+                        </div>
+                    `;
+
+                    card.insertBefore(actions, card.firstChild);
+                    noRootContent.appendChild(card);
+                });
+
+                noRootSection.appendChild(noRootHeader);
+                noRootSection.appendChild(noRootContent);
+                container.appendChild(noRootSection);
+            }
+
+            updateStats();
+        }
+
+        function toggleRoot(root) {
+            const header = document.querySelector(`[data-root="${root}"] .root-header`);
+            const content = document.querySelector(`[data-root-content="${root}"]`);
+            
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        function toggleFavorite(wordId) {
+            favorites[wordId] = !favorites[wordId];
+            if (!favorites[wordId]) delete favorites[wordId];
+            localStorage.setItem('hebrewRootsFavorites', JSON.stringify(favorites));
+            
+            const card = document.querySelector(`[data-word-id="${wordId}"]`);
+            const btn = card.querySelector('.favorite-btn');
+            
+            if (favorites[wordId]) {
+                card.classList.add('favorited');
+                btn.classList.add('active');
+                btn.textContent = '⭐';
+            } else {
+                card.classList.remove('favorited');
+                btn.classList.remove('active');
+                btn.textContent = '☆';
+            }
+            
+            updateStats();
+            applyFilter(currentFilter);
+        }
+
+        function toggleNote(wordId) {
+            const noteSection = document.getElementById(`note-${wordId}`);
+            noteSection.style.display = noteSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveNote(wordId, text) {
+            if (text.trim()) {
+                notes[wordId] = text;
+                const btn = document.querySelector(`[data-word-id="${wordId}"] .note-btn`);
+                btn.classList.add('active');
+            } else {
+                delete notes[wordId];
+                const btn = document.querySelector(`[data-word-id="${wordId}"] .note-btn`);
+                btn.classList.remove('active');
+            }
+            localStorage.setItem('hebrewRootsNotes', JSON.stringify(notes));
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('favoriteCount').textContent = Object.keys(favorites).length;
+            document.getElementById('noteCount').textContent = Object.keys(notes).length;
+        }
+
+        function applyFilter(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('.word-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const wordId = card.dataset.wordId;
+                let show = false;
+
+                if (filter === 'all') {
+                    show = true;
+                } else if (filter === 'favorites') {
+                    show = favorites[wordId];
+                } else if (filter === 'with-notes') {
+                    show = notes[wordId];
+                }
+
+                if (show) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Hide empty root families
+            document.querySelectorAll('.root-family').forEach(fam => {
+                const visibleCards = fam.querySelectorAll('.word-card:not(.hidden)');
+                const header = fam.querySelector('.root-header');
+                const content = fam.querySelector('.root-content');
+                
+                if (visibleCards.length === 0) {
+                    fam.classList.add('hidden');
+                } else {
+                    fam.classList.remove('hidden');
+                    // Auto-expand when filtering
+                    if (filter !== 'all') {
+                        header.classList.remove('collapsed');
+                        content.classList.remove('collapsed');
+                    }
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+        }
+
+        function search(query) {
+            const cards = document.querySelectorAll('.word-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const matches = text.includes(query.toLowerCase());
+
+                if (matches || query === '') {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Hide empty root families, expand non-empty ones
+            document.querySelectorAll('.root-family').forEach(fam => {
+                const visibleCards = fam.querySelectorAll('.word-card:not(.hidden)');
+                const header = fam.querySelector('.root-header');
+                const content = fam.querySelector('.root-content');
+                
+                if (visibleCards.length === 0) {
+                    fam.classList.add('hidden');
+                } else {
+                    fam.classList.remove('hidden');
+                    // Auto-expand when searching
+                    if (query !== '') {
+                        header.classList.remove('collapsed');
+                        content.classList.remove('collapsed');
+                    }
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            search(e.target.value);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilter(btn.dataset.filter);
+            });
+        });
+
+        // Initialize
+        renderRoots();
+    </script>
+</body>
+</html>
