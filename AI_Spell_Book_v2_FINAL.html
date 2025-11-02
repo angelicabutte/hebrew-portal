@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Spell Book</title>
+  <style>
+    body {
+      font-family: 'Garamond', serif;
+      background: #f6f0d8 url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      color: #2d1b0e;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    details {
+      background: rgba(255,255,240,0.85);
+      border: 2px solid #bfa87a;
+      border-radius: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    }
+    summary {
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .prompt {
+      margin: 8px 0;
+      padding: 6px;
+      background: #fffaf0;
+      border: 1px dashed #bfa87a;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .prompt:hover {
+      background: #f9f2d6;
+    }
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+  <link rel="apple-touch-icon" href="ai-spellbook1.jpg">
+  <link rel="icon" type="image/jpeg" href="ai-spellbook1.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>✨ AI Spell Book ✨</h1>
+
+  <details>
+    <summary>Accuracy Mode 📚</summary>
+    <div class="prompt">Be precise and cite sources when relevant.</div>
+    <div class="prompt">Use structured explanations with minimal fluff.</div>
+    <div class="prompt">Fact-check claims before presenting them as true.</div>
+    <div class="prompt">When uncertain, say so and explain why.</div>
+    <div class="prompt">Break down complex topics into verifiable components.</div>
+    <div class="prompt">Distinguish between facts, interpretations, and opinions.</div>
+    <div class="prompt">Provide step-by-step reasoning for conclusions.</div>
+    <div class="prompt">Compare multiple authoritative sources when available.</div>
+  </details>
+
+  <details>
+    <summary>Creative Mode 🎨</summary>
+    <div class="prompt">Lean into imaginative phrasing and lateral thinking.</div>
+    <div class="prompt">Offer several inventive takes on the idea.</div>
+    <div class="prompt">Break conventional patterns and explore wild possibilities.</div>
+    <div class="prompt">Use vivid imagery and unexpected metaphors.</div>
+    <div class="prompt">Generate 5 radically different approaches.</div>
+    <div class="prompt">Think like a child: what if the rules didn't exist?</div>
+    <div class="prompt">Combine unrelated concepts to spark innovation.</div>
+    <div class="prompt">Prioritize originality over practicality in brainstorming.</div>
+      <div class="prompt">Give me two unrelated nouns and one emotional tone. Write or sketch something that connects them.</div>
+    <div class="prompt">/spark - Random association generator for creative blocks</div>
+  </details>
+
+  <details>
+    <summary>Learning Mode 🧠</summary>
+    <div class="prompt">Break the concept down in simple language.</div>
+    <div class="prompt">Suggest mnemonics, flashcards, and examples.</div>
+    <div class="prompt">Use the Feynman technique: explain like I'm 12.</div>
+    <div class="prompt">Create analogies using everyday objects.</div>
+    <div class="prompt">Build from fundamentals before adding complexity.</div>
+    <div class="prompt">Provide practice problems with increasing difficulty.</div>
+    <div class="prompt">Identify common misconceptions and address them.</div>
+    <div class="prompt">Connect new concepts to things I already know.</div>
+    <div class="prompt">Use visual descriptions and diagrams when helpful.</div>
+    <div class="prompt">Suggest spaced repetition schedules for retention.</div>
+      <div class="prompt">Pattern Echo: After a lesson, write one paragraph starting every sentence with the same key word to force active recall.</div>
+  </details>
+
+  <details>
+    <summary>Writing Mode ✍️</summary>
+    <div class="prompt">Refine my draft but preserve my voice.</div>
+    <div class="prompt">Offer variations in tone and rhythm.</div>
+    <div class="prompt">Strengthen weak verbs and eliminate passive voice.</div>
+    <div class="prompt">Cut unnecessary words without losing meaning.</div>
+    <div class="prompt">Vary sentence length for better flow.</div>
+    <div class="prompt">Check for clichés and suggest fresh alternatives.</div>
+    <div class="prompt">Ensure consistent point of view and tense.</div>
+    <div class="prompt">Make the opening hook more compelling.</div>
+    <div class="prompt">Strengthen the conclusion with impact.</div>
+    <div class="prompt">Suggest where to add sensory details.</div>
+  </details>
+
+  <details>
+    <summary>Organizing Mode 🗂️</summary>
+    <div class="prompt">Structure the mess into clear lists and timelines.</div>
+    <div class="prompt">Highlight key actions and dependencies.</div>
+    <div class="prompt">Identify what's urgent vs important using Eisenhower Matrix.</div>
+    <div class="prompt">Break large projects into milestone chunks.</div>
+    <div class="prompt">Suggest parallel tasks that can run simultaneously.</div>
+    <div class="prompt">Flag potential bottlenecks before they happen.</div>
+    <div class="prompt">Create a decision tree for complex choices.</div>
+    <div class="prompt">Sort by effort vs impact for prioritization.</div>
+    <div class="prompt">Build a simple Gantt chart or timeline.</div>
+    <div class="prompt">Identify what can be delegated or eliminated.</div>
+      <div class="prompt">List every thread tugging at me today. Cluster them by theme. Show which ones feed energy and which drain it.</div>
+    <div class="prompt">Three-Window Rule: Keep only 3 tabs/windows open - one active task, one reference, one rest. Anything else waits in a parking doc.</div>
+  </details>
+
+  <details>
+    <summary>Self-Improvement Mode 🌿</summary>
+    <div class="prompt">Suggest mindful, practical steps to make progress.</div>
+    <div class="prompt">Offer habit-building tips and realistic strategies.</div>
+    <div class="prompt">Use tiny habits: make it so easy I can't say no.</div>
+    <div class="prompt">Create implementation intentions (if-then plans).</div>
+    <div class="prompt">Suggest environment design changes that support goals.</div>
+    <div class="prompt">Identify potential obstacles and plan responses.</div>
+    <div class="prompt">Build accountability mechanisms into the plan.</div>
+    <div class="prompt">Focus on systems over goals for sustainable change.</div>
+    <div class="prompt">Suggest tracking methods that won't feel burdensome.</div>
+    <div class="prompt">Reframe setbacks as data, not failures.</div>
+      <div class="prompt">What would future-me thank present-me for learning today?</div>
+    <div class="prompt">Reverse Autopilot: Do a normal routine backward once a day for neurological stretch and awareness gain.</div>
+    <div class="prompt">The Five-Minute Gate: What's the smallest action that proves I've started? If you do it, continue; if not, stop pretending.</div>
+  </details>
+
+  <details>
+    <summary>System Commands 🛠️</summary>
+    <div class="prompt">time to make the donuts (Weekly planning ritual)</div>
+    <div class="prompt">Think it'll work? / It'll take a miracle! / Buhbye! (Closing ritual)</div>
+    <div class="prompt">Extract and organize all ideas from this conversation</div>
+    <div class="prompt">Create toggle-ready HTML structure for all entries</div>
+    <div class="prompt">Auto-categorize by priority: Accuracy, Learning, Organizing, Creative, Self-Improvement, Writing</div>
+    <div class="prompt">Mark incomplete ideas with ⚠️ for later development</div>
+    <div class="prompt">Apply burnt parchment theme with deep brown text only</div>
+    <div class="prompt">Add ✨ sparkle tags for new additions</div>
+    <div class="prompt">Enable search, filter, and favorites functionality</div>
+    <div class="prompt">Hebrew Set 1 tasks override all other processes</div>
+      <div class="prompt">/revive checkpoint - Creates new file from last stable state with diff summary</div>
+    <div class="prompt">/reset 3min - Three minutes of total stillness timer to kill context fatigue</div>
+    <div class="prompt">/seed again - Run when stuck: prompts future-self gratitude for daily focus</div>
+  </details>
+
+  <details>
+    <summary>Hebrew Learning 🇮🇱</summary>
+    <div class="prompt">Focus only on modern conversational Israeli Hebrew</div>
+    <div class="prompt">Prioritize frequency-based vocabulary (most common words first)</div>
+    <div class="prompt">Create mnemonics using sound-based associations</div>
+    <div class="prompt">Build flashcards with Hebrew (with nikkud), transliteration, English, image, audio, example</div>
+    <div class="prompt">Generate weekly study packets: Anki deck, mnemonics PDF, tracker HTML</div>
+    <div class="prompt">Use Sephardic transliteration (ch not kh)</div>
+    <div class="prompt">Organize by concrete nouns first, then abstract concepts</div>
+    <div class="prompt">Include cultural context and etymology when relevant</div>
+  </details>
+
+  <details>
+    <summary>Quick Prompts 🎯</summary>
+    <div class="prompt">Explain the opposite perspective on this issue</div>
+    <div class="prompt">What would a 10x solution look like?</div>
+    <div class="prompt">Simplify this to a single sentence</div>
+    <div class="prompt">What's the 80/20 here? (Pareto principle)</div>
+    <div class="prompt">Red team this idea: find the flaws</div>
+    <div class="prompt">What assumptions am I making?</div>
+    <div class="prompt">Turn this into a teaching analogy</div>
+    <div class="prompt">Create a decision framework for similar situations</div>
+    <div class="prompt">What would I tell my best friend to do?</div>
+    <div class="prompt">If I had unlimited resources, what would change?</div>
+  </details>
+  <details>
+    <summary>🔍 Research & Analysis</summary>
+    <div class="prompt">Compare X and Y across these dimensions: cost, time, quality, risk</div>
+    <div class="prompt">What are the top 3 arguments for and against this position?</div>
+    <div class="prompt">Synthesize these sources into key themes and contradictions</div>
+    <div class="prompt">What questions should I ask before making this decision?</div>
+  </details>
+
+  <details>
+    <summary>💬 Communication & Relationships</summary>
+    <div class="prompt">Help me write a difficult email that's firm but kind</div>
+    <div class="prompt">Translate this into non-technical language for stakeholders</div>
+    <div class="prompt">What's the steel-man version of their argument?</div>
+    <div class="prompt">Suggest 3 ways to say no without burning bridges</div>
+  </details>
+
+  <details>
+    <summary>🐛 Troubleshooting & Problem-Solving</summary>
+    <div class="prompt">Walk me through systematic debugging of this issue</div>
+    <div class="prompt">What are 5 possible root causes I haven't considered?</div>
+    <div class="prompt">Pre-mortem: imagine this failed - what went wrong?</div>
+    <div class="prompt">What would an expert in [field] ask about this problem?</div>
+  </details>
+
+  <details>
+    <summary>📊 Meeting & Synthesis</summary>
+    <div class="prompt">Extract action items with owners and deadlines from these notes</div>
+    <div class="prompt">Summarize this in 3 bullet points for someone who missed it</div>
+    <div class="prompt">What are the open questions that need follow-up?</div>
+    <div class="prompt">Create an agenda for a 30-minute decision meeting on this</div>
+  </details>
+
+  
+  <details>
+    <summary>💭 Reflection & Awareness</summary>
+    <div class="prompt">Night-Log: What did I avoid today, and why? (One sentence only - meant to release, not archive)</div>
+    <div class="prompt">Micro-Reset: 3 minutes of total stillness - no screens, no sound. Re-open work tab afterward.</div>
+  </details>
+
+  <footer>
+    Mischief Managed 🪄
+  </footer>
+
+  
+<script>
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrhdCqStc8k5Jyajz5vfDVBqvowEn35OU",
+        authDomain: "ang-adventure-portal.firebaseapp.com",
+        projectId: "ang-adventure-portal",
+        storageBucket: "ang-adventure-portal.firebasestorage.app",
+        messagingSenderId: "874083824263",
+        appId: "1:874083824263:web:6bd7cba944c5228fec3e22",
+        measurementId: "G-0NWLQ8TG2H"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const spellBookDoc = db.collection('aiSpellBook').doc('userSpells');
+
+    // Load custom spells from Firestore
+    async function loadCustomSpells() {
+        try {
+            const doc = await spellBookDoc.get();
+            if (doc.exists && doc.data().customSpells) {
+                const customSpells = doc.data().customSpells;
+                // Add custom spells section if doesn't exist
+                let customSection = document.querySelector('.custom-spells-section');
+                if (!customSection) {
+                    customSection = document.createElement('details');
+                    customSection.className = 'custom-spells-section';
+                    customSection.innerHTML = '<summary>My Custom Spells âœ¨</summary>';
+                    document.querySelector('body').insertBefore(customSection, document.querySelector('footer'));
+                }
+                
+                // Clear and rebuild
+                const existingPrompts = customSection.querySelectorAll('.prompt');
+                existingPrompts.forEach(p => p.remove());
+                
+                customSpells.forEach(spell => {
+                    const div = document.createElement('div');
+                    div.className = 'prompt';
+                    div.innerText = spell;
+                    div.addEventListener('click', () => {
+                        navigator.clipboard.writeText(spell);
+                        div.style.background = '#e5deb3';
+                        setTimeout(() => div.style.background = '#fffaf0', 500);
+                    });
+                    customSection.appendChild(div);
+                });
+            }
+        } catch (err) {
+            console.error('Error loading custom spells:', err);
+        }
+    }
+
+    // Save custom spell
+    async function saveCustomSpell(spellText) {
+        try {
+            const doc = await spellBookDoc.get();
+            const customSpells = doc.exists && doc.data().customSpells ? doc.data().customSpells : [];
+            customSpells.push(spellText);
+            await spellBookDoc.set({
+                customSpells: customSpells,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            await loadCustomSpells();
+            alert('âœ… Spell saved!');
+        } catch (err) {
+            console.error('Error saving spell:', err);
+            alert('â�� Failed to save spell');
+        }
+    }
+
+    // Add button to save custom spells
+    window.addEventListener('load', () => {
+        const addButton = document.createElement('button');
+        addButton.innerText = 'âž• Add Custom Spell';
+        addButton.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#764ba2;color:white;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;box-shadow:2px 2px 6px rgba(0,0,0,0.3);';
+        addButton.onclick = () => {
+            const spell = prompt('Enter your custom spell/prompt:');
+            if (spell && spell.trim()) {
+                saveCustomSpell(spell.trim());
+            }
+        };
+        document.body.appendChild(addButton);
+        
+        // Load existing spells
+        loadCustomSpells();
+    });
+</script>
+
+</body>
+</html>
