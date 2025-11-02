@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Synonyms - Interactive Guide</title>
+    <link rel="icon" type="image/png" href="Song_image.png">
+    <link rel="apple-touch-icon" href="Song_image.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="Song_image.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1em;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #fff5f5;
+            border-bottom: 2px solid #ffe0e0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 18px;
+            font-size: 15px;
+            border: 2px solid #ffcccb;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #ff6b6b;
+            background: white;
+            color: #ff6b6b;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .content {
+            padding: 20px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .category {
+            margin-bottom: 15px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-header {
+            font-size: 1.4em;
+            color: white;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            padding: 12px 20px;
+            margin-bottom: 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, #ff7b7b 0%, #ff9e63 100%);
+            transform: translateX(3px);
+        }
+
+        .category-header .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .category-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 12px;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .category-content.collapsed {
+            display: none;
+        }
+
+        .word-card {
+            background: white;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            border-radius: 6px;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+        }
+
+        .word-card.favorited {
+            border-left-color: #FFD700;
+            background: #fffdf7;
+        }
+
+        .hebrew {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .transliteration {
+            font-size: 1.1em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+
+        .pronunciation {
+            font-size: 1em;
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .usage-list {
+            margin-top: 8px;
+            font-size: 0.95em;
+        }
+
+        .usage-item {
+            margin-bottom: 6px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .usage-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ffa500;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .example {
+            background: #fff5f5;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-style: italic;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .hebrew-text {
+            direction: rtl;
+            display: inline-block;
+        }
+
+        .note-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px dashed #ffe0e0;
+        }
+
+        .note-textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ffcccb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .note-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .note-label {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.9em;
+        }
+
+        .saved-note {
+            background: #fff5f5;
+            padding: 6px;
+            border-radius: 4px;
+            color: #d63447;
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #ffcccb;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn {
+            border-color: #FFD700;
+        }
+
+        .favorite-btn.active {
+            background: #FFD700;
+        }
+
+        .note-btn {
+            border-color: #ff6b6b;
+        }
+
+        .note-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .stats {
+            background: #fff5f5;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .category-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hebrew {
+                font-size: 1.4em;
+            }
+
+            .transliteration {
+                font-size: 1em;
+            }
+
+            .category-header {
+                font-size: 1.2em;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Hebrew Synonyms Guide</h1>
+            <p>Words You'll Actually Hear in Movies & Music</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search Hebrew, English, or transliteration...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
+                <button class="filter-btn" data-filter="with-notes">📝 With Notes</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalWords">0</div>
+                    <div class="stat-label">Total Words</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="favoriteCount">0</div>
+                    <div class="stat-label">Favorites</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="noteCount">0</div>
+                    <div class="stat-label">With Notes</div>
+                </div>
+            </div>
+
+            <div id="categoriesContainer"></div>
+            <div id="noResults" class="no-results hidden">
+                No results found. Try a different search term.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const synonymsData = {
+            "MAN": [
+                {
+                    hebrew: "אִישׁ",
+                    transliteration: "ish",
+                    pronunciation: "eesh",
+                    usage: "Man (formal, standard)",
+                    context: "Biblical, formal speech",
+                    example: { hebrew: "אִישׁ טוֹב", english: "ish tov - a good man" },
+                    note: "Also means 'husband'"
+                },
+                {
+                    hebrew: "גֶּבֶר",
+                    transliteration: "gever",
+                    pronunciation: "ver-GEH",
+                    usage: "Guy, dude (informal, macho)",
+                    context: "Casual, implies masculinity",
+                    example: { hebrew: "גֶּבֶר גֶּבֶר!", english: "gever gever - What a man!" }
+                },
+                {
+                    hebrew: "בָּחוּר",
+                    transliteration: "bachur",
+                    pronunciation: "CHOOR-bah",
+                    usage: "Young man",
+                    context: "Teenage/young adult males",
+                    example: { hebrew: "בָּחוּר צָעִיר", english: "bachur tza'ir - a young guy" }
+                }
+            ],
+            "WOMAN": [
+                {
+                    hebrew: "אִשָּׁה",
+                    transliteration: "isha",
+                    pronunciation: "SHAH-ee",
+                    usage: "Woman (standard)",
+                    context: "Neutral, respectful",
+                    example: { hebrew: "אִשָּׁה חֲכָמָה", english: "isha chachama - a wise woman" },
+                    note: "Also means 'wife'"
+                },
+                {
+                    hebrew: "גְּבֶרֶת",
+                    transliteration: "geveret",
+                    pronunciation: "RET-gve",
+                    usage: "Lady, ma'am, Mrs.",
+                    context: "Polite, formal address",
+                    example: { hebrew: "גְּבֶרֶת, אֶפְשָׁר?", english: "geveret, efshar? - Ma'am, may I?" }
+                },
+                {
+                    hebrew: "בַּחוּרָה",
+                    transliteration: "bachura",
+                    pronunciation: "RAH-choo-bah",
+                    usage: "Young woman",
+                    context: "Informal, younger females",
+                    example: { hebrew: "בַּחוּרָה יָפָה", english: "bachura yafa - a pretty young woman" }
+                }
+            ],
+            "PEOPLE": [
+                {
+                    hebrew: "אֲנָשִׁים",
+                    transliteration: "anashim",
+                    pronunciation: "SHEEM-na-a",
+                    usage: "People (most common)",
+                    context: "General term",
+                    example: { hebrew: "הַרְבֵּה אֲנָשִׁים", english: "harbeh anashim - many people" }
+                },
+                {
+                    hebrew: "עַם",
+                    transliteration: "am",
+                    pronunciation: "ahm",
+                    usage: "People, nation",
+                    context: "Collective, formal",
+                    example: { hebrew: "עַם יִשְׂרָאֵל", english: "am yisrael - the people of Israel" }
+                },
+                {
+                    hebrew: "בְּנֵי אָדָם",
+                    transliteration: "b'nei adam",
+                    pronunciation: "b-NAY a-DAHM",
+                    usage: "Human beings",
+                    context: "Formal/poetic",
+                    example: { hebrew: "כָּל בְּנֵי אָדָם", english: "kol b'nei adam - all humans" }
+                }
+            ],
+            "HUSBAND / WIFE / PARTNER": [
+                {
+                    hebrew: "בַּעַל",
+                    transliteration: "ba'al",
+                    pronunciation: "BAH-al",
+                    usage: "Husband (most common)",
+                    context: "Standard term",
+                    example: { hebrew: "הַבַּעַל שֶׁלִּי", english: "haba'al sheli - my husband" }
+                },
+                {
+                    hebrew: "אִשָּׁה",
+                    transliteration: "isha",
+                    pronunciation: "SHAH-ee",
+                    usage: "Wife",
+                    context: "Standard term",
+                    example: { hebrew: "הָאִשָּׁה שֶׁלִּי", english: "ha'isha sheli - my wife" }
+                },
+                {
+                    hebrew: "בֶּן זוּג",
+                    transliteration: "ben zug",
+                    pronunciation: "ZOOG ben",
+                    usage: "Partner (m.)",
+                    context: "Modern, gender-neutral",
+                    example: { hebrew: "הַבֶּן זוּג שֶׁלִּי", english: "haben zug sheli - my partner" }
+                },
+                {
+                    hebrew: "בַּת זוּג",
+                    transliteration: "bat zug",
+                    pronunciation: "ZOOG bat",
+                    usage: "Partner (f.)",
+                    context: "Modern, inclusive",
+                    example: { hebrew: "הַבַּת זוּג שֶׁלִּי", english: "habat zug sheli - my partner" }
+                }
+            ],
+            "HAPPY": [
+                {
+                    hebrew: "שָׂמֵחַ / שְׂמֵחָה",
+                    transliteration: "same'ach (m.) / sme'cha (f.)",
+                    pronunciation: "sa-MAY-ach / sme-CHAH",
+                    usage: "Happy, joyful",
+                    context: "Standard word",
+                    example: { hebrew: "אֲנִי שָׂמֵחַ!", english: "ani same'ach! - I'm happy!" }
+                },
+                {
+                    hebrew: "מְאֻשָּׁר / מְאֻשֶּׁרֶת",
+                    transliteration: "me'ushar (m.) / me'usheret (f.)",
+                    pronunciation: "me-oo-SHAR / me-oo-SHER-et",
+                    usage: "Blessed, fortunate",
+                    context: "Deeper happiness",
+                    example: { hebrew: "אֲנִי מְאֻשָּׁר", english: "ani me'ushar - I'm blessed" }
+                }
+            ],
+            "SORRY / EXCUSE ME": [
+                {
+                    hebrew: "סְלִיחָה",
+                    transliteration: "slicha",
+                    pronunciation: "CHAH-slee",
+                    usage: "Sorry, excuse me (common)",
+                    context: "Light apologies, getting attention",
+                    example: { hebrew: "סְלִיחָה!", english: "slicha! - Excuse me!" }
+                },
+                {
+                    hebrew: "מִצְטַעֵר / מִצְטַעֶרֶת",
+                    transliteration: "mitztaer (m.) / mitztaeret (f.)",
+                    pronunciation: "mitz-ta-AYR / mitz-ta-ER-et",
+                    usage: "I'm sorry (heartfelt)",
+                    context: "Deeper apologies",
+                    example: { hebrew: "אֲנִי מִצְטַעֵר מְאוֹד", english: "ani mitztaer me'od - I'm very sorry" }
+                }
+            ],
+            "NO PROBLEM / SURE THING": [
+                {
+                    hebrew: "בְּסֵדֶר",
+                    transliteration: "beseder",
+                    pronunciation: "der-SEH-be",
+                    usage: "OK, sure, no problem (SUPER common!)",
+                    context: "Agreement, acceptance",
+                    example: { hebrew: "בְּסֵדֶר!", english: "beseder! - OK! / Sure thing!" }
+                },
+                {
+                    hebrew: "אֵין בְּעָיָה",
+                    transliteration: "ein be'aya",
+                    pronunciation: "ayn be-ah-YAH",
+                    usage: "No problem",
+                    context: "Reassuring response",
+                    example: { hebrew: "אֵין בְּעָיָה!", english: "ein be'aya! - No problem!" }
+                },
+                {
+                    hebrew: "אֵין דָּבָר",
+                    transliteration: "ein davar",
+                    pronunciation: "VAR-dah ayn",
+                    usage: "No thing, no problem (casual)",
+                    context: "Very common, means 'it's nothing'",
+                    example: { hebrew: "אֵין דָּבָר!", english: "ein davar! - No worries! / It's nothing!" }
+                },
+                {
+                    hebrew: "בְּכֵיף",
+                    transliteration: "b'keif",
+                    pronunciation: "יףֵכְּב",
+                    usage: "With pleasure, gladly",
+                    context: "Enthusiastic yes",
+                    example: { hebrew: "בְּכֵיף!", english: "b'keif! - With pleasure!" }
+                },
+                {
+                    hebrew: "יָלָּה",
+                    transliteration: "yalla",
+                    pronunciation: "lah-YAH",
+                    usage: "Let's go, come on, sure",
+                    context: "Very casual, Arabic origin",
+                    example: { hebrew: "יָלָּה!", english: "yalla! - Let's go! / Sure!" }
+                }
+            ],
+            "STREET / ROAD / HIGHWAY": [
+                {
+                    hebrew: "רְחוֹב",
+                    transliteration: "rechov",
+                    pronunciation: "CHOV-re",
+                    usage: "Street (in a city)",
+                    context: "Standard urban street",
+                    example: { hebrew: "רְחוֹב הֶרְצְל", english: "rechov hertzel - Herzl Street" }
+                },
+                {
+                    hebrew: "כְּבִישׁ",
+                    transliteration: "kvish",
+                    pronunciation: "EESH-kve",
+                    usage: "Road, highway",
+                    context: "Between cities, major roads",
+                    example: { hebrew: "כְּבִישׁ 1", english: "kvish echad - Highway 1" }
+                },
+                {
+                    hebrew: "דֶּרֶךְ",
+                    transliteration: "derekh",
+                    pronunciation: "rech-DEH",
+                    usage: "Road, way, path",
+                    context: "General, can be metaphorical",
+                    example: { hebrew: "דֶּרֶךְ אֲרֻכָּה", english: "derekh aruka - a long road" }
+                },
+                {
+                    hebrew: "סִמְטָה",
+                    transliteration: "simta",
+                    pronunciation: "TAH-seem",
+                    usage: "Alley, narrow street",
+                    context: "Small side street",
+                    example: { hebrew: "סִמְטָה צָרָה", english: "simta tzara - a narrow alley" }
+                },
+                {
+                    hebrew: "כְּבִישׁ מְהִיר",
+                    transliteration: "kvish mahir",
+                    pronunciation: "HEER-ma EESH-kve",
+                    usage: "Highway, expressway",
+                    context: "Fast road",
+                    example: { hebrew: "כְּבִישׁ מְהִיר 6", english: "kvish mahir shesh - Highway 6" }
+                }
+            ],
+            "PRETTY / BEAUTIFUL": [
+                {
+                    hebrew: "יָפֶה / יָפָה",
+                    transliteration: "yafe (m.) / yafa (f.)",
+                    pronunciation: "FEH-ya / ya-FAH",
+                    usage: "Pretty, beautiful (most common)",
+                    context: "People, things, situations",
+                    example: { hebrew: "אַתְּ יָפָה!", english: "at yafa! - You're beautiful!" }
+                },
+                {
+                    hebrew: "מְהַמֵּם / מְהַמֶּמֶת",
+                    transliteration: "mehamem (m.) / mehamémet (f.)",
+                    pronunciation: "me-ha-MEM / me-ha-MEM-et",
+                    usage: "Stunning, gorgeous",
+                    context: "Stronger than יָפָה",
+                    example: { hebrew: "אַתְּ מְהַמֶּמֶת!", english: "at mehamémet! - You're stunning!" }
+                },
+                {
+                    hebrew: "נָאֶה / נָאָה",
+                    transliteration: "na'e (m.) / na'a (f.)",
+                    pronunciation: "nah-EH / nah-AH",
+                    usage: "Nice-looking, pleasant",
+                    context: "Formal/poetic",
+                    example: { hebrew: "נָאֶה מְאוֹד", english: "na'e me'od - very nice" }
+                }
+            ],
+            "HANDSOME": [
+                {
+                    hebrew: "יָפֶה",
+                    transliteration: "yafe",
+                    pronunciation: "FEH-ya",
+                    usage: "Handsome",
+                    context: "Works for both genders",
+                    example: { hebrew: "אַתָּה יָפֶה!", english: "ata yafe! - You're handsome!" }
+                },
+                {
+                    hebrew: "חָתִיךְ",
+                    transliteration: "chatikh",
+                    pronunciation: "TEEKH-cha",
+                    usage: "Hottie, hunk (slang)",
+                    context: "Very informal, very common!",
+                    example: { hebrew: "הוּא חָתִיךְ!", english: "hu chatikh! - He's a hottie!" }
+                }
+            ],
+            "CHARMING / NICE (personality)": [
+                {
+                    hebrew: "נָעִים / נְעִימָה",
+                    transliteration: "na'im (m.) / ne'ima (f.)",
+                    pronunciation: "nah-EEM / ne-ee-MAH",
+                    usage: "Pleasant, nice, charming",
+                    context: "Personality, not looks",
+                    example: { hebrew: "נָעִים מְאוֹד!", english: "na'im me'od! - Very nice to meet you!" }
+                },
+                {
+                    hebrew: "מְקַסֵּם / מְקַסֶּמֶת",
+                    transliteration: "mekasem (m.) / mekasemet (f.)",
+                    pronunciation: "me-kah-SEM / me-kah-SEM-et",
+                    usage: "Charming, enchanting",
+                    context: "Charisma and charm",
+                    example: { hebrew: "הוּא מְקַסֵּם!", english: "hu mekasem! - He's charming!" }
+                }
+            ],
+            "GOOD / FINE / OK": [
+                {
+                    hebrew: "טוֹב / טוֹבָה",
+                    transliteration: "tov (m.) / tova (f.)",
+                    pronunciation: "tov / to-VAH",
+                    usage: "Good (quality)",
+                    context: "Describing quality",
+                    example: { hebrew: "זֶה טוֹב!", english: "ze tov! - That's good!" }
+                },
+                {
+                    hebrew: "בְּסֵדֶר",
+                    transliteration: "beseder",
+                    pronunciation: "der-SEH-be",
+                    usage: "OK, fine, alright (EVERYWHERE!)",
+                    context: "Agreement, things are okay",
+                    example: { hebrew: "בְּסֵדֶר!", english: "beseder! - OK! / Alright!" }
+                },
+                {
+                    hebrew: "סַבָּבָה",
+                    transliteration: "sababa",
+                    pronunciation: "bah-BAH-sah",
+                    usage: "Cool, great, awesome (slang)",
+                    context: "THE most Israeli word!",
+                    example: { hebrew: "סַבָּבָה!", english: "sababa! - Cool!" }
+                },
+                {
+                    hebrew: "אַחְלָה",
+                    transliteration: "achla",
+                    pronunciation: "lah-ACH",
+                    usage: "Awesome, great (slang)",
+                    context: "Enthusiastic approval",
+                    example: { hebrew: "אַחְלָה!", english: "achla! - Awesome!" }
+                }
+            ],
+            "I'M GOOD / I'M FINE": [
+                {
+                    hebrew: "אֲנִי בְּסֵדֶר",
+                    transliteration: "ani beseder",
+                    pronunciation: "der-SEH-be NEE-ah",
+                    usage: "I'm fine/OK (most common)",
+                    context: "Standard response",
+                    example: { hebrew: "אֲנִי בְּסֵדֶר", english: "ani beseder - I'm fine" }
+                },
+                {
+                    hebrew: "אֲנִי טוֹב / טוֹבָה",
+                    transliteration: "ani tov (m.) / tova (f.)",
+                    pronunciation: "NEE-ah tov / to-VAH",
+                    usage: "I'm good/well",
+                    context: "General wellbeing",
+                    example: { hebrew: "אֲנִי טוֹב, תּוֹדָה", english: "ani tov, toda - I'm good, thanks" }
+                },
+                {
+                    hebrew: "הַכֹּל בְּסֵדֶר",
+                    transliteration: "hakol beseder",
+                    pronunciation: "KOL-hah be-SEH-der",
+                    usage: "Everything's fine",
+                    context: "Reassuring",
+                    example: { hebrew: "הַכֹּל בְּסֵדֶר!", english: "hakol beseder! - Everything's fine!" }
+                }
+            ],
+            "TERMS OF ENDEARMENT": [
+                {
+                    hebrew: "מוֹתֶק",
+                    transliteration: "motek",
+                    pronunciation: "tek-MO",
+                    usage: "Sweetie (UNIVERSAL!)",
+                    context: "For EVERYONE - even strangers!",
+                    example: { hebrew: "מוֹתֶק, אֶפְשָׁר?", english: "motek, efshar? - Sweetie, may I?" }
+                },
+                {
+                    hebrew: "חָמוּד / חֲמוּדָה",
+                    transliteration: "chamud (m.) / chamuda (f.)",
+                    pronunciation: "cha-MOOD / cha-moo-DAH",
+                    usage: "Cute, sweetie",
+                    context: "Kids, partners, friends",
+                    example: { hebrew: "חֲמוּדָה שֶׁלִּי", english: "chamuda sheli - my sweetie" }
+                },
+                {
+                    hebrew: "נְשָׁמָה",
+                    transliteration: "neshama",
+                    pronunciation: "MAH-shah-ne",
+                    usage: "Soul, darling (intimate)",
+                    context: "Romantic, close relationships",
+                    example: { hebrew: "נְשָׁמָה שֶׁלִּי", english: "neshama sheli - my soul" }
+                },
+                {
+                    hebrew: "מָתוֹק / מְתוּקָה",
+                    transliteration: "matok (m.) / metuka (f.)",
+                    pronunciation: "mah-TOK / me-too-KAH",
+                    usage: "Sweet, sweetie",
+                    context: "Affectionate",
+                    example: { hebrew: "מָתוֹק שֶׁלִּי", english: "matok sheli - my sweetheart" }
+                }
+            ]
+        };
+
+        // Initialize app
+        let favorites = JSON.parse(localStorage.getItem('hebrewFavorites') || '{}');
+        let notes = JSON.parse(localStorage.getItem('hebrewNotes') || '{}');
+        let currentFilter = 'all';
+
+        function getWordId(hebrew, transliteration) {
+            return `${hebrew}-${transliteration}`;
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            let visibleCount = 0;
+            let totalCount = 0;
+
+            Object.keys(synonymsData).forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                categoryDiv.dataset.category = category;
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <span>${category}</span>
+                    <span class="toggle-icon">▼</span>
+                `;
+                header.onclick = () => toggleCategory(category);
+
+                const content = document.createElement('div');
+                content.className = 'category-content';
+                content.dataset.categoryContent = category;
+
+                categoryDiv.appendChild(header);
+
+                synonymsData[category].forEach(word => {
+                    totalCount++;
+                    const wordId = getWordId(word.hebrew, word.transliteration);
+                    const isFavorite = favorites[wordId];
+                    const hasNote = notes[wordId];
+
+                    const card = document.createElement('div');
+                    card.className = 'word-card';
+                    card.dataset.wordId = wordId;
+                    if (isFavorite) card.classList.add('favorited');
+
+                    const actions = document.createElement('div');
+                    actions.className = 'card-actions';
+                    actions.innerHTML = `
+                        <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${wordId}')">
+                            ${isFavorite ? '⭐' : '☆'}
+                        </button>
+                        <button class="action-btn note-btn ${hasNote ? 'active' : ''}" onclick="toggleNote('${wordId}')">
+                            📝
+                        </button>
+                    `;
+
+                    card.innerHTML = `
+                        <div class="hebrew">${word.hebrew}</div>
+                        <div class="transliteration">${word.transliteration}</div>
+                        <div class="pronunciation">${word.pronunciation}</div>
+                        <div class="usage-list">
+                            <div class="usage-item"><strong>Usage:</strong> ${word.usage}</div>
+                            <div class="usage-item"><strong>Context:</strong> ${word.context}</div>
+                            ${word.example ? `
+                                <div class="example">
+                                    <span class="hebrew-text">${word.example.hebrew}</span><br>
+                                    ${word.example.english}
+                                </div>
+                            ` : ''}
+                            ${word.note ? `<div class="usage-item"><strong>Note:</strong> ${word.note}</div>` : ''}
+                        </div>
+                        <div class="note-section" id="note-${wordId}" style="display: none;">
+                            <label class="note-label">Personal Notes:</label>
+                            <textarea class="note-textarea" placeholder="Add your notes here..." onblur="saveNote('${wordId}', this.value)">${notes[wordId] || ''}</textarea>
+                            ${notes[wordId] ? `<div class="saved-note">💾 Note saved</div>` : ''}
+                        </div>
+                    `;
+
+                    card.insertBefore(actions, card.firstChild);
+                    content.appendChild(card);
+                    visibleCount++;
+                });
+
+                categoryDiv.appendChild(content);
+                container.appendChild(categoryDiv);
+            });
+
+            document.getElementById('totalWords').textContent = totalCount;
+            updateStats();
+        }
+
+        function toggleCategory(category) {
+            const header = document.querySelector(`[data-category="${category}"] .category-header`);
+            const content = document.querySelector(`[data-category-content="${category}"]`);
+            
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        function toggleFavorite(wordId) {
+            favorites[wordId] = !favorites[wordId];
+            if (!favorites[wordId]) delete favorites[wordId];
+            localStorage.setItem('hebrewFavorites', JSON.stringify(favorites));
+            
+            const card = document.querySelector(`[data-word-id="${wordId}"]`);
+            const btn = card.querySelector('.favorite-btn');
+            
+            if (favorites[wordId]) {
+                card.classList.add('favorited');
+                btn.classList.add('active');
+                btn.textContent = '⭐';
+            } else {
+                card.classList.remove('favorited');
+                btn.classList.remove('active');
+                btn.textContent = '☆';
+            }
+            
+            updateStats();
+            applyFilter(currentFilter);
+        }
+
+        function toggleNote(wordId) {
+            const noteSection = document.getElementById(`note-${wordId}`);
+            const btn = document.querySelector(`[data-word-id="${wordId}"] .note-btn`);
+            
+            if (noteSection.style.display === 'none') {
+                noteSection.style.display = 'block';
+            } else {
+                noteSection.style.display = 'none';
+            }
+        }
+
+        function saveNote(wordId, text) {
+            if (text.trim()) {
+                notes[wordId] = text;
+                const btn = document.querySelector(`[data-word-id="${wordId}"] .note-btn`);
+                btn.classList.add('active');
+            } else {
+                delete notes[wordId];
+                const btn = document.querySelector(`[data-word-id="${wordId}"] .note-btn`);
+                btn.classList.remove('active');
+            }
+            localStorage.setItem('hebrewNotes', JSON.stringify(notes));
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('favoriteCount').textContent = Object.keys(favorites).length;
+            document.getElementById('noteCount').textContent = Object.keys(notes).length;
+        }
+
+        function applyFilter(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('.word-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const wordId = card.dataset.wordId;
+                let show = false;
+
+                if (filter === 'all') {
+                    show = true;
+                } else if (filter === 'favorites') {
+                    show = favorites[wordId];
+                } else if (filter === 'with-notes') {
+                    show = notes[wordId];
+                }
+
+                if (show) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Hide empty categories, expand non-empty ones
+            document.querySelectorAll('.category').forEach(cat => {
+                const visibleCards = cat.querySelectorAll('.word-card:not(.hidden)');
+                const header = cat.querySelector('.category-header');
+                const content = cat.querySelector('.category-content');
+                
+                if (visibleCards.length === 0) {
+                    cat.classList.add('hidden');
+                } else {
+                    cat.classList.remove('hidden');
+                    // Auto-expand categories with visible results
+                    if (filter !== 'all') {
+                        header.classList.remove('collapsed');
+                        content.classList.remove('collapsed');
+                    }
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+        }
+
+        function search(query) {
+            const cards = document.querySelectorAll('.word-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const matches = text.includes(query.toLowerCase());
+
+                if (matches || query === '') {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Hide empty categories, expand non-empty ones
+            document.querySelectorAll('.category').forEach(cat => {
+                const visibleCards = cat.querySelectorAll('.word-card:not(.hidden)');
+                const header = cat.querySelector('.category-header');
+                const content = cat.querySelector('.category-content');
+                
+                if (visibleCards.length === 0) {
+                    cat.classList.add('hidden');
+                } else {
+                    cat.classList.remove('hidden');
+                    // Auto-expand when searching
+                    if (query !== '') {
+                        header.classList.remove('collapsed');
+                        content.classList.remove('collapsed');
+                    }
+                }
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            search(e.target.value);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilter(btn.dataset.filter);
+            });
+        });
+
+        // Initialize
+        renderCategories();
+    </script>
+</body>
+</html>

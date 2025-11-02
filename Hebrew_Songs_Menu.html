@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Song Learning - Main Menu</title>
+    <link rel="icon" type="image/png" href="synonym_image.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #0891b2;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        
+        .song-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .song-card {
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            border: 2px solid #a5f3fc;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .song-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+            border-color: #06b6d4;
+        }
+        
+        .song-number {
+            font-size: 14px;
+            color: #0891b2;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .song-title {
+            font-size: 1.5em;
+            color: #374151;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .song-artist {
+            color: #6b7280;
+            font-size: 1.1em;
+        }
+        
+        .song-subtitle {
+            color: #9ca3af;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .song-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Hebrew Song Learning</h1>
+        <p class="subtitle">Click any song to view lyrics, vocabulary, and cultural notes</p>
+        
+        <div class="song-grid">
+            <a href="Song_01_Eretz_Chadasha.html" class="song-card">
+                <div class="song-number">SONG #1</div>
+                <div class="song-title">ארץ חדשה</div>
+                <div class="song-artist">Shlomo Artzi</div>
+                <div class="song-subtitle">Eretz Chadasha - "New Land"</div>
+            </a>
+            
+            <a href="Song_02_Mitachat_Lashamayim.html" class="song-card">
+                <div class="song-number">SONG #2</div>
+                <div class="song-title">Mitachat La'shamayim</div>
+                <div class="song-artist">David Broza</div>
+                <div class="song-subtitle">"Under The Sky"</div>
+            </a>
+            
+            <a href="Song_03_Gesher_Tzar_Meod.html" class="song-card">
+                <div class="song-number">SONG #3</div>
+                <div class="song-title">גשר צר מאוד</div>
+                <div class="song-artist">Traditional</div>
+                <div class="song-subtitle">Gesher Tzar Me'od - "Narrow Bridge"</div>
+            </a>
+            
+            <a href="Song_04_Uf_Gozal.html" class="song-card">
+                <div class="song-number">SONG #4</div>
+                <div class="song-title">עוף גוזל</div>
+                <div class="song-artist">Arik Einstein</div>
+                <div class="song-subtitle">Uf Gozal - "Fly, Young Bird"</div>
+            </a>
+            
+            <a href="Song_05_Lean_Lean_Lean.html" class="song-card">
+                <div class="song-number">SONG #5</div>
+                <div class="song-title">Lean Lean Lean</div>
+                <div class="song-artist">Shlomo Artzi</div>
+                <div class="song-subtitle">"Where, Where, Where"</div>
+            </a>
+            
+            <a href="Song_06_Yihye_Tov.html" class="song-card">
+                <div class="song-number">SONG #6</div>
+                <div class="song-title">יהיה טוב</div>
+                <div class="song-artist">David Broza</div>
+                <div class="song-subtitle">Yihye Tov - "Things Will Be Better"</div>
+            </a>
+            
+            <a href="Song_07_Shalom_Al_Yisrael.html" class="song-card">
+                <div class="song-number">SONG #7</div>
+                <div class="song-title">שלום על ישראל</div>
+                <div class="song-artist">Traditional</div>
+                <div class="song-subtitle">Shalom Al Yisrael - "Peace Upon Israel"</div>
+            </a>
+            
+            <a href="Song_08_Salaam.html" class="song-card">
+                <div class="song-number">SONG #8</div>
+                <div class="song-title">Salaam</div>
+                <div class="song-artist">Camp Tawonga</div>
+                <div class="song-subtitle">"Peace" (Hebrew-Arabic)</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
