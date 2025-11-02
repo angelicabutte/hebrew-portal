@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shrek 1 Hebrew Mnemonics - Colorful Cards!</title>
+    <link rel="icon" type="image/png" href="Shrek_Mnemonics_icon.png">
+    <link rel="apple-touch-icon" href="Shrek_Mnemonics_icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="Shrek_Mnemonics_icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
         * {
             margin: 0;
@@ -56,12 +60,42 @@
             font-weight: bold;
             margin-bottom: 20px;
             box-shadow: 0 8px 20px rgba(86, 171, 47, 0.3);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .chunk-title:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(86, 171, 47, 0.4);
+        }
+        
+        .toggle-icon {
+            font-size: 28px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.collapsed {
+            transform: rotate(-90deg);
         }
         
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+        
+        .cards-grid.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
         }
         
         @media (max-width: 700px) {
@@ -163,7 +197,10 @@
         
         <!-- CHUNK 1: Verbs & Actions -->
         <div class="chunk-section">
-            <div class="chunk-title">🎬 Verbs & Actions</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>🎬 Verbs & Actions</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -396,7 +433,10 @@
         
         <!-- CHUNK 2: Question Words & Connectors -->
         <div class="chunk-section">
-            <div class="chunk-title">❓ Question Words & Connectors</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>❓ Question Words & Connectors</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -629,7 +669,10 @@
         
         <!-- CHUNK 3: People & Relationships -->
         <div class="chunk-section">
-            <div class="chunk-title">👥 People & Relationships</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>👥 People & Relationships</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -762,7 +805,10 @@
         
         <!-- CHUNK 4: Fantasy & Creatures -->
         <div class="chunk-section">
-            <div class="chunk-title">🐲 Fantasy & Creatures</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>🐲 Fantasy & Creatures</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -895,7 +941,10 @@
         
         <!-- CHUNK 5: Time & Quantity -->
         <div class="chunk-section">
-            <div class="chunk-title">⏰ Time & Quantity</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>⏰ Time & Quantity</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -1028,7 +1077,10 @@
         
         <!-- CHUNK 6: Movement & Direction -->
         <div class="chunk-section">
-            <div class="chunk-title">🚶 Movement & Direction</div>
+            <div class="chunk-title" onclick="toggleSection(this)">
+                <span>🚶 Movement & Direction</span>
+                <span class="toggle-icon">▼</span>
+            </div>
             <div class="cards-grid">
                 
                 <div class="mnemonic-card">
@@ -1065,5 +1117,15 @@
         </div>
         
     </div>
+    
+    <script>
+        function toggleSection(element) {
+            const cardsGrid = element.nextElementSibling;
+            const icon = element.querySelector('.toggle-icon');
+            
+            cardsGrid.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        }
+    </script>
 </body>
 </html>
