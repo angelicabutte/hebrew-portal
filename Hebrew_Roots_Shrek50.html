@@ -489,7 +489,7 @@
     <div class="container">
         <div class="header">
             <h1>🌳 Hebrew Root Families</h1>
-            <p>Shrek Vocabulary - 50 Words by 3-Letter Roots</p>
+            <p>Shrek 50 + Week 02 Frequency Roots | With Cultural & Biblical Notes</p>
         </div>
 
         <div class="controls">
@@ -510,7 +510,7 @@
                     <div class="stat-label">Total Words</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="rootCount">34</div>
+                    <div class="stat-number" id="rootCount">39</div>
                     <div class="stat-label">Root Families</div>
                 </div>
                 <div class="stat-item">
@@ -565,7 +565,79 @@
             "י-ת-ר": "More, Remain",
             "ר-ב-ה": "Many, Increase",
             "פ-נ-ה": "Turn, Face",
-            "י-ר-א": "Fear, See"
+            "י-ר-א": "Fear, See",
+            "פ-ת-ח": "Open, Begin",
+            "ה-ל-כ": "Go, Walk",
+            "א-מ-ר": "Say, Speak",
+            "ש-מ-ע": "Hear, Listen",
+            "ב-י-ן": "Between, Understand"
+        };
+
+        const culturalNotes = {
+            "ח-ש-ב": {
+                "cultural": "When computers first came to Israel, there was debate about what to call them. They chose מַחְשֵׁב (from 'think') rather than borrowing 'computer' - showing Hebrew's ability to create modern words from ancient roots!",
+                "connections": "Related to חֶשְׁבּוֹן (cheshbon) - math, calculation"
+            },
+            "ב-ו-א": {
+                "biblical": "'בֹּא אֶל הַתֵּבָה' (Bo el ha-teiva) - 'Come into the ark' (Noah). The root appears over 2,500 times in the Bible!"
+            },
+            "ע-ש-ה": {
+                "biblical": "Genesis uses this root repeatedly: 'וַיַּעַשׂ אֱלֹהִים' (Vaya'as Elohim) - 'And God made...' This is THE creation verb!"
+            },
+            "י-ד-ע": {
+                "biblical": "'וַיֵּדַע אָדָם' (Vayeda Adam) - 'And Adam knew...' (Genesis 4:1) - used for intimate knowledge, even marital relations."
+            },
+            "ר-א-ה": {
+                "cultural": "'רְאֵה' (re'eh) means 'see!' and is used as 'look!' or 'behold!' in modern Hebrew conversation."
+            },
+            "פ-ת-ח": {
+                "biblical": "In Genesis, God 'opened' (פָּתַח) Rebecca's womb. The root carries meanings of opening physical things, but also opportunities and possibilities."
+            },
+            "ה-ל-כ": {
+                "cultural": "'הֲלָכָה' (Halacha) - Jewish law, literally means 'the way to walk/go.' It's how you conduct your life, your 'walk' through the world!"
+            },
+            "א-מ-ר": {
+                "biblical": "'וַיֹּאמֶר אֱלֹהִים' (Vayomer Elohim) - 'And God said...' appears 10 times in Genesis 1. Speech as creative power!"
+            },
+            "ש-מ-ע": {
+                "cultural": "The Shema prayer ('שְׁמַע יִשְׂרָאֵל') is the central declaration of Jewish faith. To 'hear' means to truly listen AND respond."
+            },
+            "ב-י-ן": {
+                "cultural": "בִּינָה is one of the Sefirot (divine attributes) in Kabbalah, representing divine understanding."
+            }
+        };
+
+        const week02OnlyRoots = {
+            "פ-ת-ח": {
+                "meaning": "Open, Begin",
+                "words": [
+                    {hebrew: "מַפְתֵּחַ", translit: "mafteach", english: "key [lit. 'opener']", info: "The מַפְעֵל pattern creates tool nouns"}
+                ]
+            },
+            "ה-ל-כ": {
+                "meaning": "Go, Walk, Proceed",
+                "words": [
+                    {hebrew: "לָלֶכֶת", translit: "lalechet", english: "to go/walk", info: "Infinitive form with ל prefix. One of the most common roots for movement"}
+                ]
+            },
+            "א-מ-ר": {
+                "meaning": "Say, Speak, Tell",
+                "words": [
+                    {hebrew: "לוֹמַר", translit: "lomar", english: "to say", info: "This root appears in nearly every page of Hebrew text"}
+                ]
+            },
+            "ש-מ-ע": {
+                "meaning": "Hear, Listen, Obey",
+                "words": [
+                    {hebrew: "לִשְׁמוֹעַ", translit: "lishmoa", english: "to hear/listen", info: "In Hebrew, 'hearing' implies understanding and obedience"}
+                ]
+            },
+            "ב-י-ן": {
+                "meaning": "Between, Understand, Discern",
+                "words": [
+                    {hebrew: "לְהָבִין", translit: "lehavin", english: "to understand", info: "Hif'il (causative) infinitive - 'to cause oneself to understand'"}
+                ]
+            }
         };
 
         const rootsData = {"ט-ו-ב":[{"hebrew":"טוֹב","translit":"tov","english":"good; pleasant; appropriate","pos":"adjective","example_heb":"היה טוב לראות את זה","example_translit":"haya tov lirot et ze","example_eng":"That really made me feel good to see that","synonyms":"יָפֶה (yafe) – nice; נֶהֱדָר (nehedar) – wonderful; מְצֻיָּן (metzuyan) – excellent","root":"ט-ו-ב"}],"י-ד-ע":[{"hebrew":"יוֹדֵעַ","translit":"yodea","english":"know; understand","pos":"verb","example_heb":"אתה יודע מה הוא עלול לעשות","example_translit":"ata yodea ma hu alul la'asot","example_eng":"Do you know what that thing can do to you","synonyms":"מַכִּיר (makir) – recognize; מֵבִין (mevin) – understand","root":"י-ד-ע"}],"נ-ס-ך":[{"hebrew":"נְסִיכָה","translit":"nesicha","english":"princess","pos":"noun","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"בַּת מֶלֶךְ (bat melech) – daughter of a king","root":"נ-ס-ך"},{"hebrew":"הַנְּסִיכָה","translit":"hanesicha","english":"the princess","pos":"noun","example_heb":"אבל על הנסיכה הוטל כישוף מסוג נורא ואיום,","example_translit":"aval al hanesicha hutal kishuf misogg nora ve'ayom,","example_eng":"But she had an enchantment upon her of a fearful sort","synonyms":"בַּת הַמֶּלֶךְ (bat hamelech) – the king's daughter","root":"נ-ס-ך"}],"ס-ד-ר":[{"hebrew":"בְּסֵדֶר","translit":"beseder","english":"okay; alright; in order","pos":"expression","example_heb":"בסדר","example_translit":"beseder","example_eng":"Right","synonyms":"הֵיטֵב (heytev) – well; טוֹב (tov) – good","root":"ס-ד-ר"}],"א-מ-ת":[{"hebrew":"בֶּאֱמֶת","translit":"be'emet","english":"really; truly","pos":"adverb","example_heb":"כאילו שזה באמת יקרה","example_translit":"ke'ilu she'ze be'emet yikre","example_eng":"Like that's ever gonna happen","synonyms":"מַמָּשׁ (mamash) – really; אָכֵן (achen) – indeed; בִּמְצִיאוּת (bimetsiut) – in reality","root":"א-מ-ת"}],"ר-צ-ה":[{"hebrew":"רוֹצֶה","translit":"rotse","english":"want; wish","pos":"verb","example_heb":"מי היה רוצה לגור בחור כזה","example_translit":"mi haya rotse lagur be'chor kaze","example_eng":"Who'd want to live in a place like that","synonyms":"מְבַקֵּשׁ (mevakesh) – request; חָפֵץ (chafets) – desire","root":"ר-צ-ה"}],"ה-י-ה":[{"hebrew":"לִהְיוֹת","translit":"lihiyot","english":"to be","pos":"verb infinitive","example_heb":"טוב להיות חופשי","example_translit":"tov lihiyot chofshi","example_eng":"Good to be free","synonyms":"לְהִתְקַיֵּם (lehitkayem) – to exist; לְהִמָּצֵא (lehimatse) – to be found","root":"ה-י-ה"},{"hebrew":"הָיָה","translit":"haya","english":"was; were","pos":"verb (past tense)","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"הִתְקַיֵּם (hitkayem) – existed; נִמְצָא (nimtsa) – was found","root":"ה-י-ה"}],"ר-ג-ע":[{"hebrew":"רֶגַע","translit":"rega","english":"moment; wait a moment","pos":"noun","example_heb":"רגע! אתה יודע מה הוא עלול לעשות","example_translit":"rega! ata yodea ma hu alul la'asot","example_eng":"Whoa, hold on! Do you know what that thing can do to you","synonyms":"שְׁנִיָּה (shniya) – second; עֵת (et) – time; רֶגַע קַל (rega kal) – brief moment","root":"ר-ג-ע"}],"א-ה-ב":[{"hebrew":"אוֹהֵב","translit":"ohev","english":"love; like","pos":"verb","example_heb":"אני מדבר. אני אוהב לדבר","example_translit":"ani medaber. ani ohev ledaber","example_eng":"He does. I can talk. I love to talk","synonyms":"חוֹבֵב (chovev) – to like; מְאַהֵב (me'ahev) – loving","root":"א-ה-ב"}],"י-כ-ל":[{"hebrew":"יָכוֹל","translit":"yachol","english":"can; to be able","pos":"verb","example_heb":"אני יכול להגיד לך משהו?","example_translit":"ani yachol lehagid lecha mashehu?","example_eng":"Can I say something to you?","synonyms":"מְסוּגָּל (mesugal) – capable; מֻכְשָׁר (muchshar) – able","root":"י-כ-ל"}],"א-ח-ד":[{"hebrew":"אֶחָד","translit":"echad","english":"one","pos":"numeral","example_heb":"אוקיי! אבל רק ללילה אחד","example_translit":"okay! aval rak lelayla echad","example_eng":"Okay! Okay! But one night only","synonyms":"יָחִיד (yachid) – single; רִאשׁוֹן (rishon) – first","root":"א-ח-ד"}],"ב-צ-ה":[{"hebrew":"הַבִּיצָה","translit":"habitza","english":"the swamp","pos":"noun","example_heb":"והיא להחזיר את הביצה שלי לרשותי","example_translit":"vehi lehachzir et habitza sheli lirshuti","example_eng":"a quest to get my swamp back","synonyms":"אֲגַם (agam) – marsh; רֶפֶשׁ (refesh) – mire","root":"ב-צ-ה"}],"ב-ק-ש":[{"hebrew":"בְּבַקָּשָׁה","translit":"bevakasha","english":"please; you're welcome","pos":"expression","example_heb":"בבקשה, אל תמסרי אותי","example_translit":"bevakasha, al timseri oti","example_eng":"Please don't turn me in","synonyms":"אָנָּא (ana) – please; נָא (na) – please","root":"ב-ק-ש"}],"ד-ב-ר":[{"hebrew":"לְדַבֵּר","translit":"ledaber","english":"to speak; to talk","pos":"verb infinitive","example_heb":"אני אוהב לדבר","example_translit":"ani ohev ledaber","example_eng":"I love to talk","synonyms":"לְסַפֵּר (lesaper) – to tell; לְהַגִּיד (lehagid) – to say","root":"ד-ב-ר"},{"hebrew":"מְדַבֵּר","translit":"medaber","english":"speaking; speaks; speaker","pos":"verb/noun","example_heb":"יש לי חמור מדבר.","example_translit":"yesh li chamor medaber.","example_eng":"What have you got?","synonyms":"אוֹמֵר (omer) – saying; מְשׂוֹחֵחַ (mesoache'ach) – conversing","root":"ד-ב-ר"}],"ח-ב-ר":[{"hebrew":"חֲבֵרִים","translit":"chaverim","english":"friends","pos":"noun","example_heb":"אין לי חברים","example_translit":"ein li chaverim","example_eng":"But, uh, I don't have any friends","synonyms":"יְדִידִים (yedidim) – friends; רֵעִים (re'im) – companions","root":"ח-ב-ר"}],"ב-ו-א":[{"hebrew":"בָּא","translit":"ba","english":"come; enter","pos":"verb","example_heb":"כאילו שזה באמת יקרה","example_translit":"ke'ilu she'ze be'emet yikre","example_eng":"Like that's ever gonna happen","synonyms":"מַגִּיעַ (magia) – arrive; נִכְנָס (nichnas) – enter","root":"ב-ו-א"},{"hebrew":"בּוֹא","translit":"bo","english":"come (imperative)","pos":"verb","example_heb":"בוא כבר. קדימה.","example_translit":"bo kvar. kadima.","example_eng":"Get up! Come on!","synonyms":"תָּבוֹא (tavo) – you will come; לְכָה (lecha) – come here","root":"ב-ו-א"}],"ר-א-ה":[{"hebrew":"תִּרְאֶה","translit":"tir'e","english":"you will see; look","pos":"verb","example_heb":"תראה, לא כולם אוהבים בצלים","example_translit":"tir'e, lo kulam ohavim betsalim","example_eng":"Oh, you both have layers. Oh.","synonyms":"תִּסְתַּכֵּל (tistakkel) – you will look; תַּבִּיט (tabit) – you will glance","root":"ר-א-ה"}],"ש-כ-ב":[{"hebrew":"שְׁכָבוֹת","translit":"shchavot","english":"layers","pos":"noun","example_heb":"לא! שכבות! לבצלים יש שכבות","example_translit":"lo! shchavot! labetsalim yesh shchavot","example_eng":"No! Layers! Onions have layers!","synonyms":"רְבָדִים (revadim) – strata; דַּרְגּוֹת (dargot) – levels","root":"ש-כ-ב"}],"ע-ש-ה":[{"hebrew":"עוֹשֶׂה","translit":"oseh","english":"do; make","pos":"verb","example_heb":"מה אתה עושה?","example_translit":"ma ata oseh?","example_eng":"What are you doing?","synonyms":"מְבַצֵּעַ (mevatse'a) – execute; עוֹרֵךְ (orech) – arrange","root":"ע-ש-ה"}],"ס-פ-ר":[{"hebrew":"לְסַפֵּר","translit":"lesaper","english":"to tell; to relate","pos":"verb infinitive","example_heb":"רווקה מספר אחת","example_translit":"ravaka mispar achat","example_eng":"Bachelorette number one","synonyms":"לְהוֹדִיעַ (lehodi'a) – to inform; לְהַגִּיד (lehagid) – to say","root":"ס-פ-ר"}],"פ-ע-ם":[{"hebrew":"פַּעַם","translit":"pa'am","english":"time; once","pos":"noun","example_heb":"היה הייתה פעם נסיכה יפהפייה","example_translit":"haya hayta pa'am nesicha yafefiya","example_eng":"Once upon a time there was a lovely princess","synonyms":"זְמַן (zman) – time; מָקוֹם (makom) – occasion","root":"פ-ע-ם"}],"ח-ש-ב":[{"hebrew":"חוֹשֵׁב","translit":"choshev","english":"think","pos":"verb","example_heb":"אני חושב שהוא שם בפנים","example_translit":"ani choshev shehu sham bifnim","example_eng":"Think it's in there?","synonyms":"סוֹבֵר (sover) – suppose; מַאֲמִין (ma'amin) – believe","root":"ח-ש-ב"}],"ק-ד-ם":[{"hebrew":"קָדִימָה","translit":"kadima","english":"forward; come on; onward","pos":"adverb","example_heb":"בוא כבר. קדימה.","example_translit":"bo kvar. kadima.","example_eng":"Get up! Come on!","synonyms":"הָלְאָה (hal'ah) – onward; קוֹדֵם (kodem) – forward","root":"ק-ד-ם"}],"ק-ט-ן":[{"hebrew":"קָטָן","translit":"katan","english":"small","pos":"adjective","example_heb":"הכלוב הזה קטן מדי.","example_translit":"hakaluv haze katan midai.","example_eng":"This cage is too small.","synonyms":"זָעִיר (za'ir) – tiny; קְטַנְטָן (ketantan) – very small; צָנוּם (tzanum) – petite","root":"ק-ט-ן"}],"פ-ש-ט":[{"hebrew":"פָּשׁוּט","translit":"pashut","english":"simple; plain; just","pos":"adjective","example_heb":"והוא מהמם! פשוט מקסים. איזה עיצוב.","example_translit":"vehu mehamem! pashut maksim. eize itzuv.","example_eng":"That would be my home.","synonyms":"קָל (kal) – easy; פְּשִׁיטָא (peshita) – obvious","root":"פ-ש-ט"}],"ס-פ-ק":[{"hebrew":"מַסְפִּיק","translit":"maspik","english":"enough; sufficient","pos":"adjective/adverb","example_heb":"שמעתי מספיק. שומרים!","example_translit":"shama'ti maspik. shomrim!","example_eng":"That's it. I've heard enough. Guards!","synonyms":"דַּי (dai) – enough; מָלֵא (male) – full","root":"ס-פ-ק"}],"כ-ל-ל":[{"hebrew":"כּוּלָם","translit":"kulam","english":"everyone; all of them","pos":"pronoun","example_heb":"אתה לא יודע איך זה להיות שונה מכולם.","example_translit":"ata lo yodea eich ze lihiyot shone mikulam.","example_eng":"You don't know what it's like to be considered a freak.","synonyms":"כֻּלָּנוּ (kulanu) – all of us; הַכֹּל (hakol) – everyone","root":"כ-ל-ל"}],"ז-מ-ן":[{"hebrew":"זְמַן","translit":"zman","english":"time","pos":"noun","example_heb":"אז קח פסק זמן והירגע, אדוני הלורד,","example_translit":"az kach pesek zman vehiragea, adoni halord,","example_eng":"So, just sit back and relax, my Lord,","synonyms":"עֵת (et) – time; שָׁעָה (sha'ah) – hour","root":"ז-מ-ן"}],"מ-ש-ש":[{"hebrew":"מַמָּשׁ","translit":"mamash","english":"really; very","pos":"adverb","example_heb":"זה היה ממש מפחיד. ואם זה לא יעבוד, הריח מהפה שלך יעשה את העבודה.","example_translit":"ze haya mamash mafchid. ve'im ze lo ya'avod, hare'ach mehappe shelcha ya'ase et ha'avoda.","example_eng":"That really made me feel good to see that. And if you see a long tunnel, stay away from the light!","synonyms":"בֶּאֱמֶת (be'emet) – really; מְאוֹד (me'od) – very","root":"מ-ש-ש"}],"כ-ו-ן":[{"hebrew":"נָכוֹן","translit":"nachon","english":"right; correct; true","pos":"adjective","example_heb":"הוא יודע לדבר! -נכון, מטומטם!","example_translit":"hu yodea ledaber! -nachon, metumtam!","example_eng":"He can talk! Right, yeah","synonyms":"צוֹדֵק (tzodek) – correct; אֱמֶת (emet) – true","root":"כ-ו-ן"}],"י-ת-ר":[{"hebrew":"יוֹתֵר","translit":"yoter","english":"more","pos":"adverb","example_heb":"בבקשה, אל תמסרי אותי. אני לא אהיה עקשן יותר! תני לי עוד צ'אנס!","example_translit":"bevakasha, al timseri oti. ani lo ehiye akshan yoter! tni li od chans!","example_eng":"Please don't turn me in. I'll never be stubborn again. I can change. Please! Give me another chance!","synonyms":"נוֹסָף (nosaf) – additional; עוֹד (od) – more","root":"י-ת-ר"}],"ר-ב-ה":[{"hebrew":"הַרְבֵּה","translit":"harbe","english":"a lot; many; much","pos":"adverb","example_heb":"עשית כל כך הרבה עם תקציב כל כך צנוע.","example_translit":"asita kol kach harbe im taktsiv kol kach tsanua.","example_eng":"You've done so much with such a modest budget.","synonyms":"רַב (rav) – much; הֲמוֹן (hamon) – multitude","root":"ר-ב-ה"}],"פ-נ-ה":[{"hebrew":"לִפְנֵי","translit":"lifnei","english":"before; in front of","pos":"preposition","example_heb":"תזהיר אותי לפני שאתה משחרר אחד כזה. הפה שלי היה פתוח.","example_translit":"tazhir oti lifnei she'ata meshacher echad kaze. happe sheli haya patuach.","example_eng":"Warn me before you crack one off. My mouth was open.","synonyms":"קוֹדֶם (kodem) – prior to; טֶרֶם (terem) – before","root":"פ-נ-ה"}],"י-ר-א":[{"hebrew":"נוֹרָא","translit":"nora","english":"terrible; awful; very (colloquial)","pos":"adjective/adverb","example_heb":"שנשמרה על-ידי דרקון נורא, יורק להבות.","example_translit":"shenishmera al-yedei drakon nora, yorek lehavot.","example_eng":"guarded by a terrible fire-breathing dragon","synonyms":"אָיֹם (ayom) – terrible; מַפְחִיד (mafchid) – scary; רַע (ra) – bad","root":"י-ר-א"}]};
@@ -608,10 +680,11 @@
 
                 const header = document.createElement('div');
                 header.className = 'root-header collapsed';
+                const hasCulturalNote = culturalNotes[root] ? '💡' : '';
                 header.innerHTML = `
                     <div class="root-info">
                         <span class="root-letters">${root}</span>
-                        <span class="root-meaning">${meaning}</span>
+                        <span class="root-meaning">${meaning} ${hasCulturalNote}</span>
                         <span class="word-count">${words.length} word${words.length > 1 ? 's' : ''}</span>
                     </div>
                     <span class="toggle-icon">▼</span>
@@ -675,10 +748,102 @@
                     content.appendChild(card);
                 });
 
+                // Add cultural note if exists
+                if (culturalNotes[root]) {
+                    const noteBox = document.createElement('div');
+                    noteBox.className = 'cultural-note-box';
+                    noteBox.style.cssText = 'grid-column: 1 / -1; background: linear-gradient(135deg, #fffef8 0%, #f5ead6 100%); border: 2px solid #d4a574; border-radius: 8px; padding: 15px; margin-top: 10px;';
+                    
+                    let noteHTML = '<div style="font-weight: 700; color: #6b4423; margin-bottom: 8px; font-size: 1.1em;">💡 Cultural & Biblical Insight</div>';
+                    
+                    if (culturalNotes[root].cultural) {
+                        noteHTML += `<div style="margin-bottom: 8px; color: #555;"><strong>Cultural Note:</strong> ${culturalNotes[root].cultural}</div>`;
+                    }
+                    if (culturalNotes[root].biblical) {
+                        noteHTML += `<div style="margin-bottom: 8px; color: #555;"><strong>Biblical:</strong> ${culturalNotes[root].biblical}</div>`;
+                    }
+                    if (culturalNotes[root].connections) {
+                        noteHTML += `<div style="color: #555;"><strong>Connections:</strong> ${culturalNotes[root].connections}</div>`;
+                    }
+                    
+                    noteBox.innerHTML = noteHTML;
+                    content.appendChild(noteBox);
+                }
+
                 rootDiv.appendChild(header);
                 rootDiv.appendChild(content);
                 container.appendChild(rootDiv);
             });
+
+            // Render Week 02 roots not in Shrek
+            const week02Section = document.createElement('div');
+            week02Section.className = 'no-root-section';
+            week02Section.style.marginTop = '30px';
+            
+            const week02Header = document.createElement('div');
+            week02Header.className = 'root-header collapsed';
+            week02Header.style.background = 'linear-gradient(135deg, #4a7c59 0%, #6b9370 100%)';
+            week02Header.innerHTML = `
+                <div class="root-info">
+                    <span class="root-letters">Week 02 Roots</span>
+                    <span class="root-meaning">Not in Shrek - From Your Frequency Deck 💡</span>
+                    <span class="word-count">5 roots</span>
+                </div>
+                <span class="toggle-icon">▼</span>
+            `;
+            
+            const week02Content = document.createElement('div');
+            week02Content.className = 'root-content collapsed';
+            week02Content.style.background = '#f0f8f0';
+            
+            Object.keys(week02OnlyRoots).forEach(root => {
+                const rootData = week02OnlyRoots[root];
+                
+                const miniRoot = document.createElement('div');
+                miniRoot.style.cssText = 'background: white; border-left: 4px solid #4a7c59; padding: 15px; border-radius: 6px;';
+                
+                let wordsHTML = '';
+                rootData.words.forEach(word => {
+                    wordsHTML += `
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 1.4em; font-weight: bold; direction: rtl; text-align: right;">${word.hebrew}</div>
+                            <div style="font-style: italic; color: #666;">${word.translit}</div>
+                            <div style="color: #6b4423; font-weight: 600;">${word.english}</div>
+                            ${word.info ? `<div style="font-size: 0.9em; color: #777; margin-top: 5px;">${word.info}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                let noteHTML = '';
+                if (culturalNotes[root]) {
+                    noteHTML = '<div style="background: #fffef8; border: 2px solid #d4a574; border-radius: 6px; padding: 12px; margin-top: 12px;">';
+                    noteHTML += '<div style="font-weight: 700; color: #6b4423; margin-bottom: 6px;">💡 Cultural Insight</div>';
+                    if (culturalNotes[root].cultural) {
+                        noteHTML += `<div style="color: #555;">${culturalNotes[root].cultural}</div>`;
+                    }
+                    if (culturalNotes[root].biblical) {
+                        noteHTML += `<div style="color: #555; margin-top: 6px;">${culturalNotes[root].biblical}</div>`;
+                    }
+                    noteHTML += '</div>';
+                }
+                
+                miniRoot.innerHTML = `
+                    <div style="font-size: 1.3em; color: #4a7c59; font-weight: bold; margin-bottom: 10px;">${root} - ${rootData.meaning}</div>
+                    ${wordsHTML}
+                    ${noteHTML}
+                `;
+                
+                week02Content.appendChild(miniRoot);
+            });
+            
+            week02Header.onclick = () => {
+                week02Header.classList.toggle('collapsed');
+                week02Content.classList.toggle('collapsed');
+            };
+            
+            week02Section.appendChild(week02Header);
+            week02Section.appendChild(week02Content);
+            container.appendChild(week02Section);
 
             // Render words without roots
             if (wordsWithoutRoots.length > 0) {
