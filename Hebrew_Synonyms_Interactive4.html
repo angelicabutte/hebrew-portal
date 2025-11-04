@@ -223,7 +223,7 @@
         }
 
         .usage-item:before {
-            content: "•";
+            content: "â€¢";
             position: absolute;
             left: 0;
             color: #ffa500;
@@ -408,18 +408,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 Hebrew Synonyms Guide</h1>
+            <h1>ðŸ“š Hebrew Synonyms Guide</h1>
             <p>Words You'll Actually Hear in Movies & Music</p>
         </div>
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Search Hebrew, English, or transliteration...">
+                <input type="text" id="searchInput" placeholder="ðŸ” Search Hebrew, English, or transliteration...">
             </div>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
-                <button class="filter-btn" data-filter="with-notes">📝 With Notes</button>
+                <button class="filter-btn" data-filter="favorites">â­ Favorites</button>
+                <button class="filter-btn" data-filter="with-notes">ðŸ“ With Notes</button>
             </div>
         </div>
 
@@ -450,392 +450,392 @@
         const synonymsData = {
             "MAN": [
                 {
-                    hebrew: "אִישׁ",
+                    hebrew: "×Ö´×™×©×",
                     transliteration: "ish",
                     pronunciation: "eesh",
                     usage: "Man (formal, standard)",
                     context: "Biblical, formal speech",
-                    example: { hebrew: "אִישׁ טוֹב", english: "ish tov - a good man" },
+                    example: { hebrew: "×Ö´×™×©× ×˜×•Ö¹×‘", english: "ish tov - a good man" },
                     note: "Also means 'husband'"
                 },
                 {
-                    hebrew: "גֶּבֶר",
+                    hebrew: "×’Ö¶Ö¼×‘Ö¶×¨",
                     transliteration: "gever",
-                    pronunciation: "ver-GEH",
+                    pronunciation: "GEH-ver",
                     usage: "Guy, dude (informal, macho)",
                     context: "Casual, implies masculinity",
-                    example: { hebrew: "גֶּבֶר גֶּבֶר!", english: "gever gever - What a man!" }
+                    example: { hebrew: "×’Ö¶Ö¼×‘Ö¶×¨ ×’Ö¶Ö¼×‘Ö¶×¨!", english: "gever gever - What a man!" }
                 },
                 {
-                    hebrew: "בָּחוּר",
+                    hebrew: "×‘Ö¸Ö¼×—×•Ö¼×¨",
                     transliteration: "bachur",
-                    pronunciation: "CHOOR-bah",
+                    pronunciation: "bah-CHOOR",
                     usage: "Young man",
                     context: "Teenage/young adult males",
-                    example: { hebrew: "בָּחוּר צָעִיר", english: "bachur tza'ir - a young guy" }
+                    example: { hebrew: "×‘Ö¸Ö¼×—×•Ö¼×¨ ×¦Ö¸×¢Ö´×™×¨", english: "bachur tza'ir - a young guy" }
                 }
             ],
             "WOMAN": [
                 {
-                    hebrew: "אִשָּׁה",
+                    hebrew: "×Ö´×©Ö¸Ö¼××”",
                     transliteration: "isha",
-                    pronunciation: "SHAH-ee",
+                    pronunciation: "ee-SHAH",
                     usage: "Woman (standard)",
                     context: "Neutral, respectful",
-                    example: { hebrew: "אִשָּׁה חֲכָמָה", english: "isha chachama - a wise woman" },
+                    example: { hebrew: "×Ö´×©Ö¸Ö¼××” ×—Ö²×›Ö¸×žÖ¸×”", english: "isha chachama - a wise woman" },
                     note: "Also means 'wife'"
                 },
                 {
-                    hebrew: "גְּבֶרֶת",
+                    hebrew: "×’Ö°Ö¼×‘Ö¶×¨Ö¶×ª",
                     transliteration: "geveret",
-                    pronunciation: "RET-gve",
+                    pronunciation: "gve-RET",
                     usage: "Lady, ma'am, Mrs.",
                     context: "Polite, formal address",
-                    example: { hebrew: "גְּבֶרֶת, אֶפְשָׁר?", english: "geveret, efshar? - Ma'am, may I?" }
+                    example: { hebrew: "×’Ö°Ö¼×‘Ö¶×¨Ö¶×ª, ×Ö¶×¤Ö°×©Ö¸××¨?", english: "geveret, efshar? - Ma'am, may I?" }
                 },
                 {
-                    hebrew: "בַּחוּרָה",
+                    hebrew: "×‘Ö·Ö¼×—×•Ö¼×¨Ö¸×”",
                     transliteration: "bachura",
-                    pronunciation: "RAH-choo-bah",
+                    pronunciation: "bah-choo-RAH",
                     usage: "Young woman",
                     context: "Informal, younger females",
-                    example: { hebrew: "בַּחוּרָה יָפָה", english: "bachura yafa - a pretty young woman" }
+                    example: { hebrew: "×‘Ö·Ö¼×—×•Ö¼×¨Ö¸×” ×™Ö¸×¤Ö¸×”", english: "bachura yafa - a pretty young woman" }
                 }
             ],
             "PEOPLE": [
                 {
-                    hebrew: "אֲנָשִׁים",
+                    hebrew: "×Ö²× Ö¸×©Ö´××™×",
                     transliteration: "anashim",
-                    pronunciation: "SHEEM-na-a",
+                    pronunciation: "a-na-SHEEM",
                     usage: "People (most common)",
                     context: "General term",
-                    example: { hebrew: "הַרְבֵּה אֲנָשִׁים", english: "harbeh anashim - many people" }
+                    example: { hebrew: "×”Ö·×¨Ö°×‘ÖµÖ¼×” ×Ö²× Ö¸×©Ö´××™×", english: "harbeh anashim - many people" }
                 },
                 {
-                    hebrew: "עַם",
+                    hebrew: "×¢Ö·×",
                     transliteration: "am",
                     pronunciation: "ahm",
                     usage: "People, nation",
                     context: "Collective, formal",
-                    example: { hebrew: "עַם יִשְׂרָאֵל", english: "am yisrael - the people of Israel" }
+                    example: { hebrew: "×¢Ö·× ×™Ö´×©Ö°×‚×¨Ö¸×Öµ×œ", english: "am yisrael - the people of Israel" }
                 },
                 {
-                    hebrew: "בְּנֵי אָדָם",
+                    hebrew: "×‘Ö°Ö¼× Öµ×™ ×Ö¸×“Ö¸×",
                     transliteration: "b'nei adam",
                     pronunciation: "b-NAY a-DAHM",
                     usage: "Human beings",
                     context: "Formal/poetic",
-                    example: { hebrew: "כָּל בְּנֵי אָדָם", english: "kol b'nei adam - all humans" }
+                    example: { hebrew: "×›Ö¸Ö¼×œ ×‘Ö°Ö¼× Öµ×™ ×Ö¸×“Ö¸×", english: "kol b'nei adam - all humans" }
                 }
             ],
             "HUSBAND / WIFE / PARTNER": [
                 {
-                    hebrew: "בַּעַל",
+                    hebrew: "×‘Ö·Ö¼×¢Ö·×œ",
                     transliteration: "ba'al",
                     pronunciation: "BAH-al",
                     usage: "Husband (most common)",
                     context: "Standard term",
-                    example: { hebrew: "הַבַּעַל שֶׁלִּי", english: "haba'al sheli - my husband" }
+                    example: { hebrew: "×”Ö·×‘Ö·Ö¼×¢Ö·×œ ×©Ö¶××œÖ´Ö¼×™", english: "haba'al sheli - my husband" }
                 },
                 {
-                    hebrew: "אִשָּׁה",
+                    hebrew: "×Ö´×©Ö¸Ö¼××”",
                     transliteration: "isha",
-                    pronunciation: "SHAH-ee",
+                    pronunciation: "ee-SHAH",
                     usage: "Wife",
                     context: "Standard term",
-                    example: { hebrew: "הָאִשָּׁה שֶׁלִּי", english: "ha'isha sheli - my wife" }
+                    example: { hebrew: "×”Ö¸×Ö´×©Ö¸Ö¼××” ×©Ö¶××œÖ´Ö¼×™", english: "ha'isha sheli - my wife" }
                 },
                 {
-                    hebrew: "בֶּן זוּג",
+                    hebrew: "×‘Ö¶Ö¼×Ÿ ×–×•Ö¼×’",
                     transliteration: "ben zug",
-                    pronunciation: "ZOOG ben",
+                    pronunciation: "ben ZOOG",
                     usage: "Partner (m.)",
                     context: "Modern, gender-neutral",
-                    example: { hebrew: "הַבֶּן זוּג שֶׁלִּי", english: "haben zug sheli - my partner" }
+                    example: { hebrew: "×”Ö·×‘Ö¶Ö¼×Ÿ ×–×•Ö¼×’ ×©Ö¶××œÖ´Ö¼×™", english: "haben zug sheli - my partner" }
                 },
                 {
-                    hebrew: "בַּת זוּג",
+                    hebrew: "×‘Ö·Ö¼×ª ×–×•Ö¼×’",
                     transliteration: "bat zug",
-                    pronunciation: "ZOOG bat",
+                    pronunciation: "bat ZOOG",
                     usage: "Partner (f.)",
                     context: "Modern, inclusive",
-                    example: { hebrew: "הַבַּת זוּג שֶׁלִּי", english: "habat zug sheli - my partner" }
+                    example: { hebrew: "×”Ö·×‘Ö·Ö¼×ª ×–×•Ö¼×’ ×©Ö¶××œÖ´Ö¼×™", english: "habat zug sheli - my partner" }
                 }
             ],
             "HAPPY": [
                 {
-                    hebrew: "שָׂמֵחַ / שְׂמֵחָה",
+                    hebrew: "×©Ö¸×‚×žÖµ×—Ö· / ×©Ö°×‚×žÖµ×—Ö¸×”",
                     transliteration: "same'ach (m.) / sme'cha (f.)",
                     pronunciation: "sa-MAY-ach / sme-CHAH",
                     usage: "Happy, joyful",
                     context: "Standard word",
-                    example: { hebrew: "אֲנִי שָׂמֵחַ!", english: "ani same'ach! - I'm happy!" }
+                    example: { hebrew: "×Ö²× Ö´×™ ×©Ö¸×‚×žÖµ×—Ö·!", english: "ani same'ach! - I'm happy!" }
                 },
                 {
-                    hebrew: "מְאֻשָּׁר / מְאֻשֶּׁרֶת",
+                    hebrew: "×žÖ°×Ö»×©Ö¸Ö¼××¨ / ×žÖ°×Ö»×©Ö¶Ö¼××¨Ö¶×ª",
                     transliteration: "me'ushar (m.) / me'usheret (f.)",
                     pronunciation: "me-oo-SHAR / me-oo-SHER-et",
                     usage: "Blessed, fortunate",
                     context: "Deeper happiness",
-                    example: { hebrew: "אֲנִי מְאֻשָּׁר", english: "ani me'ushar - I'm blessed" }
+                    example: { hebrew: "×Ö²× Ö´×™ ×žÖ°×Ö»×©Ö¸Ö¼××¨", english: "ani me'ushar - I'm blessed" }
                 }
             ],
             "SORRY / EXCUSE ME": [
                 {
-                    hebrew: "סְלִיחָה",
+                    hebrew: "×¡Ö°×œÖ´×™×—Ö¸×”",
                     transliteration: "slicha",
-                    pronunciation: "CHAH-slee",
+                    pronunciation: "slee-CHAH",
                     usage: "Sorry, excuse me (common)",
                     context: "Light apologies, getting attention",
-                    example: { hebrew: "סְלִיחָה!", english: "slicha! - Excuse me!" }
+                    example: { hebrew: "×¡Ö°×œÖ´×™×—Ö¸×”!", english: "slicha! - Excuse me!" }
                 },
                 {
-                    hebrew: "מִצְטַעֵר / מִצְטַעֶרֶת",
+                    hebrew: "×žÖ´×¦Ö°×˜Ö·×¢Öµ×¨ / ×žÖ´×¦Ö°×˜Ö·×¢Ö¶×¨Ö¶×ª",
                     transliteration: "mitztaer (m.) / mitztaeret (f.)",
                     pronunciation: "mitz-ta-AYR / mitz-ta-ER-et",
                     usage: "I'm sorry (heartfelt)",
                     context: "Deeper apologies",
-                    example: { hebrew: "אֲנִי מִצְטַעֵר מְאוֹד", english: "ani mitztaer me'od - I'm very sorry" }
+                    example: { hebrew: "×Ö²× Ö´×™ ×žÖ´×¦Ö°×˜Ö·×¢Öµ×¨ ×žÖ°××•Ö¹×“", english: "ani mitztaer me'od - I'm very sorry" }
                 }
             ],
             "NO PROBLEM / SURE THING": [
                 {
-                    hebrew: "בְּסֵדֶר",
+                    hebrew: "×‘Ö°Ö¼×¡Öµ×“Ö¶×¨",
                     transliteration: "beseder",
-                    pronunciation: "der-SEH-be",
+                    pronunciation: "be-SEH-der",
                     usage: "OK, sure, no problem (SUPER common!)",
                     context: "Agreement, acceptance",
-                    example: { hebrew: "בְּסֵדֶר!", english: "beseder! - OK! / Sure thing!" }
+                    example: { hebrew: "×‘Ö°Ö¼×¡Öµ×“Ö¶×¨!", english: "beseder! - OK! / Sure thing!" }
                 },
                 {
-                    hebrew: "אֵין בְּעָיָה",
+                    hebrew: "×Öµ×™×Ÿ ×‘Ö°Ö¼×¢Ö¸×™Ö¸×”",
                     transliteration: "ein be'aya",
                     pronunciation: "ayn be-ah-YAH",
                     usage: "No problem",
                     context: "Reassuring response",
-                    example: { hebrew: "אֵין בְּעָיָה!", english: "ein be'aya! - No problem!" }
+                    example: { hebrew: "×Öµ×™×Ÿ ×‘Ö°Ö¼×¢Ö¸×™Ö¸×”!", english: "ein be'aya! - No problem!" }
                 },
                 {
-                    hebrew: "אֵין דָּבָר",
+                    hebrew: "×Öµ×™×Ÿ ×“Ö¸Ö¼×‘Ö¸×¨",
                     transliteration: "ein davar",
-                    pronunciation: "VAR-dah ayn",
+                    pronunciation: "ayn dah-VAR",
                     usage: "No thing, no problem (casual)",
                     context: "Very common, means 'it's nothing'",
-                    example: { hebrew: "אֵין דָּבָר!", english: "ein davar! - No worries! / It's nothing!" }
+                    example: { hebrew: "×Öµ×™×Ÿ ×“Ö¸Ö¼×‘Ö¸×¨!", english: "ein davar! - No worries! / It's nothing!" }
                 },
                 {
-                    hebrew: "בְּכֵיף",
+                    hebrew: "×‘Ö°Ö¼×›Öµ×™×£",
                     transliteration: "b'keif",
-                    pronunciation: "יףֵכְּב",
+                    pronunciation: "b-KEIF",
                     usage: "With pleasure, gladly",
                     context: "Enthusiastic yes",
-                    example: { hebrew: "בְּכֵיף!", english: "b'keif! - With pleasure!" }
+                    example: { hebrew: "×‘Ö°Ö¼×›Öµ×™×£!", english: "b'keif! - With pleasure!" }
                 },
                 {
-                    hebrew: "יָלָּה",
+                    hebrew: "×™Ö¸×œÖ¸Ö¼×”",
                     transliteration: "yalla",
-                    pronunciation: "lah-YAH",
+                    pronunciation: "YAH-lah",
                     usage: "Let's go, come on, sure",
                     context: "Very casual, Arabic origin",
-                    example: { hebrew: "יָלָּה!", english: "yalla! - Let's go! / Sure!" }
+                    example: { hebrew: "×™Ö¸×œÖ¸Ö¼×”!", english: "yalla! - Let's go! / Sure!" }
                 }
             ],
             "STREET / ROAD / HIGHWAY": [
                 {
-                    hebrew: "רְחוֹב",
+                    hebrew: "×¨Ö°×—×•Ö¹×‘",
                     transliteration: "rechov",
-                    pronunciation: "CHOV-re",
+                    pronunciation: "re-CHOV",
                     usage: "Street (in a city)",
                     context: "Standard urban street",
-                    example: { hebrew: "רְחוֹב הֶרְצְל", english: "rechov hertzel - Herzl Street" }
+                    example: { hebrew: "×¨Ö°×—×•Ö¹×‘ ×”Ö¶×¨Ö°×¦Ö°×œ", english: "rechov hertzel - Herzl Street" }
                 },
                 {
-                    hebrew: "כְּבִישׁ",
+                    hebrew: "×›Ö°Ö¼×‘Ö´×™×©×",
                     transliteration: "kvish",
-                    pronunciation: "EESH-kve",
+                    pronunciation: "kve-EESH",
                     usage: "Road, highway",
                     context: "Between cities, major roads",
-                    example: { hebrew: "כְּבִישׁ 1", english: "kvish echad - Highway 1" }
+                    example: { hebrew: "×›Ö°Ö¼×‘Ö´×™×©× 1", english: "kvish echad - Highway 1" }
                 },
                 {
-                    hebrew: "דֶּרֶךְ",
+                    hebrew: "×“Ö¶Ö¼×¨Ö¶×šÖ°",
                     transliteration: "derekh",
-                    pronunciation: "rech-DEH",
+                    pronunciation: "DEH-rech",
                     usage: "Road, way, path",
                     context: "General, can be metaphorical",
-                    example: { hebrew: "דֶּרֶךְ אֲרֻכָּה", english: "derekh aruka - a long road" }
+                    example: { hebrew: "×“Ö¶Ö¼×¨Ö¶×šÖ° ×Ö²×¨Ö»×›Ö¸Ö¼×”", english: "derekh aruka - a long road" }
                 },
                 {
-                    hebrew: "סִמְטָה",
+                    hebrew: "×¡Ö´×žÖ°×˜Ö¸×”",
                     transliteration: "simta",
-                    pronunciation: "TAH-seem",
+                    pronunciation: "seem-TAH",
                     usage: "Alley, narrow street",
                     context: "Small side street",
-                    example: { hebrew: "סִמְטָה צָרָה", english: "simta tzara - a narrow alley" }
+                    example: { hebrew: "×¡Ö´×žÖ°×˜Ö¸×” ×¦Ö¸×¨Ö¸×”", english: "simta tzara - a narrow alley" }
                 },
                 {
-                    hebrew: "כְּבִישׁ מְהִיר",
+                    hebrew: "×›Ö°Ö¼×‘Ö´×™×©× ×žÖ°×”Ö´×™×¨",
                     transliteration: "kvish mahir",
-                    pronunciation: "HEER-ma EESH-kve",
+                    pronunciation: "kve-EESH ma-HEER",
                     usage: "Highway, expressway",
                     context: "Fast road",
-                    example: { hebrew: "כְּבִישׁ מְהִיר 6", english: "kvish mahir shesh - Highway 6" }
+                    example: { hebrew: "×›Ö°Ö¼×‘Ö´×™×©× ×žÖ°×”Ö´×™×¨ 6", english: "kvish mahir shesh - Highway 6" }
                 }
             ],
             "PRETTY / BEAUTIFUL": [
                 {
-                    hebrew: "יָפֶה / יָפָה",
+                    hebrew: "×™Ö¸×¤Ö¶×” / ×™Ö¸×¤Ö¸×”",
                     transliteration: "yafe (m.) / yafa (f.)",
-                    pronunciation: "FEH-ya / ya-FAH",
+                    pronunciation: "ya-FEH / ya-FAH",
                     usage: "Pretty, beautiful (most common)",
                     context: "People, things, situations",
-                    example: { hebrew: "אַתְּ יָפָה!", english: "at yafa! - You're beautiful!" }
+                    example: { hebrew: "×Ö·×ªÖ°Ö¼ ×™Ö¸×¤Ö¸×”!", english: "at yafa! - You're beautiful!" }
                 },
                 {
-                    hebrew: "מְהַמֵּם / מְהַמֶּמֶת",
-                    transliteration: "mehamem (m.) / mehamémet (f.)",
+                    hebrew: "×žÖ°×”Ö·×žÖµÖ¼× / ×žÖ°×”Ö·×žÖ¶Ö¼×žÖ¶×ª",
+                    transliteration: "mehamem (m.) / mehamÃ©met (f.)",
                     pronunciation: "me-ha-MEM / me-ha-MEM-et",
                     usage: "Stunning, gorgeous",
-                    context: "Stronger than יָפָה",
-                    example: { hebrew: "אַתְּ מְהַמֶּמֶת!", english: "at mehamémet! - You're stunning!" }
+                    context: "Stronger than ×™Ö¸×¤Ö¸×”",
+                    example: { hebrew: "×Ö·×ªÖ°Ö¼ ×žÖ°×”Ö·×žÖ¶Ö¼×žÖ¶×ª!", english: "at mehamÃ©met! - You're stunning!" }
                 },
                 {
-                    hebrew: "נָאֶה / נָאָה",
+                    hebrew: "× Ö¸×Ö¶×” / × Ö¸×Ö¸×”",
                     transliteration: "na'e (m.) / na'a (f.)",
                     pronunciation: "nah-EH / nah-AH",
                     usage: "Nice-looking, pleasant",
                     context: "Formal/poetic",
-                    example: { hebrew: "נָאֶה מְאוֹד", english: "na'e me'od - very nice" }
+                    example: { hebrew: "× Ö¸×Ö¶×” ×žÖ°××•Ö¹×“", english: "na'e me'od - very nice" }
                 }
             ],
             "HANDSOME": [
                 {
-                    hebrew: "יָפֶה",
+                    hebrew: "×™Ö¸×¤Ö¶×”",
                     transliteration: "yafe",
-                    pronunciation: "FEH-ya",
+                    pronunciation: "ya-FEH",
                     usage: "Handsome",
                     context: "Works for both genders",
-                    example: { hebrew: "אַתָּה יָפֶה!", english: "ata yafe! - You're handsome!" }
+                    example: { hebrew: "×Ö·×ªÖ¸Ö¼×” ×™Ö¸×¤Ö¶×”!", english: "ata yafe! - You're handsome!" }
                 },
                 {
-                    hebrew: "חָתִיךְ",
+                    hebrew: "×—Ö¸×ªÖ´×™×šÖ°",
                     transliteration: "chatikh",
-                    pronunciation: "TEEKH-cha",
+                    pronunciation: "cha-TEEKH",
                     usage: "Hottie, hunk (slang)",
                     context: "Very informal, very common!",
-                    example: { hebrew: "הוּא חָתִיךְ!", english: "hu chatikh! - He's a hottie!" }
+                    example: { hebrew: "×”×•Ö¼× ×—Ö¸×ªÖ´×™×šÖ°!", english: "hu chatikh! - He's a hottie!" }
                 }
             ],
             "CHARMING / NICE (personality)": [
                 {
-                    hebrew: "נָעִים / נְעִימָה",
+                    hebrew: "× Ö¸×¢Ö´×™× / × Ö°×¢Ö´×™×žÖ¸×”",
                     transliteration: "na'im (m.) / ne'ima (f.)",
                     pronunciation: "nah-EEM / ne-ee-MAH",
                     usage: "Pleasant, nice, charming",
                     context: "Personality, not looks",
-                    example: { hebrew: "נָעִים מְאוֹד!", english: "na'im me'od! - Very nice to meet you!" }
+                    example: { hebrew: "× Ö¸×¢Ö´×™× ×žÖ°××•Ö¹×“!", english: "na'im me'od! - Very nice to meet you!" }
                 },
                 {
-                    hebrew: "מְקַסֵּם / מְקַסֶּמֶת",
+                    hebrew: "×žÖ°×§Ö·×¡ÖµÖ¼× / ×žÖ°×§Ö·×¡Ö¶Ö¼×žÖ¶×ª",
                     transliteration: "mekasem (m.) / mekasemet (f.)",
                     pronunciation: "me-kah-SEM / me-kah-SEM-et",
                     usage: "Charming, enchanting",
                     context: "Charisma and charm",
-                    example: { hebrew: "הוּא מְקַסֵּם!", english: "hu mekasem! - He's charming!" }
+                    example: { hebrew: "×”×•Ö¼× ×žÖ°×§Ö·×¡ÖµÖ¼×!", english: "hu mekasem! - He's charming!" }
                 }
             ],
             "GOOD / FINE / OK": [
                 {
-                    hebrew: "טוֹב / טוֹבָה",
+                    hebrew: "×˜×•Ö¹×‘ / ×˜×•Ö¹×‘Ö¸×”",
                     transliteration: "tov (m.) / tova (f.)",
                     pronunciation: "tov / to-VAH",
                     usage: "Good (quality)",
                     context: "Describing quality",
-                    example: { hebrew: "זֶה טוֹב!", english: "ze tov! - That's good!" }
+                    example: { hebrew: "×–Ö¶×” ×˜×•Ö¹×‘!", english: "ze tov! - That's good!" }
                 },
                 {
-                    hebrew: "בְּסֵדֶר",
+                    hebrew: "×‘Ö°Ö¼×¡Öµ×“Ö¶×¨",
                     transliteration: "beseder",
-                    pronunciation: "der-SEH-be",
+                    pronunciation: "be-SEH-der",
                     usage: "OK, fine, alright (EVERYWHERE!)",
                     context: "Agreement, things are okay",
-                    example: { hebrew: "בְּסֵדֶר!", english: "beseder! - OK! / Alright!" }
+                    example: { hebrew: "×‘Ö°Ö¼×¡Öµ×“Ö¶×¨!", english: "beseder! - OK! / Alright!" }
                 },
                 {
-                    hebrew: "סַבָּבָה",
+                    hebrew: "×¡Ö·×‘Ö¸Ö¼×‘Ö¸×”",
                     transliteration: "sababa",
-                    pronunciation: "bah-BAH-sah",
+                    pronunciation: "sah-BAH-bah",
                     usage: "Cool, great, awesome (slang)",
                     context: "THE most Israeli word!",
-                    example: { hebrew: "סַבָּבָה!", english: "sababa! - Cool!" }
+                    example: { hebrew: "×¡Ö·×‘Ö¸Ö¼×‘Ö¸×”!", english: "sababa! - Cool!" }
                 },
                 {
-                    hebrew: "אַחְלָה",
+                    hebrew: "×Ö·×—Ö°×œÖ¸×”",
                     transliteration: "achla",
-                    pronunciation: "lah-ACH",
+                    pronunciation: "ACH-lah",
                     usage: "Awesome, great (slang)",
                     context: "Enthusiastic approval",
-                    example: { hebrew: "אַחְלָה!", english: "achla! - Awesome!" }
+                    example: { hebrew: "×Ö·×—Ö°×œÖ¸×”!", english: "achla! - Awesome!" }
                 }
             ],
             "I'M GOOD / I'M FINE": [
                 {
-                    hebrew: "אֲנִי בְּסֵדֶר",
+                    hebrew: "×Ö²× Ö´×™ ×‘Ö°Ö¼×¡Öµ×“Ö¶×¨",
                     transliteration: "ani beseder",
-                    pronunciation: "der-SEH-be NEE-ah",
+                    pronunciation: "ah-NEE be-SEH-der",
                     usage: "I'm fine/OK (most common)",
                     context: "Standard response",
-                    example: { hebrew: "אֲנִי בְּסֵדֶר", english: "ani beseder - I'm fine" }
+                    example: { hebrew: "×Ö²× Ö´×™ ×‘Ö°Ö¼×¡Öµ×“Ö¶×¨", english: "ani beseder - I'm fine" }
                 },
                 {
-                    hebrew: "אֲנִי טוֹב / טוֹבָה",
+                    hebrew: "×Ö²× Ö´×™ ×˜×•Ö¹×‘ / ×˜×•Ö¹×‘Ö¸×”",
                     transliteration: "ani tov (m.) / tova (f.)",
                     pronunciation: "NEE-ah tov / to-VAH",
                     usage: "I'm good/well",
                     context: "General wellbeing",
-                    example: { hebrew: "אֲנִי טוֹב, תּוֹדָה", english: "ani tov, toda - I'm good, thanks" }
+                    example: { hebrew: "×Ö²× Ö´×™ ×˜×•Ö¹×‘, ×ªÖ¼×•Ö¹×“Ö¸×”", english: "ani tov, toda - I'm good, thanks" }
                 },
                 {
-                    hebrew: "הַכֹּל בְּסֵדֶר",
+                    hebrew: "×”Ö·×›Ö¹Ö¼×œ ×‘Ö°Ö¼×¡Öµ×“Ö¶×¨",
                     transliteration: "hakol beseder",
-                    pronunciation: "KOL-hah be-SEH-der",
+                    pronunciation: "ha-KOL be-SEH-der",
                     usage: "Everything's fine",
                     context: "Reassuring",
-                    example: { hebrew: "הַכֹּל בְּסֵדֶר!", english: "hakol beseder! - Everything's fine!" }
+                    example: { hebrew: "×”Ö·×›Ö¹Ö¼×œ ×‘Ö°Ö¼×¡Öµ×“Ö¶×¨!", english: "hakol beseder! - Everything's fine!" }
                 }
             ],
             "TERMS OF ENDEARMENT": [
                 {
-                    hebrew: "מוֹתֶק",
+                    hebrew: "×ž×•Ö¹×ªÖ¶×§",
                     transliteration: "motek",
-                    pronunciation: "tek-MO",
+                    pronunciation: "MO-tek",
                     usage: "Sweetie (UNIVERSAL!)",
                     context: "For EVERYONE - even strangers!",
-                    example: { hebrew: "מוֹתֶק, אֶפְשָׁר?", english: "motek, efshar? - Sweetie, may I?" }
+                    example: { hebrew: "×ž×•Ö¹×ªÖ¶×§, ×Ö¶×¤Ö°×©Ö¸××¨?", english: "motek, efshar? - Sweetie, may I?" }
                 },
                 {
-                    hebrew: "חָמוּד / חֲמוּדָה",
+                    hebrew: "×—Ö¸×ž×•Ö¼×“ / ×—Ö²×ž×•Ö¼×“Ö¸×”",
                     transliteration: "chamud (m.) / chamuda (f.)",
                     pronunciation: "cha-MOOD / cha-moo-DAH",
                     usage: "Cute, sweetie",
                     context: "Kids, partners, friends",
-                    example: { hebrew: "חֲמוּדָה שֶׁלִּי", english: "chamuda sheli - my sweetie" }
+                    example: { hebrew: "×—Ö²×ž×•Ö¼×“Ö¸×” ×©Ö¶××œÖ´Ö¼×™", english: "chamuda sheli - my sweetie" }
                 },
                 {
-                    hebrew: "נְשָׁמָה",
+                    hebrew: "× Ö°×©Ö¸××žÖ¸×”",
                     transliteration: "neshama",
-                    pronunciation: "MAH-shah-ne",
+                    pronunciation: "ne-shah-MAH",
                     usage: "Soul, darling (intimate)",
                     context: "Romantic, close relationships",
-                    example: { hebrew: "נְשָׁמָה שֶׁלִּי", english: "neshama sheli - my soul" }
+                    example: { hebrew: "× Ö°×©Ö¸××žÖ¸×” ×©Ö¶××œÖ´Ö¼×™", english: "neshama sheli - my soul" }
                 },
                 {
-                    hebrew: "מָתוֹק / מְתוּקָה",
+                    hebrew: "×žÖ¸×ª×•Ö¹×§ / ×žÖ°×ª×•Ö¼×§Ö¸×”",
                     transliteration: "matok (m.) / metuka (f.)",
                     pronunciation: "mah-TOK / me-too-KAH",
                     usage: "Sweet, sweetie",
                     context: "Affectionate",
-                    example: { hebrew: "מָתוֹק שֶׁלִּי", english: "matok sheli - my sweetheart" }
+                    example: { hebrew: "×žÖ¸×ª×•Ö¹×§ ×©Ö¶××œÖ´Ö¼×™", english: "matok sheli - my sweetheart" }
                 }
             ]
         };
@@ -865,7 +865,7 @@
                 header.className = 'category-header';
                 header.innerHTML = `
                     <span>${category}</span>
-                    <span class="toggle-icon">▼</span>
+                    <span class="toggle-icon">â–¼</span>
                 `;
                 header.onclick = () => toggleCategory(category);
 
@@ -890,10 +890,10 @@
                     actions.className = 'card-actions';
                     actions.innerHTML = `
                         <button class="action-btn favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${wordId}')">
-                            ${isFavorite ? '⭐' : '☆'}
+                            ${isFavorite ? 'â­' : 'â˜†'}
                         </button>
                         <button class="action-btn note-btn ${hasNote ? 'active' : ''}" onclick="toggleNote('${wordId}')">
-                            📝
+                            ðŸ“
                         </button>
                     `;
 
@@ -915,7 +915,7 @@
                         <div class="note-section" id="note-${wordId}" style="display: none;">
                             <label class="note-label">Personal Notes:</label>
                             <textarea class="note-textarea" placeholder="Add your notes here..." onblur="saveNote('${wordId}', this.value)">${notes[wordId] || ''}</textarea>
-                            ${notes[wordId] ? `<div class="saved-note">💾 Note saved</div>` : ''}
+                            ${notes[wordId] ? `<div class="saved-note">ðŸ’¾ Note saved</div>` : ''}
                         </div>
                     `;
 
@@ -951,11 +951,11 @@
             if (favorites[wordId]) {
                 card.classList.add('favorited');
                 btn.classList.add('active');
-                btn.textContent = '⭐';
+                btn.textContent = 'â­';
             } else {
                 card.classList.remove('favorited');
                 btn.classList.remove('active');
-                btn.textContent = '☆';
+                btn.textContent = 'â˜†';
             }
             
             updateStats();

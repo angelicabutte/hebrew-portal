@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Frequency Word Checklist - UPDATED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 20px;
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .word-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            position: relative;
+        }
+
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #764ba2;
+        }
+
+        .word-card.known {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+            border-width: 3px;
+        }
+        .word-card.known::before {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .checkbox {
+            float: right;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .word-hebrew {
+            font-size: 24px;
+            font-weight: bold;
+            color: #764ba2;
+            direction: rtl;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .word-transliteration {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 3px;
+        }
+
+        .word-english {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .header-note {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #155724;
+        }
+
+        .header-note strong {
+            color: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .word-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="apple-touch-icon" href="picker1_image.jpg">
+    <link rel="icon" type="image/jpeg" href="picker1_image.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+</head>
+<body>
+    <div class="container">
+        <h1>ðŸ“š Hebrew Frequency Word Checklist</h1>
+        <p class="subtitle">Mark words you already know â€¢ Track your progress â€¢ Export your mastered list</p>
+        
+        <div class="header-note">
+            <strong>âœ… UPDATED VERSION</strong> - Week 1 (54 words) & Week 2 (114 words) already removed! This list contains <strong>1,832 remaining words</strong> from your 2000-word master frequency list. Check off any additional words you already know, then export to create your personalized mastered words filter for Week 3+.
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="knownCount">0</div>
+                <div class="stat-label">Words Known</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="remainingCount">1832</div>
+                <div class="stat-label">Words Remaining</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="percentKnown">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="ðŸ” Search by Hebrew, English, or transliteration...">
+            <button onclick="saveProgress()">ðŸ’¾ Save Progress</button>
+            <button onclick="loadProgress()">ðŸ“‚ Load Progress</button>
+            <button onclick="exportKnownWords()">ðŸ“¥ Export Known Words</button>
+            <button onclick="clearAll()">ðŸ—‘ï¸ Clear All</button>
+            <button onclick="saveProgress()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">ðŸ’¾ Save Progress</button>
+            <button onclick="loadProgress()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">ðŸ“‚ Load Progress</button>
+            <button onclick="exportKnown()" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">ðŸ“¤ Export Known</button>
+        </div>
+
+        <div class="word-grid" id="wordGrid"></div>
+    </div>
+
+    <script>
+        const words = [
+{"hebrew":"×–Ö¶×”","trans":"ze","english":"this/it"},
+{"hebrew":"×¢Ö·×œ","trans":"al","english":"on/about"},
+{"hebrew":"×‘Ö°Ö¼","trans":"be","english":"in/at"},
+{"hebrew":"×œÖ°","trans":"le","english":"to/for"},
+{"hebrew":"×žÖ´×Ÿ","trans":"min","english":"from"},
+{"hebrew":"×¢Ö´×","trans":"im","english":"with"},
+{"hebrew":"×›Ö°Ö¼×ž×•Ö¹","trans":"kmo","english":"like"},
+{"hebrew":"×Ö¶×œ","trans":"el","english":"to/toward"},
+{"hebrew":"×žÖ·×”","trans":"ma","english":"what"},
+{"hebrew":"×žÖ´×™","trans":"mi","english":"who"},
+{"hebrew":"×Öµ×™×šÖ°","trans":"eich","english":"how"},
+{"hebrew":"×œÖ¸×žÖ¸Ö¼×”","trans":"lama","english":"why"},
+{"hebrew":"×Öµ×™×¤Ö¹×”","trans":"eifo","english":"where"},
+{"hebrew":"×žÖ¸×ªÖ·×™","trans":"matai","english":"when"},
+{"hebrew":"×›Ö·Ö¼×žÖ¸Ö¼×”","trans":"kama","english":"how much/many"},
+{"hebrew":"×›Ö¸Ö¼×œ","trans":"kol","english":"all/every"},
+{"hebrew":"×™Öµ×©×","trans":"yesh","english":"there is/have"},
+{"hebrew":"×Öµ×™×Ÿ","trans":"ein","english":"there isn't/no"},
+{"hebrew":"×’Ö·Ö¼×","trans":"gam","english":"also/too"},
+{"hebrew":"××•Ö¹","trans":"o","english":"or"},
+{"hebrew":"×Ö²×‘Ö¸×œ","trans":"aval","english":"but"},
+{"hebrew":"×¨Ö·×§","trans":"rak","english":"only"},
+{"hebrew":"×¢×•Ö¹×“","trans":"od","english":"more/still/yet"},
+{"hebrew":"×›Ö°Ö¼×‘Ö¸×¨","trans":"kvar","english":"already"},
+{"hebrew":"×Ö¸×–","trans":"az","english":"then/so"},
+{"hebrew":"×›Ö´Ö¼×™","trans":"ki","english":"because/that"},
+{"hebrew":"×Ö´×","trans":"im","english":"if"},
+{"hebrew":"×—Ö¸×“Ö¸×©×","trans":"chadash","english":"new"},
+{"hebrew":"×™Ö¸×©Ö¸××Ÿ","trans":"yashan","english":"old"},
+{"hebrew":"×”Ö·×¨Ö°×‘ÖµÖ¼×”","trans":"harbe","english":"a lot/many"},
+{"hebrew":"×žÖ°×¢Ö·×˜","trans":"meat","english":"little/few"},
+{"hebrew":"×™×•Ö¹×ªÖµ×¨","trans":"yoter","english":"more"},
+{"hebrew":"×¤Ö¸Ö¼×—×•Ö¹×ª","trans":"pachot","english":"less"},
+{"hebrew":"×™×•Ö¹×","trans":"yom","english":"day"},
+{"hebrew":"×œÖ·×™Ö°×œÖ¸×”","trans":"laila","english":"night"},
+{"hebrew":"×‘Ö¹Ö¼×§Ö¶×¨","trans":"boker","english":"morning"},
+{"hebrew":"×¢Ö¶×¨Ö¶×‘","trans":"erev","english":"evening"},
+{"hebrew":"×©Ö¸××‘×•Ö¼×¢Ö·","trans":"shavua","english":"week"},
+{"hebrew":"×—Ö¹×“Ö¶×©×","trans":"chodesh","english":"month"},
+{"hebrew":"×©Ö¸×× Ö¸×”","trans":"shana","english":"year"},
+{"hebrew":"×©Ö¸××¢Ö¸×”","trans":"shaa","english":"hour"},
+{"hebrew":"×“Ö·Ö¼×§Ö¸Ö¼×”","trans":"daka","english":"minute"},
+{"hebrew":"×©Ö°×× Ö´×™Ö¸Ö¼×”","trans":"shniya","english":"second"},
+{"hebrew":"×¢Ö·×›Ö°×©Ö¸××™×•","trans":"achshav","english":"now"},
+{"hebrew":"×Ö¶×ªÖ°×ž×•Ö¹×œ","trans":"etmol","english":"yesterday"},
+{"hebrew":"×”Ö·×™Ö¼×•Ö¹×","trans":"hayom","english":"today"},
+{"hebrew":"×žÖ¸×—Ö¸×¨","trans":"machar","english":"tomorrow"},
+{"hebrew":"×¤Ö·Ö¼×¢Ö·×","trans":"paam","english":"time/once"},
+{"hebrew":"×ªÖ¸Ö¼×žÖ´×™×“","trans":"tamid","english":"always"},
+{"hebrew":"×œÖ°×¢×•Ö¹×œÖ¸×","trans":"leolam","english":"never/forever"},
+{"hebrew":"×›Ö¸Ö¼××Ÿ","trans":"kan","english":"here"},
+{"hebrew":"×©Ö¸××","trans":"sham","english":"there"},
+{"hebrew":"×¤Ö¹Ö¼×”","trans":"po","english":"here"},
+{"hebrew":"×žÖ¸×§×•Ö¹×","trans":"makom","english":"place"},
+{"hebrew":"×›Ö°Ö¼×¤Ö¸×¨","trans":"kfar","english":"village"},
+{"hebrew":"×’Ö·Ö¼×Ÿ","trans":"gan","english":"garden/park"},
+{"hebrew":"×‘ÖµÖ¼×™×ª ×¡Öµ×¤Ö¶×¨","trans":"beit sefer","english":"school"},
+{"hebrew":"×‘ÖµÖ¼×™×ª ×—×•Ö¹×œÖ´×™×","trans":"beit cholim","english":"hospital"},
+{"hebrew":"×žÖ´×¡Ö°×¢Ö¸×“Ö¸×”","trans":"misada","english":"restaurant"},
+{"hebrew":"×‘Ö·Ö¼× Ö°×§","trans":"bank","english":"bank"},
+{"hebrew":"×“Ö¹Ö¼×Ö·×¨","trans":"doar","english":"post office/mail"},
+{"hebrew":"×©Ö¸×‚×“Ö¶×”","trans":"sadeh","english":"field"},
+{"hebrew":"×”Ö·×¨","trans":"har","english":"mountain"},
+{"hebrew":"×™Ö¸×","trans":"yam","english":"sea"},
+{"hebrew":"× Ö¸×”Ö¸×¨","trans":"nahar","english":"river"},
+{"hebrew":"×Ö¶×¨Ö¶×¥","trans":"eretz","english":"land/country"},
+{"hebrew":"×¢×•Ö¹×œÖ¸×","trans":"olam","english":"world"},
+{"hebrew":"×Ö¸×¨Ö¶×¥","trans":"aretz","english":"earth/land"},
+{"hebrew":"×¢Ö¸× Ö¸×Ÿ","trans":"anan","english":"cloud"},
+{"hebrew":"×©Ö¶××œÖ¶×’","trans":"sheleg","english":"snow"},
+{"hebrew":"×¨×•Ö¼×—Ö·","trans":"ruach","english":"wind/spirit"},
+{"hebrew":"×Öµ×©×","trans":"esh","english":"fire"},
+{"hebrew":"×žÖ·×™Ö´×","trans":"mayim","english":"water"},
+{"hebrew":"×¢Öµ×¥","trans":"etz","english":"tree"},
+{"hebrew":"×¤Ö¶Ö¼×¨Ö·×—","trans":"perach","english":"flower"},
+{"hebrew":"×“Ö¶Ö¼×©Ö¶××","trans":"deshe","english":"grass"},
+{"hebrew":"×Ö¶×‘Ö¶×Ÿ","trans":"even","english":"stone"},
+{"hebrew":"×—×•Ö¹×œ","trans":"chol","english":"sand"},
+{"hebrew":"×›Ö¶Ö¼×œÖ¶×‘","trans":"kelev","english":"dog"},
+{"hebrew":"×—Ö¸×ª×•Ö¼×œ","trans":"chatul","english":"cat"},
+{"hebrew":"×¡×•Ö¼×¡","trans":"sus","english":"horse"},
+{"hebrew":"×¤Ö¸Ö¼×¨Ö¸×”","trans":"para","english":"cow"},
+{"hebrew":"×¦Ö´×¤Ö¼×•Ö¹×¨","trans":"tzipor","english":"bird"},
+{"hebrew":"×“Ö¸Ö¼×’","trans":"dag","english":"fish"},
+{"hebrew":"× Ö¸×—Ö¸×©×","trans":"nachash","english":"snake"},
+{"hebrew":"×—Ö·×™Ö¸Ö¼×”","trans":"chaya","english":"animal"},
+{"hebrew":"×Ö¹×›Ö¶×œ","trans":"ochel","english":"food"},
+{"hebrew":"×œÖ¶×—Ö¶×","trans":"lechem","english":"bread"},
+{"hebrew":"×—Ö¸×œÖ¸×‘","trans":"chalav","english":"milk"},
+{"hebrew":"×‘Ö¸Ö¼×©Ö¸×‚×¨","trans":"basar","english":"meat"},
+{"hebrew":"×™Ö¸×¨Ö¸×§","trans":"yarak","english":"vegetable"},
+{"hebrew":"×¤Ö°Ö¼×¨Ö´×™","trans":"pri","english":"fruit"},
+{"hebrew":"×¢×•Ö¼×’Ö¸×”","trans":"uga","english":"cake"},
+{"hebrew":"×¡×•Ö¼×›Ö¸Ö¼×¨","trans":"sukar","english":"sugar"},
+{"hebrew":"×žÖ¶×œÖ·×—","trans":"melach","english":"salt"},
+{"hebrew":"×™Ö·×™Ö´×Ÿ","trans":"yayin","english":"wine"},
+{"hebrew":"×§Ö¸×¤Ö¶×”","trans":"kafe","english":"coffee"},
+{"hebrew":"×ªÖµÖ¼×”","trans":"te","english":"tea"},
+{"hebrew":"×žÖ´×™×¥","trans":"mitz","english":"juice"},
+{"hebrew":"×‘Ö¶Ö¼×’Ö¶×“","trans":"beged","english":"clothing"},
+{"hebrew":"×—Ö»×œÖ°×¦Ö¸×”","trans":"chultza","english":"shirt"},
+{"hebrew":"×žÖ´×›Ö°× Ö¸×¡Ö·×™Ö´×","trans":"michnaslayim","english":"pants"},
+{"hebrew":"×©Ö´×‚×žÖ°×œÖ¸×”","trans":"simla","english":"dress"},
+{"hebrew":"× Ö·×¢Ö·×œ","trans":"naal","english":"shoe"},
+{"hebrew":"×’Ö¶Ö¼×¨Ö¶×‘","trans":"gerev","english":"sock"},
+{"hebrew":"×›Ö¼×•Ö¹×‘Ö·×¢","trans":"kova","english":"hat"},
+{"hebrew":"×žÖ°×¢Ö´×™×œ","trans":"meil","english":"coat"},
+{"hebrew":"×¦Ö¸×¢Ö´×™×£","trans":"tzaif","english":"scarf"},
+{"hebrew":"×›Ö¶Ö¼×¡Ö¶×£","trans":"kesef","english":"money/silver"},
+{"hebrew":"×–Ö¸×”Ö¸×‘","trans":"zahav","english":"gold"},
+{"hebrew":"×žÖ·×ªÖ¸Ö¼× Ö¸×”","trans":"matana","english":"gift"},
+{"hebrew":"×›Ö°Ö¼×œÖ´×™","trans":"kli","english":"tool/vessel"},
+{"hebrew":"×¡Öµ×¤Ö¶×¨","trans":"sefer","english":"book"},
+{"hebrew":"×¢Ö´×ªÖ¼×•Ö¹×Ÿ","trans":"iton","english":"newspaper"},
+{"hebrew":"×žÖ´×›Ö°×ªÖ¸Ö¼×‘","trans":"michtav","english":"letter"},
+{"hebrew":"×˜Ö¶×œÖ¶×¤×•Ö¹×Ÿ","trans":"telefon","english":"telephone"},
+{"hebrew":"××•Ö¹×˜×•Ö¹×‘Ö¼×•Ö¼×¡","trans":"otobus","english":"bus"},
+{"hebrew":"×¨Ö·×›Ö¶Ö¼×‘Ö¶×ª","trans":"rakevet","english":"train"},
+{"hebrew":"×žÖ¸×˜×•Ö¹×¡","trans":"matos","english":"airplane"},
+{"hebrew":"×Ö³× Ö´×™Ö¸Ö¼×”","trans":"oniya","english":"ship"},
+{"hebrew":"×¦Ö¶×‘Ö·×¢","trans":"tzeva","english":"color"},
+{"hebrew":"×œÖ¸×‘Ö¸×Ÿ","trans":"lavan","english":"white"},
+{"hebrew":"×©Ö¸××—×•Ö¹×¨","trans":"shachor","english":"black"},
+{"hebrew":"×Ö¸×“Ö¹×","trans":"adom","english":"red"},
+{"hebrew":"×›Ö¸Ö¼×—Ö¹×œ","trans":"kachol","english":"blue"},
+{"hebrew":"×™Ö¸×¨Ö¹×§","trans":"yarok","english":"green"},
+{"hebrew":"×¦Ö¸×”Ö¹×‘","trans":"tzahov","english":"yellow"},
+{"hebrew":"×›Ö¸Ö¼×ªÖ¹×","trans":"katom","english":"orange"},
+{"hebrew":"×¡Ö¸×’Ö¹×œ","trans":"sagol","english":"purple"},
+{"hebrew":"×—×•Ö¼×","trans":"chum","english":"brown"},
+{"hebrew":"×•Ö¸×¨Ö¹×“","trans":"varod","english":"pink"},
+{"hebrew":"×žÖ´×¡Ö°×¤Ö¸Ö¼×¨","trans":"mispar","english":"number"},
+{"hebrew":"×Ö¶×—Ö¸×“","trans":"echad","english":"one"},
+{"hebrew":"×©Ö°×× Ö·×™Ö´×","trans":"shnayim","english":"two"},
+{"hebrew":"×©Ö¸××œ×•Ö¹×©×","trans":"shalosh","english":"three"},
+{"hebrew":"×Ö·×¨Ö°×‘Ö·Ö¼×¢","trans":"arba","english":"four"},
+{"hebrew":"×—Ö¸×žÖµ×©×","trans":"chamesh","english":"five"},
+{"hebrew":"×©Öµ××©×","trans":"shesh","english":"six"},
+{"hebrew":"×©Ö¶××‘Ö·×¢","trans":"sheva","english":"seven"},
+{"hebrew":"×©Ö°××ž×•Ö¹× Ö¶×”","trans":"shmone","english":"eight"},
+{"hebrew":"×ªÖµÖ¼×©Ö·××¢","trans":"tesha","english":"nine"},
+{"hebrew":"×¢Ö¶×©Ö¶×‚×¨","trans":"eser","english":"ten"},
+{"hebrew":"×žÖµ×Ö¸×”","trans":"mea","english":"hundred"},
+{"hebrew":"×Ö¶×œÖ¶×£","trans":"elef","english":"thousand"},
+{"hebrew":"×¨Ö´××©××•Ö¹×Ÿ","trans":"rishon","english":"first"},
+{"hebrew":"×©Öµ×× Ö´×™","trans":"sheni","english":"second"},
+{"hebrew":"×©Ö°××œÖ´×™×©Ö´××™","trans":"shlishi","english":"third"},
+{"hebrew":"×Ö·×—Ö²×¨×•Ö¹×Ÿ","trans":"acharon","english":"last"},
+{"hebrew":"×”Ö¸×™Ö¸×”","trans":"haya","english":"was/were"},
+{"hebrew":"×™Ö´×”Ö°×™Ö¶×”","trans":"yihiye","english":"will be"},
+{"hebrew":"×”×•Ö¹×•Ö¶×”","trans":"hove","english":"present"},
+{"hebrew":"×¢Ö¸×‘Ö¸×¨","trans":"avar","english":"past"},
+{"hebrew":"×¢Ö¸×ªÖ´×™×“","trans":"atid","english":"future"},
+{"hebrew":"×œÖ¸×œÖ¶×›Ö¶×ª","trans":"lalechet","english":"to go"},
+{"hebrew":"×œÖ¸×‘×•Ö¹×","trans":"lavo","english":"to come"},
+{"hebrew":"×œÖ¸×©Ö¶××‘Ö¶×ª","trans":"lashevet","english":"to sit"},
+{"hebrew":"×œÖ·×¢Ö²×žÖ¹×“","trans":"laamod","english":"to stand"},
+{"hebrew":"×œÖ¸×¨×•Ö¼×¥","trans":"larutz","english":"to run"},
+{"hebrew":"×œÖ´×¨Ö°××•Ö¹×ª","trans":"lirot","english":"to see"},
+{"hebrew":"×œÖ´×©Ö°××žÖ¹×¢Ö·","trans":"lishmoa","english":"to hear"},
+{"hebrew":"×œÖ°×“Ö·×‘ÖµÖ¼×¨","trans":"ledaber","english":"to speak"},
+{"hebrew":"×œ×•Ö¹×žÖ·×¨","trans":"lomar","english":"to say"},
+{"hebrew":"×œÖ´×›Ö°×ªÖ¹Ö¼×‘","trans":"lichtov","english":"to write"},
+{"hebrew":"×œÖ´×§Ö°×¨Ö¹×","trans":"likro","english":"to read/call"},
+{"hebrew":"×œÖ¶×Ö±×›Ö¹×œ","trans":"leechol","english":"to eat"},
+{"hebrew":"×œÖ´×©Ö°××ªÖ¼×•Ö¹×ª","trans":"lishtot","english":"to drink"},
+{"hebrew":"×œÖ´×™×©Ö¹××Ÿ","trans":"lishon","english":"to sleep"},
+{"hebrew":"×œÖ¸×§×•Ö¼×","trans":"lakum","english":"to get up"},
+{"hebrew":"×œÖ·×¢Ö²×©×‚×•Ö¹×ª","trans":"laasot","english":"to do/make"},
+{"hebrew":"×œÖ¸×ªÖµ×ª","trans":"latet","english":"to give"},
+{"hebrew":"×œÖ¸×§Ö·×—Ö·×ª","trans":"lakachat","english":"to take"},
+{"hebrew":"×œÖ¸×©Ö´×‚×™×","trans":"lasim","english":"to put"},
+{"hebrew":"×œÖ°×§Ö·×‘ÖµÖ¼×œ","trans":"lekabel","english":"to receive"},
+{"hebrew":"×œÖ´×žÖ°×¦Ö¹×","trans":"limtzo","english":"to find"},
+{"hebrew":"×œÖ°×—Ö·×¤ÖµÖ¼×©×‚","trans":"lechapes","english":"to search"},
+{"hebrew":"×œÖ°×”Ö¸×‘Ö´×™×Ÿ","trans":"lehavin","english":"to understand"},
+{"hebrew":"×œÖ¸×“Ö·×¢Ö·×ª","trans":"ladaat","english":"to know"},
+{"hebrew":"×œÖ°×œÖ·×žÖµÖ¼×“","trans":"lelamed","english":"to teach"},
+{"hebrew":"×œÖ´×œÖ°×žÖ¹×“","trans":"lilmod","english":"to learn"},
+{"hebrew":"×œÖ·×¢Ö²×–Ö¹×¨","trans":"laazor","english":"to help"},
+{"hebrew":"×œÖ·×¢Ö²×‘Ö¹×“","trans":"laavod","english":"to work"},
+{"hebrew":"×œÖ°×©Ö·×‚×—Öµ×§","trans":"lesachek","english":"to play"},
+{"hebrew":"×œÖ¸×©Ö´××™×¨","trans":"lashir","english":"to sing"},
+{"hebrew":"×œÖ´×¨Ö°×§Ö¹×“","trans":"lirkod","english":"to dance"},
+{"hebrew":"×œÖ´×¦Ö°×—Ö¹×§","trans":"litzhok","english":"to laugh"},
+{"hebrew":"×œÖ´×‘Ö°×›Ö¼×•Ö¹×ª","trans":"livkot","english":"to cry"},
+{"hebrew":"×œÖ¶×Ö±×”Ö¹×‘","trans":"leehov","english":"to love"},
+{"hebrew":"×œÖ´×©Ö°×‚× Ö¹×","trans":"lisno","english":"to hate"},
+{"hebrew":"×œÖ´×¤Ö°×—Öµ×“","trans":"lifched","english":"to fear"},
+{"hebrew":"×œÖ°×§Ö·×•Ö¹Ö¼×ª","trans":"lekavot","english":"to hope"},
+{"hebrew":"×œÖ°×”Ö·×Ö²×žÖ´×™×Ÿ","trans":"lehaamin","english":"to believe"},
+{"hebrew":"×œÖ·×—Ö²×©Ö¹××‘","trans":"lachshov","english":"to think"},
+{"hebrew":"×œÖ°×”Ö·×¨Ö°×’Ö´Ö¼×™×©×","trans":"lehargish","english":"to feel"},
+{"hebrew":"×œÖ¸×–×•Ö¼×–","trans":"lazuz","english":"to move"},
+{"hebrew":"×œÖ´×¡Ö°×’Ö¹Ö¼×¨","trans":"lisgor","english":"to close"},
+{"hebrew":"×œÖ´×¤Ö°×ªÖ¹Ö¼×—Ö·","trans":"liftoach","english":"to open"},
+{"hebrew":"×œÖ´×©Ö°××‘Ö¹Ö¼×¨","trans":"lishbor","english":"to break"},
+{"hebrew":"×œÖ°×ªÖ·×§ÖµÖ¼×Ÿ","trans":"letaken","english":"to fix"},
+{"hebrew":"×œÖ´×‘Ö°× ×•Ö¹×ª","trans":"livnot","english":"to build"},
+{"hebrew":"×œÖ·×”Ö²×¨Ö¹×¡","trans":"laharos","english":"to destroy"},
+{"hebrew":"×œÖ´×§Ö°× ×•Ö¹×ª","trans":"liknot","english":"to buy"},
+{"hebrew":"×œÖ´×žÖ°×›Ö¹Ö¼×¨","trans":"limkor","english":"to sell"},
+{"hebrew":"×œÖ°×©Ö·××œÖµÖ¼×","trans":"leshalem","english":"to pay"},
+{"hebrew":"×œÖ°×”Ö´×©Ö°××ªÖ·Ö¼×žÖµÖ¼×©×","trans":"lehishtamesh","english":"to use"},
+{"hebrew":"×¦Ö¸×¨Ö´×™×šÖ°","trans":"tzarich","english":"need (m.)"},
+{"hebrew":"×¦Ö°×¨Ö´×™×›Ö¸×”","trans":"tzricha","english":"need (f.)"},
+{"hebrew":"×™Ö¸×›×•Ö¹×œ","trans":"yachol","english":"can (m.)"},
+{"hebrew":"×™Ö°×›×•Ö¹×œÖ¸×”","trans":"yechola","english":"can (f.)"},
+{"hebrew":"×¨×•Ö¹×¦Ö¶×”","trans":"rotze","english":"want (m.)"},
+{"hebrew":"×¨×•Ö¹×¦Ö¸×”","trans":"rotza","english":"want (f.)"},
+{"hebrew":"××•Ö¹×”Öµ×‘","trans":"ohev","english":"love (m.)"},
+{"hebrew":"××•Ö¹×”Ö¶×‘Ö¶×ª","trans":"ohevet","english":"love (f.)"},
+{"hebrew":"×žÖ°×“Ö·×‘ÖµÖ¼×¨","trans":"medaber","english":"speak (m.)"},
+{"hebrew":"×žÖ°×“Ö·×‘Ö¶Ö¼×¨Ö¶×ª","trans":"medaberet","english":"speak (f.)"},
+{"hebrew":"×¢×•Ö¹×©Ö¶×‚×”","trans":"ose","english":"do (m.)"},
+{"hebrew":"×¢×•Ö¹×©Ö¸×‚×”","trans":"osa","english":"do (f.)"},
+{"hebrew":"×”×•Ö¹×œÖµ×šÖ°","trans":"holech","english":"go (m.)"},
+{"hebrew":"×”×•Ö¹×œÖ¶×›Ö¶×ª","trans":"holechet","english":"go (f.)"},
+{"hebrew":"×‘Ö¸Ö¼×","trans":"ba","english":"come (m.)"},
+{"hebrew":"×‘Ö¸Ö¼×Ö¸×”","trans":"baa","english":"come (f.)"},
+{"hebrew":"×¨×•Ö¹×Ö¶×”","trans":"roe","english":"see (m.)"},
+{"hebrew":"×¨×•Ö¹×Ö¸×”","trans":"roa","english":"see (f.)"},
+{"hebrew":"×©××•Ö¹×žÖµ×¢Ö·","trans":"shomea","english":"hear (m.)"},
+{"hebrew":"×©××•Ö¹×žÖ·×¢Ö·×ª","trans":"shomat","english":"hear (f.)"},
+{"hebrew":"×™×•Ö¹×“Öµ×¢Ö·","trans":"yodea","english":"know (m.)"},
+{"hebrew":"×™×•Ö¹×“Ö·×¢Ö·×ª","trans":"yodaat","english":"know (f.)"},
+{"hebrew":"×žÖµ×‘Ö´×™×Ÿ","trans":"mevin","english":"understand (m.)"},
+{"hebrew":"×žÖ°×‘Ö´×™× Ö¸×”","trans":"mevina","english":"understand (f.)"},
+{"hebrew":"×©××•Ö¹×Öµ×œ","trans":"shoel","english":"ask (m.)"},
+{"hebrew":"×©××•Ö¹×Ö¶×œÖ¶×ª","trans":"shoelet","english":"ask (f.)"},
+{"hebrew":"×¢×•Ö¹× Ö¶×”","trans":"one","english":"answer (m.)"},
+{"hebrew":"×¢×•Ö¹× Ö¸×”","trans":"ona","english":"answer (f.)"},
+{"hebrew":"××•Ö¹×›Öµ×œ","trans":"ochel","english":"eat (m.)"},
+{"hebrew":"××•Ö¹×›Ö¶×œÖ¶×ª","trans":"ochelet","english":"eat (f.)"},
+{"hebrew":"×©××•Ö¹×ªÖ¶×”","trans":"shote","english":"drink (m.)"},
+{"hebrew":"×©××•Ö¹×ªÖ¸×”","trans":"shota","english":"drink (f.)"},
+{"hebrew":"×™Ö¸×©Öµ××Ÿ","trans":"yashen","english":"sleep (m.)"},
+{"hebrew":"×™Ö°×©Öµ×× Ö¸×”","trans":"yeshena","english":"sleep (f.)"},
+{"hebrew":"×—×•Ö¹×©Öµ××‘","trans":"choshev","english":"think (m.)"},
+{"hebrew":"×—×•Ö¹×©Ö¶××‘Ö¶×ª","trans":"choshevet","english":"think (f.)"},
+{"hebrew":"×žÖ·×¨Ö°×’Ö´Ö¼×™×©×","trans":"margish","english":"feel (m.)"},
+{"hebrew":"×žÖ·×¨Ö°×’Ö´Ö¼×™×©Ö¸××”","trans":"margisha","english":"feel (f.)"},
+{"hebrew":"×žÖ°×§Ö·×•Ö¶Ö¼×”","trans":"mekave","english":"hope (m.)"},
+{"hebrew":"×žÖ°×§Ö·×•Ö¸Ö¼×”","trans":"mekava","english":"hope (f.)"},
+{"hebrew":"×“Ö¸Ö¼×‘Ö¸×¨","trans":"davar","english":"thing/word"},
+{"hebrew":"×“Ö°Ö¼×‘Ö¸×¨Ö´×™×","trans":"dvarim","english":"things/words"},
+{"hebrew":"×©Öµ××","trans":"shem","english":"name"},
+{"hebrew":"×›Ö´Ö¼×™×•Ö¼×•Ö¼×Ÿ","trans":"kivun","english":"direction"},
+{"hebrew":"×¦Ö¸×¤×•Ö¹×Ÿ","trans":"tzafon","english":"north"},
+{"hebrew":"×“Ö¸Ö¼×¨×•Ö¹×","trans":"darom","english":"south"},
+{"hebrew":"×žÖ´×–Ö°×¨Ö¸×—","trans":"mizrach","english":"east"},
+{"hebrew":"×žÖ·×¢Ö²×¨Ö¸×‘","trans":"maarav","english":"west"},
+{"hebrew":"×™Ö¸×žÖ´×™×Ÿ","trans":"yamin","english":"right"},
+{"hebrew":"×©Ö°×‚×žÖ¹××œ","trans":"smol","english":"left"},
+{"hebrew":"×œÖ°×žÖ·×¢Ö°×œÖ¸×”","trans":"lemaala","english":"up/above"},
+{"hebrew":"×œÖ°×žÖ·×˜Ö¸Ö¼×”","trans":"lemata","english":"down/below"},
+{"hebrew":"×¤Ö¸Ö¼× Ö´×™×","trans":"panim","english":"inside/face"},
+{"hebrew":"×—×•Ö¼×¥","trans":"chutz","english":"outside"},
+{"hebrew":"×§Ö¸×¨×•Ö¹×‘","trans":"karov","english":"close/near"},
+{"hebrew":"×¨Ö¸×—×•Ö¹×§","trans":"rachok","english":"far"},
+{"hebrew":"×‘ÖµÖ¼×™×Ÿ","trans":"bein","english":"between"},
+{"hebrew":"×œÖ´×¤Ö°× Öµ×™","trans":"lifnei","english":"before"},
+{"hebrew":"×Ö·×—Ö²×¨Öµ×™","trans":"acharei","english":"after"},
+{"hebrew":"×ªÖ·Ö¼×—Ö·×ª","trans":"tachat","english":"under"},
+{"hebrew":"×žÖµ×¢Ö·×œ","trans":"meal","english":"above"},
+{"hebrew":"×Öµ×¦Ö¶×œ","trans":"etzel","english":"at/by"},
+{"hebrew":"×ž×•Ö¼×œ","trans":"mul","english":"opposite"},
+{"hebrew":"×¡Ö¸×‘Ö´×™×‘","trans":"saviv","english":"around"},
+{"hebrew":"×“Ö¶Ö¼×¨Ö¶×šÖ°","trans":"derech","english":"through"},
+{"hebrew":"×‘Ö°Ö¼×œÖ´×™","trans":"bli","english":"without"},
+{"hebrew":"×¢Ö·×“","trans":"ad","english":"until"},
+{"hebrew":"×‘Ö°Ö¼×ª×•Ö¹×šÖ°","trans":"betoch","english":"inside"},
+{"hebrew":"×žÖ´×—×•Ö¼×¥","trans":"michutz","english":"outside"},
+{"hebrew":"×™Ö·×—Ö·×“","trans":"yachad","english":"together"},
+{"hebrew":"×œÖ°×‘Ö·×“","trans":"levad","english":"alone"},
+{"hebrew":"×’Ö°Ö¼×“×•Ö¹×œÖ¸×”","trans":"gdola","english":"big (f.)"},
+{"hebrew":"×§Ö°×˜Ö·× Ö¸Ö¼×”","trans":"ktana","english":"small (f.)"},
+{"hebrew":"×˜×•Ö¹×‘Ö¸×”","trans":"tova","english":"good (f.)"},
+{"hebrew":"×¨Ö¸×¢Ö¸×”","trans":"raa","english":"bad (f.)"},
+{"hebrew":"×—Ö²×“Ö¸×©Ö¸××”","trans":"chadasha","english":"new (f.)"},
+{"hebrew":"×™Ö°×©Ö¸×× Ö¸×”","trans":"yeshana","english":"old (f.)"},
+{"hebrew":"×™Ö¸×¤Ö¶×”","trans":"yafe","english":"beautiful"},
+{"hebrew":"×žÖ°×›×•Ö¹×¢Ö¸×¨","trans":"mechoar","english":"ugly"},
+{"hebrew":"×—Ö¸×–Ö¸×§","trans":"chazak","english":"strong"},
+{"hebrew":"×—Ö¸×œÖ¸×©×","trans":"chalash","english":"weak"},
+{"hebrew":"×žÖ¸×”Ö´×™×¨","trans":"mahir","english":"fast"},
+{"hebrew":"×Ö´×˜Ö´Ö¼×™","trans":"iti","english":"slow"},
+{"hebrew":"×—Ö·×","trans":"cham","english":"hot"},
+{"hebrew":"×§Ö·×¨","trans":"kar","english":"cold"},
+{"hebrew":"×™Ö¸×‘Öµ×©×","trans":"yavesh","english":"dry"},
+{"hebrew":"×¨Ö¸×˜Ö¹×‘","trans":"ratov","english":"wet"},
+{"hebrew":"×§Ö¸×©Ö¶××”","trans":"kashe","english":"difficult/hard"},
+{"hebrew":"×§Ö·×œ","trans":"kal","english":"easy/light"},
+{"hebrew":"×›Ö¸Ö¼×‘Öµ×“","trans":"kaved","english":"heavy"},
+{"hebrew":"×—Ö¸×©××•Ö¼×‘","trans":"chashuv","english":"important"},
+{"hebrew":"×¨Ö¸×’Ö´×™×œ","trans":"ragil","english":"regular/normal"},
+{"hebrew":"×žÖ°×™Ö»×—Ö¸×“","trans":"meyuchad","english":"special"},
+{"hebrew":"×©Ö¸××œÖµ×","trans":"shalem","english":"complete/whole"},
+{"hebrew":"×©Ö¸××‘×•Ö¼×¨","trans":"shavur","english":"broken"},
+{"hebrew":"×¨Öµ×™×§","trans":"reik","english":"empty"},
+{"hebrew":"×žÖ¸×œÖµ×","trans":"male","english":"full"},
+{"hebrew":"× Ö¸×›×•Ö¹×Ÿ","trans":"nachon","english":"correct/right"},
+{"hebrew":"×˜Ö¸×¢×•Ö¼×ª","trans":"taoot","english":"mistake/wrong"},
+{"hebrew":"×‘Ö¸Ö¼×˜×•Ö¼×—Ö·","trans":"batuach","english":"safe/sure"},
+{"hebrew":"×žÖ°×¡Ö»×›Ö¸Ö¼×Ÿ","trans":"mesukan","english":"dangerous"}
+        ];
+
+        let knownWords = new Set();
+        let filteredWords = words;
+
+        function renderWords() {
+            const grid = document.getElementById('wordGrid');
+            grid.innerHTML = '';
+            
+            filteredWords.forEach((word, index) => {
+                const card = document.createElement('div');
+                card.className = 'word-card' + (knownWords.has(word.hebrew) ? ' known' : '');
+                card.innerHTML = `
+                    <div class="word-hebrew">${word.hebrew}</div>
+                    <div class="word-transliteration">${word.trans}</div>
+                    <div class="word-english">${word.english}</div>
+                `;
+                card.onclick = function() {
+                    if (knownWords.has(word.hebrew)) {
+                        knownWords.delete(word.hebrew);
+                    } else {
+                        knownWords.add(word.hebrew);
+                    }
+                    updateStats();
+                    renderWords();
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('knownCount').textContent = knownWords.size;
+            document.getElementById('remainingCount').textContent = words.length - knownWords.size;
+            const percent = ((knownWords.size / words.length) * 100).toFixed(1);
+            document.getElementById('percentKnown').textContent = percent + '%';
+        }
+
+        function saveProgress() {
+            localStorage.setItem('hebrewKnownWords', JSON.stringify(Array.from(knownWords)));
+            alert('âœ… Progress saved!');
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('hebrewKnownWords');
+            if (saved) {
+                knownWords = new Set(JSON.parse(saved));
+                updateStats();
+                renderWords();
+                alert('ðŸ“‚ Progress loaded!');
+            } else {
+                alert('âš ï¸ No saved progress found');
+            }
+        }
+
+        function exportKnownWords() {
+            const knownList = words.filter(w => knownWords.has(w.hebrew));
+            let output = '# KNOWN HEBREW WORDS - Export from Frequency Checker\n';
+            output += '# Total: ' + knownList.length + ' words\n\n';
+            knownList.forEach(w => {
+                output += `${w.hebrew}|${w.trans}|${w.english}\n`;
+            });
+            
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hebrew_known_words_' + new Date().toISOString().split('T')[0] + '.txt';
+            a.click();
+        }
+
+        function clearAll() {
+            if (confirm('Clear all checkmarks?')) {
+                knownWords.clear();
+                updateStats();
+                renderWords();
+            }
+        }
+
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            filteredWords = words.filter(w => 
+                w.hebrew.includes(query) ||
+                w.english.toLowerCase().includes(query) ||
+                w.trans.toLowerCase().includes(query)
+            );
+            renderWords();
+        });
+
+        // Initialize
+        renderWords();
+        updateStats();
+
+        // Auto-load on startup
+        const saved = localStorage.getItem('hebrewKnownWords');
+        if (saved) {
+            knownWords = new Set(JSON.parse(saved));
+            updateStats();
+            renderWords();
+        }
+    
+        // Save progress to localStorage
+        function saveProgress() {
+            const knownArray = Array.from(knownWords);
+            localStorage.setItem('hebrewFrequencyKnown', JSON.stringify(knownArray));
+            alert('âœ… Progress saved!');
+        }
+
+        // Load progress from localStorage  
+        function loadProgress() {
+            const saved = localStorage.getItem('hebrewFrequencyKnown');
+            if (saved) {
+                knownWords = new Set(JSON.parse(saved));
+                renderWords();
+                alert('âœ… Progress loaded!');
+            } else {
+                alert('No saved progress found.');
+            }
+        }
+
+        // Export known words
+        function exportKnown() {
+            const text = Array.from(knownWords).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'HEB_Known_Words.txt';
+            a.click();
+        }
+
+        // Auto-load on page start
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('hebrewFrequencyKnown');
+            if (saved) {
+                knownWords = new Set(JSON.parse(saved));
+                renderWords();
+            }
+        });
+
+</script>
+</body>
+</html>

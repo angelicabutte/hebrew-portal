@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 2 - Subdeck 1 Mnemonics (01. Rishon)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .chunk-section {
+            margin-bottom: 40px;
+        }
+        
+        .chunk-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        @media (max-width: 700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mnemonic-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 6px solid;
+        }
+        
+        .mnemonic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        /* Color variations */
+        .mnemonic-card:nth-child(6n+1) { border-left-color: #ef4444; }
+        .mnemonic-card:nth-child(6n+2) { border-left-color: #f59e0b; }
+        .mnemonic-card:nth-child(6n+3) { border-left-color: #10b981; }
+        .mnemonic-card:nth-child(6n+4) { border-left-color: #3b82f6; }
+        .mnemonic-card:nth-child(6n+5) { border-left-color: #8b5cf6; }
+        .mnemonic-card:nth-child(6n+6) { border-left-color: #ec4899; }
+        
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .word-hebrew {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1f2937;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+        
+        .word-info {
+            text-align: right;
+        }
+        
+        .word-translit {
+            font-size: 14px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .word-english {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .mnemonic-hook {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 10px;
+        }
+        
+        .connection {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .pronunciation {
+            font-size: 14px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Part 2 - Subdeck 1 Mnemonics</h1>
+            <p>01. Rishon [Start Here] - 25 Words</p>
+        </div>
+        
+        <!-- ALL 25 WORDS -->
+        <div class="chunk-section">
+            <div class="chunk-title">🚀 First Subdeck - Essential Words</div>
+            <div class="cards-grid">
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">גַּב</div>
+                        <div class="word-info">
+                            <div class="word-translit">gav</div>
+                            <div class="word-english">back</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">GAVe me his back!</div>
+                    <div class="connection">GAV sounds like "gave" - someone gave you their back (turned away). Body part!</div>
+                    <div class="pronunciation">🔊 Sounds like: GAHV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">הַרְפַּתְקָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">harpatka</div>
+                            <div class="word-english">adventure</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">HARP attack = adventure!</div>
+                    <div class="connection">Playing a HARP while being ATTACKED = quite the adventure! Like camp rope courses!</div>
+                    <div class="pronunciation">🔊 Sounds like: har-PAT-kah</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לִהְיוֹת</div>
+                        <div class="word-info">
+                            <div class="word-translit">lihyot</div>
+                            <div class="word-english">to be</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">To BE or NOT to BE!</div>
+                    <div class="connection">Super important verb! Like "lehiyot yehudi" (to be Jewish) - you've heard it!</div>
+                    <div class="pronunciation">🔊 Sounds like: lee-hee-OT</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">עֵר</div>
+                        <div class="word-info">
+                            <div class="word-translit">er</div>
+                            <div class="word-english">awake</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">ERR... I'm awake!</div>
+                    <div class="connection">When someone wakes you: "Er? Er? You awake?" So short - just ER!</div>
+                    <div class="pronunciation">🔊 Sounds like: AIR</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְקַבֵּל</div>
+                        <div class="word-info">
+                            <div class="word-translit">lekabel</div>
+                            <div class="word-english">to receive/get/accept</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Le-CABLE = receive signal!</div>
+                    <div class="connection">CABLE receives the signal! "Lekabel et ha'matana" (receive the gift). Important verb!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-kah-BELL</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מִיטָּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">mita</div>
+                            <div class="word-english">bed</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">MEET-a bed!</div>
+                    <div class="connection">You already know this from Week 1! "Meet a" friend in bed (for storytime). Bunks at camp!</div>
+                    <div class="pronunciation">🔊 Sounds like: mee-TAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">אֵצֶל</div>
+                        <div class="word-info">
+                            <div class="word-translit">etzel</div>
+                            <div class="word-english">at (someone's place)</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">AT-ZEL's house!</div>
+                    <div class="connection">"Etzel Grandma" = at Grandma's. Also the underground group ETZEL - at their HQ!</div>
+                    <div class="pronunciation">🔊 Sounds like: ET-zel</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">אֲרוּחָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">arucha</div>
+                            <div class="word-english">meal</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">A-ROO-chah! Dinner call!</div>
+                    <div class="connection">Like camp bell: "Arucha! Arucha!" Three meals = "shalosh aruchot". You've heard this!</div>
+                    <div class="pronunciation">🔊 Sounds like: ah-roo-KHAH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מָלוֹן</div>
+                        <div class="word-info">
+                            <div class="word-translit">malon</div>
+                            <div class="word-english">hotel</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">MELON-sized hotel!</div>
+                    <div class="connection">Big MELON = big hotel! Think: fancy Israeli hotels with fresh melons at breakfast!</div>
+                    <div class="pronunciation">🔊 Sounds like: mah-LONE</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">כַּיּוֹם</div>
+                        <div class="word-info">
+                            <div class="word-translit">kayom</div>
+                            <div class="word-english">currently/nowadays</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">KAY-yom = K, TODAY!</div>
+                    <div class="connection">"K (okay), today/yom (day)" = currently! Like "ka-yom" sounds like "okay + yom"!</div>
+                    <div class="pronunciation">🔊 Sounds like: kah-YOME</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לִשְׁמֹעַ</div>
+                        <div class="word-info">
+                            <div class="word-translit">lishmoa</div>
+                            <div class="word-english">to hear/listen</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SHEMA - you already know!</div>
+                    <div class="connection">"Shema Yisrael!" = HEAR/LISTEN Israel! Root: sh-m-a. Super common verb!</div>
+                    <div class="pronunciation">🔊 Sounds like: leesh-MO-ah</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">חִבּוּק</div>
+                        <div class="word-info">
+                            <div class="word-translit">chibuk</div>
+                            <div class="word-english">hug/embrace</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Chi-BOOK needs a hug!</div>
+                    <div class="connection">CHEEK + BOOK = hug! You hug with your cheek, while reading! "Chibuk gadol!"</div>
+                    <div class="pronunciation">🔊 Sounds like: khee-BOOK</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">שׁוּם</div>
+                        <div class="word-info">
+                            <div class="word-translit">shum</div>
+                            <div class="word-english">garlic 🧄</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SHOO'M away garlic breath!</div>
+                    <div class="connection">SHOO + UM = garlic smell! "Shum" = garlic in Israeli cooking!</div>
+                    <div class="pronunciation">🔊 Sounds like: SHOOM</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לֵב</div>
+                        <div class="word-info">
+                            <div class="word-translit">lev</div>
+                            <div class="word-english">heart</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">LOVE = LEV (heart)!</div>
+                    <div class="connection">TEL AVIV = Hill of Spring. LEV is everywhere! "Lev tov" = good heart!</div>
+                    <div class="pronunciation">🔊 Sounds like: LEV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְבַד</div>
+                        <div class="word-info">
+                            <div class="word-translit">levad</div>
+                            <div class="word-english">alone</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">LEV-BAD = heart feels bad alone!</div>
+                    <div class="connection">Heart (lev) + bad = alone! "Ani levad" = I'm alone. Sad song vibes!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-VAHD</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">מְסוּגָּל</div>
+                        <div class="word-info">
+                            <div class="word-translit">mesugal</div>
+                            <div class="word-english">able</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Me-SUGAR-able!</div>
+                    <div class="connection">ME + SUGAR + ABLE = I'm able to eat sugar! Like "yachol" but fancier!</div>
+                    <div class="pronunciation">🔊 Sounds like: meh-soo-GAHL</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְהוֹסִיף</div>
+                        <div class="word-info">
+                            <div class="word-translit">lehosif</div>
+                            <div class="word-english">to add</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Le-HO-sif = add MORE!</div>
+                    <div class="connection">HO-sif sounds like "hose if" - add water with hose! "Lehosif od echad" = add one more!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-ho-SEEF</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְרֹחַב</div>
+                        <div class="word-info">
+                            <div class="word-translit">lerochav</div>
+                            <div class="word-english">across</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Le-ROCHAV = across the WAVE!</div>
+                    <div class="connection">ROCHAV sounds like "rock-have" - across the rocks! Like street: "rechov" (width)!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-RO-khahv</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">כְּתֹבֶת</div>
+                        <div class="word-info">
+                            <div class="word-translit">ktovet</div>
+                            <div class="word-english">address</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">K-TO-vet = address to VET!</div>
+                    <div class="connection">Root: k-t-v (write). You WRITE an address! "Ktovet email" = email address!</div>
+                    <div class="pronunciation">🔊 Sounds like: k-TOH-vet</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְהִתְוַדּוֹת</div>
+                        <div class="word-info">
+                            <div class="word-translit">lehitvadot</div>
+                            <div class="word-english">to confess</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">HIT-vah-DOT = confess I HIT!</div>
+                    <div class="connection">HIT + vada + DOT = confess! Reflexive verb (hit- prefix). Serious word!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-heet-vah-DOTE</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">שׁוּב</div>
+                        <div class="word-info">
+                            <div class="word-translit">shuv</div>
+                            <div class="word-english">again</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SHOVE again!</div>
+                    <div class="connection">SHOVE = SHUV! Do it AGAIN! "Od pa'am" also means again but shuv is classic!</div>
+                    <div class="pronunciation">🔊 Sounds like: SHOOV</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">כָּעוּס</div>
+                        <div class="word-info">
+                            <div class="word-translit">kaus</div>
+                            <div class="word-english">angry</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">KA-US = angry at US!</div>
+                    <div class="connection">KA + US = angry! Like COWS (kaus) = angry bull! "Ani kaus!" I'm mad!</div>
+                    <div class="pronunciation">🔊 Sounds like: kah-OOS</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">לִשְׁאֹל</div>
+                        <div class="word-info">
+                            <div class="word-translit">lishol</div>
+                            <div class="word-english">to ask</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Li-SHAWL = ask for shawl!</div>
+                    <div class="connection">Root: sh-a-l (ask/question). "She'ela" = question! Super common verb!</div>
+                    <div class="pronunciation">🔊 Sounds like: leesh-OLE</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">יְפֵהפֶה</div>
+                        <div class="word-info">
+                            <div class="word-translit">yefefe</div>
+                            <div class="word-english">very beautiful</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">YAY-fay-FAY = SO beautiful!</div>
+                    <div class="connection">Double "yafe" (beautiful) = VERY beautiful! Like "super yafe!" Israeli compliment!</div>
+                    <div class="pronunciation">🔊 Sounds like: yeh-feh-FEH</div>
+                </div>
+                
+                <div class="mnemonic-card">
+                    <div class="word-header">
+                        <div class="word-hebrew">הַרְגָּשָׁה</div>
+                        <div class="word-info">
+                            <div class="word-translit">hargasha</div>
+                            <div class="word-english">feeling/sensation</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">HAR-gasha = mountain GASH feeling!</div>
+                    <div class="connection">Root: r-g-sh (feel). "Ani margish" = I feel. This is the noun - a feeling!</div>
+                    <div class="pronunciation">🔊 Sounds like: har-gah-SHAH</div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>

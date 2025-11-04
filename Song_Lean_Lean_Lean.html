@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lean Lean Lean - Shlomo Artzi</title>
+    <link rel="icon" type="image/png" href="synonym_image.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #0891b2; margin-bottom: 10px; text-align: center; font-size: 2.5em; }
+        h2 { color: #6b7280; text-align: center; margin-bottom: 30px; font-size: 1.3em; }
+        .btn {
+            background: #0891b2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #0e7490; transform: translateY(-2px); }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .view-mode, .edit-mode { display: none; }
+        .view-mode.active, .edit-mode.active { display: block; }
+        .lyrics-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .lyrics-column {
+            background: #ecfeff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #a5f3fc;
+        }
+        .lyrics-column h3 { color: #0891b2; margin-bottom: 15px; font-size: 1.5em; }
+        .lyrics-text {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #374151;
+        }
+        .info-section {
+            background: #fef3c7;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .info-section h3 { color: #d97706; margin-bottom: 15px; }
+        .info-section p { line-height: 1.8; color: #374151; white-space: pre-wrap; }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #a5f3fc;
+            border-radius: 10px;
+            min-height: 400px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        .form-group { margin: 20px 0; }
+        .form-group label {
+            font-weight: bold;
+            color: #0891b2;
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .lyrics-section { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+            h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Lean Lean Lean</h1>
+        <h2>Shlomo Artzi</h2>
+        
+        <!-- View Mode -->
+        <div class="view-mode active" id="viewMode">
+            <button class="btn" onclick="switchToEdit()">✏️ EDIT LYRICS</button>
+            
+            <div class="lyrics-section">
+                <div class="lyrics-column">
+                    <h3>English Lyrics</h3>
+                    <div class="lyrics-text" id="englishDisplay"></div>
+                </div>
+                <div class="lyrics-column">
+                    <h3>Transliteration</h3>
+                    <div class="lyrics-text" id="transDisplay"></div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>📚 Key Vocabulary</h3>
+                <p>לאן (le'an) = where to, whither
+הולך (holech) = going, walking (masculine)
+הולכת (holechet) = going, walking (feminine)
+לכת (lechet) = to go, to walk
+דרך (derech) = way, road, path
+חיים (chayim) = life
+זמן (zman) = time
+לב (lev) = heart
+נפש (nefesh) = soul
+מקום (makom) = place
+כאן (kan) = here
+שם (sham) = there</p>
+            </div>
+            
+            <div class="info-section" style="background: #dbeafe;">
+                <h3 style="color: #1e40af;">🎭 Cultural Notes</h3>
+                <p>This is another classic from Shlomo Artzi, Israel's poet-rocker who has been the soundtrack to Israeli life for decades. "Lean Lean Lean" (Where, Where, Where) captures a universal human experience - the feeling of being uncertain about one's direction in life, searching for meaning and purpose.
+
+The repetition of "le'an" (where to) creates a sense of urgency and existential questioning that resonates deeply in Israeli culture, which has always grappled with questions of identity, belonging, and direction - both individually and collectively. The song's introspective nature is characteristic of Artzi's work, which often explores the inner landscape of emotions and thoughts.
+
+Artzi's songs are known for their poetic quality and their ability to capture complex emotions in simple, everyday Hebrew. He writes about love, loss, hope, and the Israeli experience with an authenticity that makes him beloved across generations. His concerts are legendary events where tens of thousands of Israelis sing along to every word.
+
+For Hebrew learners, this song provides excellent practice with directional and movement vocabulary (going, walking, where). The repetitive structure makes it easy to memorize, and the questioning format helps learners practice interrogative forms in Hebrew. Artzi's enunciation is clear, and his conversational style of singing makes his songs particularly accessible for language learners while still being deeply meaningful.</p>
+            </div>
+        </div>
+        
+        <!-- Edit Mode -->
+        <div class="edit-mode" id="editMode">
+            <button class="btn" onclick="saveAndView()">← SAVE & VIEW</button>
+            
+            <div class="form-group">
+                <label>English Lyrics - Just Paste Here:</label>
+                <textarea id="englishEdit"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Transliteration - Just Paste Here:</label>
+                <textarea id="transEdit"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SONG_KEY = 'song_lean_lean_lean';
+        
+        function loadData() {
+            const data = localStorage.getItem(SONG_KEY);
+            if (data) {
+                const parsed = JSON.parse(data);
+                document.getElementById('englishDisplay').textContent = parsed.english || 'Click EDIT LYRICS to add English lyrics';
+                document.getElementById('transDisplay').textContent = parsed.trans || 'Click EDIT LYRICS to add transliteration';
+                document.getElementById('englishEdit').value = parsed.english || '';
+                document.getElementById('transEdit').value = parsed.trans || '';
+            } else {
+                document.getElementById('englishDisplay').textContent = 'Click EDIT LYRICS to add English lyrics';
+                document.getElementById('transDisplay').textContent = 'Click EDIT LYRICS to add transliteration';
+            }
+        }
+        
+        function switchToEdit() {
+            document.getElementById('viewMode').classList.remove('active');
+            document.getElementById('editMode').classList.add('active');
+        }
+        
+        function saveAndView() {
+            const data = {
+                english: document.getElementById('englishEdit').value,
+                trans: document.getElementById('transEdit').value
+            };
+            localStorage.setItem(SONG_KEY, JSON.stringify(data));
+            loadData();
+            document.getElementById('editMode').classList.remove('active');
+            document.getElementById('viewMode').classList.add('active');
+        }
+        
+        loadData();
+    </script>
+</body>
+</html>

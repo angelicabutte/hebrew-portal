@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shrek 1 Word Frequency Checker</title>
-    <link rel="apple-touch-icon" href="shrek2_image.png">
-    <link rel="icon" type="image/jpeg" href="shrek2_image.png">
+    <link rel="apple-touch-icon" href="shrek4_image.jpg">
+    <link rel="icon" type="image/jpeg" href="shrek4_image.jpg">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <style>
@@ -83,6 +83,7 @@
             cursor: pointer;
             transition: all 0.3s;
             background: white;
+            position: relative;
         }
         .word-card:hover {
             transform: translateY(-3px);
@@ -90,9 +91,18 @@
             border-color: #764ba2;
         }
         .word-card.known {
-            background: #f8f9fa;
-            border-color: #6c757d;
-            opacity: 0.6;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+            border-width: 3px;
+        }
+        .word-card.known::before {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #28a745;
+            font-weight: bold;
         }
         .word-card.already-done {
             background: #e9ecef;
@@ -123,7 +133,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎬 Shrek 1 Word Checker</h1>
+        <h1>ðŸŽ¬ Shrek 1 Word Checker</h1>
         <div class="subtitle">Top 100 Words from Shrek Hebrew Dub</div>
         
         <div class="stats">
@@ -134,10 +144,10 @@
             <input type="text" class="search-box" id="search" placeholder="Search Hebrew or English...">
             <button onclick="selectNext20()">Select Next 20</button>
             <button onclick="clearAll()">Clear All</button>
-            <button onclick="saveProgress()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">💾 Save</button>
-            <button onclick="loadProgress()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">📂 Load</button>
-            <button onclick="exportAvailable()">📤 Export Available</button>
-            <button onclick="exportKnown()">📥 Export Known</button>
+            <button onclick="saveProgress()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">ðŸ’¾ Save</button>
+            <button onclick="loadProgress()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">ðŸ“‚ Load</button>
+            <button onclick="exportAvailable()">ðŸ“¤ Export Available</button>
+            <button onclick="exportKnown()">ðŸ“¥ Export Known</button>
         </div>
         
         <div class="word-grid" id="word-grid"></div>
@@ -147,701 +157,701 @@
         const words = [
         {
                 "rank": 1,
-                "hebrew": "אני",
+                "hebrew": "×× ×™",
                 "english": "I / me",
                 "trans": "ani",
                 "done": false
         },
         {
                 "rank": 2,
-                "hebrew": "לא",
+                "hebrew": "×œ×",
                 "english": "no / not",
                 "trans": "lo",
                 "done": false
         },
         {
                 "rank": 3,
-                "hebrew": "את",
+                "hebrew": "××ª",
                 "english": "you (fem. sing.)",
                 "trans": "at",
                 "done": false
         },
         {
                 "rank": 4,
-                "hebrew": "זה",
+                "hebrew": "×–×”",
                 "english": "this / it",
                 "trans": "ze",
                 "done": false
         },
         {
                 "rank": 5,
-                "hebrew": "אתה",
+                "hebrew": "××ª×”",
                 "english": "you (masc. sing.)",
                 "trans": "ata",
                 "done": false
         },
         {
                 "rank": 6,
-                "hebrew": "מה",
-                "english": "—",
+                "hebrew": "×ž×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 7,
-                "hebrew": "לי",
-                "english": "—",
+                "hebrew": "×œ×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 8,
-                "hebrew": "שרק",
-                "english": "—",
+                "hebrew": "×©×¨×§",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 9,
-                "hebrew": "לך",
-                "english": "—",
+                "hebrew": "×œ×š",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 10,
-                "hebrew": "יש",
-                "english": "—",
+                "hebrew": "×™×©",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 11,
-                "hebrew": "אבל",
-                "english": "—",
+                "hebrew": "××‘×œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 12,
-                "hebrew": "כן",
-                "english": "—",
+                "hebrew": "×›×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 13,
-                "hebrew": "הוא",
-                "english": "—",
+                "hebrew": "×”×•×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 14,
-                "hebrew": "טוב",
-                "english": "—",
+                "hebrew": "×˜×•×‘",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 15,
-                "hebrew": "על",
-                "english": "—",
+                "hebrew": "×¢×œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 16,
-                "hebrew": "אותי",
-                "english": "—",
+                "hebrew": "××•×ª×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 17,
-                "hebrew": "היא",
-                "english": "—",
+                "hebrew": "×”×™×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 18,
-                "hebrew": "שלי",
-                "english": "—",
+                "hebrew": "×©×œ×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 19,
-                "hebrew": "יודע",
-                "english": "—",
+                "hebrew": "×™×•×“×¢",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 20,
-                "hebrew": "חמור",
-                "english": "—",
+                "hebrew": "×—×ž×•×¨",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 21,
-                "hebrew": "נסיכה",
-                "english": "—",
+                "hebrew": "× ×¡×™×›×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 22,
-                "hebrew": "בסדר",
-                "english": "—",
+                "hebrew": "×‘×¡×“×¨",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 23,
-                "hebrew": "אותך",
-                "english": "—",
+                "hebrew": "××•×ª×š",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 24,
-                "hebrew": "של",
-                "english": "—",
+                "hebrew": "×©×œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 25,
-                "hebrew": "אל",
-                "english": "—",
+                "hebrew": "××œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 26,
-                "hebrew": "באמת",
-                "english": "—",
+                "hebrew": "×‘××ž×ª",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 27,
-                "hebrew": "רוצה",
-                "english": "—",
+                "hebrew": "×¨×•×¦×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 28,
-                "hebrew": "עם",
-                "english": "—",
+                "hebrew": "×¢×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 29,
-                "hebrew": "רק",
-                "english": "—",
+                "hebrew": "×¨×§",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 30,
-                "hebrew": "כל",
-                "english": "—",
+                "hebrew": "×›×œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 31,
-                "hebrew": "שלך",
-                "english": "—",
+                "hebrew": "×©×œ×š",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 32,
-                "hebrew": "אותו",
-                "english": "—",
+                "hebrew": "××•×ª×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 33,
-                "hebrew": "עוג",
-                "english": "—",
+                "hebrew": "×¢×•×’",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 34,
-                "hebrew": "הנסיכה",
-                "english": "—",
+                "hebrew": "×”× ×¡×™×›×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 35,
-                "hebrew": "פה",
-                "english": "—",
+                "hebrew": "×¤×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 36,
-                "hebrew": "פיונה",
-                "english": "—",
+                "hebrew": "×¤×™×•× ×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 37,
-                "hebrew": "אם",
-                "english": "—",
+                "hebrew": "××",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 38,
-                "hebrew": "למה",
-                "english": "—",
+                "hebrew": "×œ×ž×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 39,
-                "hebrew": "הם",
-                "english": "—",
+                "hebrew": "×”×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 40,
-                "hebrew": "להיות",
-                "english": "—",
+                "hebrew": "×œ×”×™×•×ª",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 41,
-                "hebrew": "עוד",
-                "english": "—",
+                "hebrew": "×¢×•×“",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 42,
-                "hebrew": "זו",
-                "english": "—",
+                "hebrew": "×–×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 43,
-                "hebrew": "רגע",
-                "english": "—",
+                "hebrew": "×¨×’×¢",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 44,
-                "hebrew": "מי",
-                "english": "—",
+                "hebrew": "×ž×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 45,
-                "hebrew": "פרקוואד",
-                "english": "—",
+                "hebrew": "×¤×¨×§×•×•××“",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 46,
-                "hebrew": "הזה",
-                "english": "—",
+                "hebrew": "×”×–×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 47,
-                "hebrew": "כך",
-                "english": "—",
+                "hebrew": "×›×š",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 48,
-                "hebrew": "אז",
-                "english": "—",
+                "hebrew": "××–",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 49,
-                "hebrew": "אין",
-                "english": "—",
+                "hebrew": "××™×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 50,
-                "hebrew": "משהו",
-                "english": "—",
+                "hebrew": "×ž×©×”×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 51,
-                "hebrew": "כי",
-                "english": "—",
+                "hebrew": "×›×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 52,
-                "hebrew": "עליי",
-                "english": "—",
+                "hebrew": "×¢×œ×™×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 53,
-                "hebrew": "אוקיי",
-                "english": "—",
+                "hebrew": "××•×§×™×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 54,
-                "hebrew": "אותה",
-                "english": "—",
+                "hebrew": "××•×ª×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 55,
-                "hebrew": "אולי",
-                "english": "—",
+                "hebrew": "××•×œ×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 56,
-                "hebrew": "היה",
-                "english": "—",
+                "hebrew": "×”×™×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 57,
-                "hebrew": "אתם",
-                "english": "—",
+                "hebrew": "××ª×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 58,
-                "hebrew": "לו",
-                "english": "—",
+                "hebrew": "×œ×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 59,
-                "hebrew": "שאני",
-                "english": "—",
+                "hebrew": "×©×× ×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 60,
-                "hebrew": "אוהב",
-                "english": "—",
+                "hebrew": "××•×”×‘",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 61,
-                "hebrew": "איפה",
-                "english": "—",
+                "hebrew": "××™×¤×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 62,
-                "hebrew": "יכול",
-                "english": "—",
+                "hebrew": "×™×›×•×œ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 63,
-                "hebrew": "שם",
-                "english": "—",
+                "hebrew": "×©×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 64,
-                "hebrew": "ככה",
-                "english": "—",
+                "hebrew": "×›×›×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 65,
-                "hebrew": "אחד",
-                "english": "—",
+                "hebrew": "××—×“",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 66,
-                "hebrew": "כמו",
-                "english": "—",
+                "hebrew": "×›×ž×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 67,
-                "hebrew": "איזה",
-                "english": "—",
+                "hebrew": "××™×–×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 68,
-                "hebrew": "עד",
-                "english": "—",
+                "hebrew": "×¢×“",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 69,
-                "hebrew": "הביצה",
-                "english": "—",
+                "hebrew": "×”×‘×™×¦×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 70,
-                "hebrew": "לספר",
-                "english": "—",
+                "hebrew": "×œ×¡×¤×¨",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 71,
-                "hebrew": "לדבר",
-                "english": "—",
+                "hebrew": "×œ×“×‘×¨",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 72,
-                "hebrew": "תראה",
-                "english": "—",
+                "hebrew": "×ª×¨××”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 73,
-                "hebrew": "דולוק",
-                "english": "—",
+                "hebrew": "×“×•×œ×•×§",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 74,
-                "hebrew": "בבקשה",
-                "english": "—",
+                "hebrew": "×‘×‘×§×©×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 75,
-                "hebrew": "איש",
-                "english": "—",
+                "hebrew": "××™×©",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 76,
-                "hebrew": "עושה",
-                "english": "—",
+                "hebrew": "×¢×•×©×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 77,
-                "hebrew": "שכבות",
-                "english": "—",
+                "hebrew": "×©×›×‘×•×ª",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 78,
-                "hebrew": "לפני",
-                "english": "—",
+                "hebrew": "×œ×¤× ×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 79,
-                "hebrew": "בא",
-                "english": "—",
+                "hebrew": "×‘×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 80,
-                "hebrew": "חברים",
-                "english": "—",
+                "hebrew": "×—×‘×¨×™×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 81,
-                "hebrew": "שאתה",
-                "english": "—",
+                "hebrew": "×©××ª×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 82,
-                "hebrew": "עכשיו",
-                "english": "—",
+                "hebrew": "×¢×›×©×™×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 83,
-                "hebrew": "גם",
-                "english": "—",
+                "hebrew": "×’×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 84,
-                "hebrew": "זמן",
-                "english": "—",
+                "hebrew": "×–×ž×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 85,
-                "hebrew": "הנה",
-                "english": "—",
+                "hebrew": "×”× ×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 86,
-                "hebrew": "יותר",
-                "english": "—",
+                "hebrew": "×™×•×ª×¨",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 87,
-                "hebrew": "הרבה",
-                "english": "—",
+                "hebrew": "×”×¨×‘×”",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 88,
-                "hebrew": "נכון",
-                "english": "—",
+                "hebrew": "× ×›×•×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 89,
-                "hebrew": "חושב",
-                "english": "—",
+                "hebrew": "×—×•×©×‘",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 90,
-                "hebrew": "לורד",
-                "english": "—",
+                "hebrew": "×œ×•×¨×“",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 91,
-                "hebrew": "כולם",
-                "english": "—",
+                "hebrew": "×›×•×œ×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 92,
-                "hebrew": "כדי",
-                "english": "—",
+                "hebrew": "×›×“×™",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 93,
-                "hebrew": "ממש",
-                "english": "—",
+                "hebrew": "×ž×ž×©",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 94,
-                "hebrew": "אנחנו",
-                "english": "—",
+                "hebrew": "×× ×—× ×•",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 95,
-                "hebrew": "פעם",
-                "english": "—",
+                "hebrew": "×¤×¢×",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 96,
-                "hebrew": "ואז",
-                "english": "—",
+                "hebrew": "×•××–",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 97,
-                "hebrew": "דרקון",
-                "english": "—",
+                "hebrew": "×“×¨×§×•×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 98,
-                "hebrew": "קטן",
-                "english": "—",
+                "hebrew": "×§×˜×Ÿ",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 99,
-                "hebrew": "מספיק",
-                "english": "—",
+                "hebrew": "×ž×¡×¤×™×§",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         },
         {
                 "rank": 100,
-                "hebrew": "המאפינס",
-                "english": "—",
+                "hebrew": "×”×ž××¤×™× ×¡",
+                "english": "â€”",
                 "trans": "",
                 "done": false
         }
@@ -877,8 +887,8 @@
                 
                 card.innerHTML = `
                     <div class="word-hebrew">${word.hebrew}</div>
+                    <div class="word-trans">${word.trans || ''}</div>
                     <div class="word-english">${word.english}</div>
-                    ${word.trans ? `<div class="word-trans">${word.trans}</div>` : ''}
                 `;
                 
                 if (!isDone) {
@@ -916,7 +926,7 @@
         function saveProgress() {
             const knownArray = Array.from(knownWords);
             localStorage.setItem('shrek1FrequencyKnown', JSON.stringify(knownArray));
-            alert('✅ Progress saved!');
+            alert('âœ… Progress saved!');
         }
 
         function loadProgress() {
@@ -924,7 +934,7 @@
             if (saved) {
                 knownWords = new Set(JSON.parse(saved));
                 renderWords();
-                alert('✅ Progress loaded!');
+                alert('âœ… Progress loaded!');
             } else {
                 alert('No saved progress found.');
             }

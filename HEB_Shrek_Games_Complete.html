@@ -150,9 +150,16 @@
         
         .hebrew-text {
             font-size: 3em;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: #333;
             font-weight: bold;
+        }
+        
+        .translit-text {
+            font-size: 1.5em;
+            color: #888;
+            font-style: italic;
+            margin-bottom: 20px;
         }
         
         .context-hint {
@@ -210,16 +217,29 @@
         .match-card {
             background: #667eea;
             color: white;
-            padding: 30px 15px;
+            padding: 25px 10px;
             border-radius: 10px;
             cursor: pointer;
             text-align: center;
-            font-size: 1.1em;
+            font-size: 1.3em;
             transition: all 0.3s;
-            min-height: 100px;
+            min-height: 120px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            line-height: 1.4;
+        }
+        
+        .match-card .card-main {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .match-card .card-sub {
+            font-size: 0.7em;
+            opacity: 0.9;
+            font-style: italic;
         }
         
         .match-card:hover {
@@ -258,19 +278,31 @@
         }
         
         .sentence-text {
-            font-size: 1.8em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            font-size: 2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
             direction: rtl;
+            color: #333;
         }
         
-        .blank {
+        .blank-placeholder {
             display: inline-block;
-            min-width: 150px;
-            border-bottom: 3px solid #667eea;
+            min-width: 180px;
+            border-bottom: 4px solid #667eea;
+            background: #e3f2fd;
+            padding: 5px 15px;
             margin: 0 10px;
             font-weight: bold;
             color: #667eea;
+            border-radius: 5px;
+        }
+        
+        .sentence-translit {
+            font-size: 1.3em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+            direction: ltr;
         }
         
         .english-hint {
@@ -343,15 +375,16 @@
                 font-size: 2em;
             }
             
+            .match-card {
+                font-size: 1.1em;
+                min-height: 100px;
+            }
+            
             .sentence-text {
-                font-size: 1.3em;
+                font-size: 1.5em;
             }
         }
     </style>
-    <link rel="apple-touch-icon" href="shrek4_image.jpg">
-    <link rel="icon" type="image/jpeg" href="shrek4_image.jpg">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
 <body>
     <div class="container">
@@ -468,7 +501,7 @@
                 </div>
                 <div class="stat">
                     <div class="stat-label">Round</div>
-                    <div class="stat-value" id="speedRound">1/5</div>
+                    <div class="stat-value" id="speedRoundNum">1/5</div>
                 </div>
                 <div class="stat">
                     <div class="stat-label">Game Type</div>
@@ -492,7 +525,7 @@
 עוֹג|og|ogre||noun|זהירות - עוג|zehirut - og|Beware - Ogre|00:02:42 - Warning sign|shrek1 top50
 לִהְיוֹת|lihiyot|to be||verb infinitive|טוב להיות חופשי|tov lihiyot chofshi|Good to be free|00:07:55|shrek1 top50
 רֶגַע|rega|moment; wait a moment||noun|רגע! אתה יודע מה הוא עלול לעשות|rega! ata yodea ma hu alul la'asot|Whoa, hold on! Do you know what that thing can do to you|00:03:39|shrek1 top50 casual
-מַשֶּׁהוּ|mashehu|something||pronoun|אני יכול להגיד לך משהו?|ani yachol lehagid lecha mashehu?|Can I say something to you?|00:07:34|shrek1 top50
+מַשֶּהוּ|mashehu|something||pronoun|אני יכול להגיד לך משהו?|ani yachol lehagid lecha mashehu?|Can I say something to you?|00:07:34|shrek1 top50
 אוּלַי|ulay|maybe; perhaps||adverb|אולי ראית זבוב עף|ulay ra'ita zvuv af|You might have seen a house fly, maybe even a super fly|00:06:30|shrek1 top50
 אוֹקֵי|okay|okay; alright||interjection|אוקיי! אבל רק ללילה אחד|okay! aval rak lelayla echad|Okay! Okay! But one night only|00:10:52|shrek1 top50 casual
 אוֹהֵב|ohev|love; like||verb|אני מדבר. אני אוהב לדבר|ani medaber. ani ohev ledaber|He does. I can talk. I love to talk|00:06:04 - Donkey introduces himself|shrek1 top50
@@ -549,22 +582,30 @@
 
         function startGame(gameType) {
             document.getElementById('gameSelector').style.display = 'none';
-            document.getElementById(gameType).classList.add('active');
+            document.querySelectorAll('.game-container').forEach(g => g.classList.remove('active'));
+            
             currentGame = gameType;
             
-            if (gameType === 'speedQuiz') initSpeedQuiz();
-            else if (gameType === 'matching') initMatching();
-            else if (gameType === 'fillBlank') initFillBlank();
-            else if (gameType === 'speedRound') initSpeedRound();
+            if (gameType === 'speedQuiz') {
+                document.getElementById('speedQuiz').classList.add('active');
+                initSpeedQuiz();
+            } else if (gameType === 'matching') {
+                document.getElementById('matching').classList.add('active');
+                initMatching();
+            } else if (gameType === 'fillBlank') {
+                document.getElementById('fillBlank').classList.add('active');
+                initFillBlank();
+            } else if (gameType === 'speedRound') {
+                document.getElementById('speedRound').classList.add('active');
+                initSpeedRound();
+            }
         }
 
         function backToMenu() {
-            document.querySelectorAll('.game-container').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.getElementById('gameSelector').style.display = 'grid';
             if (gameState.timer) clearInterval(gameState.timer);
-            gameState = {};
+            document.querySelectorAll('.game-container').forEach(g => g.classList.remove('active'));
+            document.getElementById('gameSelector').style.display = 'grid';
+            currentGame = null;
         }
 
         // SPEED QUIZ
@@ -572,9 +613,12 @@
             gameState = {
                 score: 0,
                 currentQ: 0,
-                questions: shuffle(words).slice(0, 10),
-                timeLeft: 60
+                timeLeft: 60,
+                questions: shuffle(words).slice(0, 10)
             };
+            
+            document.getElementById('quizScore').textContent = '0';
+            document.getElementById('quizTimer').textContent = '60';
             
             startQuizTimer();
             showQuizQuestion();
@@ -583,11 +627,10 @@
         function startQuizTimer() {
             gameState.timer = setInterval(() => {
                 gameState.timeLeft--;
-                const timerEl = document.getElementById('quizTimer');
-                timerEl.textContent = gameState.timeLeft;
+                document.getElementById('quizTimer').textContent = gameState.timeLeft;
                 
                 if (gameState.timeLeft <= 10) {
-                    timerEl.classList.add('warning');
+                    document.getElementById('quizTimer').classList.add('warning');
                 }
                 
                 if (gameState.timeLeft <= 0) {
@@ -629,7 +672,7 @@
         }
 
         function checkQuizAnswer(selected, correct) {
-            const buttons = document.querySelectorAll('.option-btn');
+            const buttons = document.querySelectorAll('#quizContent .option-btn');
             buttons.forEach(btn => {
                 btn.disabled = true;
                 if (btn.textContent.trim() === correct) {
@@ -653,8 +696,8 @@
             const percentage = Math.round((gameState.score / (gameState.questions.length * 10)) * 100);
             let message = '';
             if (percentage >= 90) message = '🎉 Excellent! You\'re a Hebrew master!';
-            else if (percentage >= 70) message = '👏 Great job! Keep practicing!';
-            else if (percentage >= 50) message = '👍 Good effort! Review and try again!';
+            else if (percentage >= 70) message = '👍 Great job! Keep practicing!';
+            else if (percentage >= 50) message = '👏 Good effort! Review and try again!';
             else message = '💪 Keep studying! You\'ll get there!';
             
             document.getElementById('quizContent').innerHTML = `
@@ -669,14 +712,24 @@
             `;
         }
 
-        // MATCHING GAME
+        // MATCHING GAME - FIXED with transliteration
         function initMatching() {
             const selectedWords = getRandomWords(6);
             const cards = [];
             
             selectedWords.forEach(word => {
-                cards.push({ type: 'hebrew', text: word.hebrew, id: word.english });
-                cards.push({ type: 'english', text: word.english, id: word.english });
+                cards.push({ 
+                    type: 'hebrew', 
+                    main: word.hebrew,
+                    sub: word.translit,
+                    id: word.english 
+                });
+                cards.push({ 
+                    type: 'english', 
+                    main: word.english,
+                    sub: '',
+                    id: word.english 
+                });
             });
             
             gameState = {
@@ -703,57 +756,65 @@
                 <div class="match-card ${gameState.matched.includes(card.id) ? 'matched' : ''}" 
                      onclick="selectMatchCard(${index})" 
                      data-index="${index}">
-                    ${card.text}
+                    <div class="card-main">${card.main}</div>
+                    ${card.sub ? `<div class="card-sub">${card.sub}</div>` : ''}
                 </div>
             `).join('');
             
             document.getElementById('matchingGrid').innerHTML = html;
-            document.getElementById('matchScore').textContent = 
-                `${gameState.matched.length / 2}/6`;
-            document.getElementById('matchMoves').textContent = gameState.moves;
         }
 
         function selectMatchCard(index) {
             const card = gameState.cards[index];
             
-            if (gameState.matched.includes(card.id) || gameState.selected.includes(index)) {
+            if (gameState.matched.includes(card.id) || 
+                gameState.selected.some(s => s.index === index)) {
                 return;
             }
             
-            gameState.selected.push(index);
-            document.querySelector(`[data-index="${index}"]`).classList.add('selected');
+            gameState.selected.push({ index, id: card.id });
+            
+            const cardElement = document.querySelector(`[data-index="${index}"]`);
+            cardElement.classList.add('selected');
             
             if (gameState.selected.length === 2) {
                 gameState.moves++;
-                checkMatch();
+                document.getElementById('matchMoves').textContent = gameState.moves;
+                
+                setTimeout(() => checkMatch(), 500);
             }
         }
 
         function checkMatch() {
-            const [idx1, idx2] = gameState.selected;
-            const card1 = gameState.cards[idx1];
-            const card2 = gameState.cards[idx2];
+            const [first, second] = gameState.selected;
             
-            if (card1.id === card2.id) {
-                gameState.matched.push(card1.id);
-                setTimeout(() => {
-                    gameState.selected = [];
-                    renderMatchingGrid();
-                    
-                    if (gameState.matched.length === 6) {
-                        clearInterval(gameState.timer);
-                        showMatchResults();
-                    }
-                }, 500);
-            } else {
-                document.querySelector(`[data-index="${idx1}"]`).classList.add('wrong');
-                document.querySelector(`[data-index="${idx2}"]`).classList.add('wrong');
+            if (first.id === second.id) {
+                gameState.matched.push(first.id);
+                document.getElementById('matchScore').textContent = 
+                    `${gameState.matched.length}/6`;
                 
+                if (gameState.matched.length === 6) {
+                    clearInterval(gameState.timer);
+                    setTimeout(showMatchResults, 500);
+                }
+            } else {
+                const firstCard = document.querySelector(`[data-index="${first.index}"]`);
+                const secondCard = document.querySelector(`[data-index="${second.index}"]`);
+                firstCard.classList.add('wrong');
+                secondCard.classList.add('wrong');
                 setTimeout(() => {
-                    gameState.selected = [];
-                    renderMatchingGrid();
-                }, 1000);
+                    firstCard.classList.remove('wrong');
+                    secondCard.classList.remove('wrong');
+                }, 500);
             }
+            
+            gameState.selected.forEach(s => {
+                const card = document.querySelector(`[data-index="${s.index}"]`);
+                card.classList.remove('selected');
+            });
+            
+            gameState.selected = [];
+            renderMatchingGrid();
         }
 
         function showMatchResults() {
@@ -773,7 +834,7 @@
             `;
         }
 
-        // FILL IN THE BLANK
+        // FILL IN THE BLANK - FIXED with transliteration and clear blank
         function initFillBlank() {
             gameState = {
                 score: 0,
@@ -797,19 +858,22 @@
             document.getElementById('blankProgress').textContent = 
                 `${gameState.currentQ + 1}/${gameState.questions.length}`;
             
-            // Create sentence with blank
-            const sentence = word.exampleHeb.replace(word.hebrew, '_____');
+            // Create sentence with highlighted blank
+            const sentence = word.exampleHeb.replace(word.hebrew, '<span class="blank-placeholder">[____]</span>');
+            const sentenceTranslit = word.exampleTranslit.replace(word.translit, '[____]');
             
             const html = `
                 <div class="sentence-display">
                     <div class="sentence-text">${sentence}</div>
+                    <div class="sentence-translit">${sentenceTranslit}</div>
                     <div class="english-hint">"${word.exampleEng}"</div>
                     <div class="context-hint">${word.timestamp}</div>
                 </div>
                 <div class="options">
                     ${allOptions.map(opt => `
                         <button class="option-btn" onclick="checkBlankAnswer('${opt.hebrew}', '${word.hebrew}')">
-                            ${opt.hebrew}
+                            <div style="font-size: 1.2em; margin-bottom: 5px;">${opt.hebrew}</div>
+                            <div style="font-size: 0.9em; color: #888; font-style: italic;">${opt.translit}</div>
                         </button>
                     `).join('')}
                 </div>
@@ -822,10 +886,11 @@
             const buttons = document.querySelectorAll('#blankContent .option-btn');
             buttons.forEach(btn => {
                 btn.disabled = true;
-                if (btn.textContent.trim() === correct) {
+                const btnHebrew = btn.querySelector('div:first-child').textContent.trim();
+                if (btnHebrew === correct) {
                     btn.classList.add('correct');
                 }
-                if (btn.textContent.trim() === selected && selected !== correct) {
+                if (btnHebrew === selected && selected !== correct) {
                     btn.classList.add('incorrect');
                 }
             });
@@ -843,8 +908,8 @@
             const percentage = Math.round((gameState.score / (gameState.questions.length * 10)) * 100);
             let message = '';
             if (percentage >= 90) message = '🎉 Perfect! You know these phrases!';
-            else if (percentage >= 70) message = '👏 Excellent work!';
-            else if (percentage >= 50) message = '👍 Good! Keep practicing!';
+            else if (percentage >= 70) message = '👍 Excellent work!';
+            else if (percentage >= 50) message = '👏 Good! Keep practicing!';
             else message = '💪 Review and try again!';
             
             document.getElementById('blankContent').innerHTML = `
@@ -859,7 +924,7 @@
             `;
         }
 
-        // SPEED ROUND MIX
+        // SPEED ROUND MIX - FIXED to properly shuffle and work
         function initSpeedRound() {
             gameState = {
                 totalScore: 0,
@@ -880,7 +945,7 @@
             gameState.currentRound++;
             const gameType = gameState.gameTypes[Math.floor(Math.random() * gameState.gameTypes.length)];
             
-            document.getElementById('speedRound').textContent = 
+            document.getElementById('speedRoundNum').textContent = 
                 `${gameState.currentRound}/${gameState.roundsTotal}`;
             
             if (gameType === 'quiz') {
@@ -903,6 +968,7 @@
             const html = `
                 <div class="question-card">
                     <div class="hebrew-text">${word.hebrew}</div>
+                    <div class="translit-text">${word.translit}</div>
                     <div class="options">
                         ${allOptions.map(opt => `
                             <button class="option-btn" onclick="speedAnswer('${opt.english}', '${word.english}', 10)">
@@ -918,16 +984,16 @@
 
         function runSpeedMatch() {
             const word = words[Math.floor(Math.random() * words.length)];
+            const wrongAnswers = getRandomWords(3, [word]);
+            const allOptions = shuffle([word, ...wrongAnswers]);
             
             const html = `
                 <div class="question-card">
                     <h3>Match this word:</h3>
                     <div class="hebrew-text">${word.hebrew}</div>
+                    <div class="translit-text">${word.translit}</div>
                     <div class="options">
-                        <button class="option-btn" onclick="speedAnswer('${word.english}', '${word.english}', 15)">
-                            ${word.english}
-                        </button>
-                        ${getRandomWords(3, [word]).map(opt => `
+                        ${allOptions.map(opt => `
                             <button class="option-btn" onclick="speedAnswer('${opt.english}', '${word.english}', 15)">
                                 ${opt.english}
                             </button>
@@ -941,7 +1007,7 @@
 
         function runSpeedBlank() {
             const word = words[Math.floor(Math.random() * words.length)];
-            const sentence = word.exampleHeb.replace(word.hebrew, '_____');
+            const sentence = word.exampleHeb.replace(word.hebrew, '<span class="blank-placeholder">[____]</span>');
             const wrongAnswers = getRandomWords(3, [word]);
             const allOptions = shuffle([word, ...wrongAnswers]);
             
@@ -953,7 +1019,8 @@
                 <div class="options">
                     ${allOptions.map(opt => `
                         <button class="option-btn" onclick="speedAnswer('${opt.hebrew}', '${word.hebrew}', 20)">
-                            ${opt.hebrew}
+                            <div style="font-size: 1.1em;">${opt.hebrew}</div>
+                            <div style="font-size: 0.85em; color: #888; font-style: italic;">${opt.translit}</div>
                         </button>
                     `).join('')}
                 </div>
