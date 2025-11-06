@@ -5,6 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hebrew Learning Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;700&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    /* Calendar Grid */
+.calendar-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+.calendar-header {
+    color: white;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+.day-cell {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: white;
+}
+.day-cell:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+.day-cell.active {
+    background: white;
+    color: #667eea;
+    font-weight: bold;
+    border-color: white;
+}
+.day-cell.completed {
+    background: rgba(40, 167, 69, 0.8);
+    border-color: #28a745;
+}
+.day-cell.completed::after {
+    content: "✓";
+    display: block;
+    font-size: 1.2em;
+    margin-top: 4px;
+}
+.day-name {
+    font-size: 0.75em;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+.day-date {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 4px;
+}
+@media (max-width: 768px) {
+    .calendar-grid { gap: 5px; }
+    .day-cell { padding: 8px 4px; }
+    .day-date { font-size: 1.1em; }
+}
     <style>
         * {
             margin: 0;
@@ -51,7 +115,14 @@
         .auto-save.show {
             opacity: 1;
         }
-        
+        /* Calendar Grid  */-->
+<div class="calendar-section">
+    <div class="calendar-header">
+        <span id="weekRange">Week Calendar</span>
+    </div>
+    <div class="calendar-grid" id="calendarGrid">
+    </div>
+</div>
         /* Gamification Bar */
         .gamification-bar {
             background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
@@ -1448,13 +1519,16 @@
         // State
         let timers = {};
         let autoSaveTimeout = null;
-        
+        let currentDay = null;
+let weekData = {};
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            updateStats();
-            updatePillars();
-        });
+       document.addEventListener('DOMContentLoaded', function() {
+    loadWeekData();
+    generateCalendar();
+    loadData();
+    updateStats();
+    updatePillars();
+});
         
         // Update current date
         function updateDate() {
@@ -1560,7 +1634,7 @@
             if (newValue !== null && !isNaN(newValue)) {
                 document.getElementById('wordCount').textContent = parseInt(newValue);
                 updateStats();
-                saveData();
+                saveCurrentDay();
             }
         }
         
@@ -1634,7 +1708,149 @@
                 indicator.classList.remove('show');
             }, 2000);
         }
-        
+        function getWeekStart(date = new Date()) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+}
+
+function generateCalendar() {
+    const weekStart = getWeekStart();
+    const today = new Date().toISOString().split('T')[0];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    document.getElementById('weekRange').textContent = 
+        `${days[0]} ${months[weekStart.getMonth()]} ${weekStart.getDate()} - ${days[6]} ${months[weekEnd.getMonth()]} ${weekEnd.getDate()}, ${weekEnd.getFullYear()}`;
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        cell.dataset.date = dateStr;
+        if (weekData[dateStr] && weekData[dateStr].completed) {
+            cell.classList.add('completed');
+        }
+        if (dateStr === today && !currentDay) {
+            cell.classList.add('active');
+            currentDay = dateStr;
+        }
+        cell.innerHTML = `<div class="day-name">${days[i]}</div><div class="day-date">${date.getDate()}</div>`;
+        cell.onclick = () => selectDay(dateStr);
+        grid.appendChild(cell);
+    }
+}
+
+function selectDay(dateStr) {
+    if (currentDay) saveCurrentDay();
+    document.querySelectorAll('.day-cell').forEach(cell => {
+        cell.classList.remove('active');
+        if (cell.dataset.date === dateStr) cell.classList.add('active');
+    });
+    currentDay = dateStr;
+    loadDayData(dateStr);
+}
+
+function loadWeekData() {
+    const saved = localStorage.getItem('hebrewTrackerWeek03_MultiDay');
+    if (saved) {
+        try { weekData = JSON.parse(saved); }
+        catch (e) { weekData = {}; }
+    }
+}
+
+function saveWeekData() {
+    localStorage.setItem('hebrewTrackerWeek03_MultiDay', JSON.stringify(weekData));
+}
+
+function saveCurrentDay() {
+    if (!currentDay) return;
+    const data = {
+        date: currentDay,
+        timestamp: new Date().toISOString(),
+        activities: {},
+        pillars: {
+            input: parseInt(document.getElementById('inputMinutes').textContent) || 0,
+            output: parseInt(document.getElementById('outputMinutes').textContent) || 0,
+            review: parseInt(document.getElementById('reviewMinutes').textContent) || 0
+        },
+        xp: parseInt(document.getElementById('xpValue').textContent) || 0,
+        notes: document.getElementById('dailyNotes').value,
+        ratings: {},
+        completed: false
+    };
+    document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+        const label = activity.querySelector('label, span');
+        if (label) {
+            const name = label.textContent.trim();
+            const checkbox = activity.querySelector('input[type="checkbox"]');
+            const timeInput = activity.querySelector('input[type="number"]');
+            data.activities[name] = {
+                checked: checkbox ? checkbox.checked : false,
+                minutes: timeInput ? (parseInt(timeInput.value) || 0) : 0
+            };
+        }
+    });
+    document.querySelectorAll('[data-rating-id]').forEach(ratingDiv => {
+        const id = ratingDiv.getAttribute('data-rating-id');
+        const filled = ratingDiv.querySelectorAll('.star.filled').length;
+        data.ratings[id] = filled;
+    });
+    data.completed = (data.pillars.input >= 15 && data.pillars.output >= 5 && data.pillars.review >= 10);
+    weekData[currentDay] = data;
+    saveWeekData();
+    updateCalendarCompletion();
+}
+
+function updateCalendarCompletion() {
+    document.querySelectorAll('.day-cell').forEach(cell => {
+        const dateStr = cell.dataset.date;
+        cell.classList.remove('completed');
+        if (weekData[dateStr] && weekData[dateStr].completed) {
+            cell.classList.add('completed');
+        }
+    });
+}
+
+function loadDayData(dateStr) {
+    const data = weekData[dateStr];
+    document.querySelectorAll('.activity input[type="checkbox"], .quick-activity input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.activity input[type="number"], .quick-activity input[type="number"]').forEach(input => input.value = '');
+    document.getElementById('dailyNotes').value = '';
+    if (!data) {
+        updatePillars();
+        updateStats();
+        return;
+    }
+    if (data.activities) {
+        document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+            const label = activity.querySelector('label, span');
+            if (label) {
+                const name = label.textContent.trim();
+                const activityData = data.activities[name];
+                if (activityData) {
+                    const checkbox = activity.querySelector('input[type="checkbox"]');
+                    const timeInput = activity.querySelector('input[type="number"]');
+                    if (checkbox) checkbox.checked = activityData.checked;
+                    if (timeInput) timeInput.value = activityData.minutes || '';
+                }
+            }
+        });
+    }
+    if (data.ratings) {
+        Object.keys(data.ratings).forEach(id => setRating(id, data.ratings[id]));
+    }
+    if (data.notes) {
+        document.getElementById('dailyNotes').value = data.notes;
+    }
+    updatePillars();
+    updateStats();
+}
         // Save data to localStorage
         function saveData() {
             const data = {
