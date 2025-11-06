@@ -1767,7 +1767,149 @@ function loadDayData(dateStr) {
     updatePillars();
     updateStats();
 }
-        // Save data to localStorage
+       function getWeekStart(date = new Date()) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+}
+
+function generateCalendar() {
+    const weekStart = getWeekStart();
+    const today = new Date().toISOString().split('T')[0];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    document.getElementById('weekRange').textContent = 
+        `${days[0]} ${months[weekStart.getMonth()]} ${weekStart.getDate()} - ${days[6]} ${months[weekEnd.getMonth()]} ${weekEnd.getDate()}, ${weekEnd.getFullYear()}`;
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        cell.dataset.date = dateStr;
+        if (weekData[dateStr] && weekData[dateStr].completed) {
+            cell.classList.add('completed');
+        }
+        if (dateStr === today && !currentDay) {
+            cell.classList.add('active');
+            currentDay = dateStr;
+        }
+        cell.innerHTML = `<div class="day-name">${days[i]}</div><div class="day-date">${date.getDate()}</div>`;
+        cell.onclick = () => selectDay(dateStr);
+        grid.appendChild(cell);
+    }
+}
+
+function selectDay(dateStr) {
+    if (currentDay) saveCurrentDay();
+    document.querySelectorAll('.day-cell').forEach(cell => {
+        cell.classList.remove('active');
+        if (cell.dataset.date === dateStr) cell.classList.add('active');
+    });
+    currentDay = dateStr;
+    loadDayData(dateStr);
+}
+
+function loadWeekData() {
+    const saved = localStorage.getItem('hebrewTrackerWeek03_MultiDay');
+    if (saved) {
+        try { weekData = JSON.parse(saved); }
+        catch (e) { weekData = {}; }
+    }
+}
+
+function saveWeekData() {
+    localStorage.setItem('hebrewTrackerWeek03_MultiDay', JSON.stringify(weekData));
+}
+
+function saveCurrentDay() {
+    if (!currentDay) return;
+    const data = {
+        date: currentDay,
+        timestamp: new Date().toISOString(),
+        activities: {},
+        pillars: {
+            input: parseInt(document.getElementById('inputMinutes').textContent) || 0,
+            output: parseInt(document.getElementById('outputMinutes').textContent) || 0,
+            review: parseInt(document.getElementById('reviewMinutes').textContent) || 0
+        },
+        xp: parseInt(document.getElementById('xpValue').textContent) || 0,
+        notes: document.getElementById('dailyNotes').value,
+        ratings: {},
+        completed: false
+    };
+    document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+        const label = activity.querySelector('label, span');
+        if (label) {
+            const name = label.textContent.trim();
+            const checkbox = activity.querySelector('input[type="checkbox"]');
+            const timeInput = activity.querySelector('input[type="number"]');
+            data.activities[name] = {
+                checked: checkbox ? checkbox.checked : false,
+                minutes: timeInput ? (parseInt(timeInput.value) || 0) : 0
+            };
+        }
+    });
+    document.querySelectorAll('[data-rating-id]').forEach(ratingDiv => {
+        const id = ratingDiv.getAttribute('data-rating-id');
+        const filled = ratingDiv.querySelectorAll('.star.filled').length;
+        data.ratings[id] = filled;
+    });
+    data.completed = (data.pillars.input >= 15 && data.pillars.output >= 5 && data.pillars.review >= 10);
+    weekData[currentDay] = data;
+    saveWeekData();
+    updateCalendarCompletion();
+}
+
+function updateCalendarCompletion() {
+    document.querySelectorAll('.day-cell').forEach(cell => {
+        const dateStr = cell.dataset.date;
+        cell.classList.remove('completed');
+        if (weekData[dateStr] && weekData[dateStr].completed) {
+            cell.classList.add('completed');
+        }
+    });
+}
+
+function loadDayData(dateStr) {
+    const data = weekData[dateStr];
+    document.querySelectorAll('.activity input[type="checkbox"], .quick-activity input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.activity input[type="number"], .quick-activity input[type="number"]').forEach(input => input.value = '');
+    document.getElementById('dailyNotes').value = '';
+    if (!data) {
+        updatePillars();
+        updateStats();
+        return;
+    }
+    if (data.activities) {
+        document.querySelectorAll('.activity, .quick-activity').forEach(activity => {
+            const label = activity.querySelector('label, span');
+            if (label) {
+                const name = label.textContent.trim();
+                const activityData = data.activities[name];
+                if (activityData) {
+                    const checkbox = activity.querySelector('input[type="checkbox"]');
+                    const timeInput = activity.querySelector('input[type="number"]');
+                    if (checkbox) checkbox.checked = activityData.checked;
+                    if (timeInput) timeInput.value = activityData.minutes || '';
+                }
+            }
+        });
+    }
+    if (data.ratings) {
+        Object.keys(data.ratings).forEach(id => setRating(id, data.ratings[id]));
+    }
+    if (data.notes) {
+        document.getElementById('dailyNotes').value = data.notes;
+    }
+    updatePillars();
+    updateStats();
+} // Save data to localStorage
         function saveData() {
             const data = {
                 date: new Date().toISOString(),
