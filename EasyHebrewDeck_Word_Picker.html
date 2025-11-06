@@ -1,0 +1,9023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Hebrew Deck - Word Picker</title>
+    <link rel="apple-touch-icon" href="HebrewPicker_image.png">
+    <link rel="icon" type="image/png" href="HebrewPicker_image.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        button.save { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        button.load { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); }
+        button.export { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 20px;
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .subdeck-container {
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .subdeck-header {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .subdeck-header:hover {
+            background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
+        }
+
+        .subdeck-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .subdeck-stats {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .subdeck-words {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: white;
+        }
+
+        .subdeck-words.collapsed {
+            display: none;
+        }
+
+        .word-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            position: relative;
+        }
+
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #764ba2;
+        }
+
+        .word-card.known {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+            border-width: 3px;
+        }
+
+        .word-card.known::before {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .word-trans {
+            font-size: 18px;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 5px;
+        }
+
+        .word-english {
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subdeck-words {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Easy Hebrew Deck - Word Picker</h1>
+        <p class="subtitle">Mark words you know • 40 subdecks (25 words each) • Export your known list</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="knownCount">0</div>
+                <div class="stat-label">Words Known</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalCount">958</div>
+                <div class="stat-label">Total Words</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="percentKnown">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search by English or transliteration...">
+            <button onclick="expandAll()">📖 Expand All</button>
+            <button onclick="collapseAll()">📕 Collapse All</button>
+            <button class="save" onclick="saveProgress()">💾 Save Progress</button>
+            <button class="load" onclick="loadProgress()">📂 Load Progress</button>
+            <button class="export" onclick="exportKnown()">📥 Export Known Words</button>
+            <button onclick="clearAll()">🗑️ Clear All</button>
+        </div>
+
+        <div id="subdecksContainer"></div>
+    </div>
+
+    <script>
+// WORD DATA WILL BE INSERTED HERE
+const wordsData = [
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 1,
+    "global_num": 1,
+    "trans": "odot",
+    "english": "about"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 2,
+    "global_num": 2,
+    "trans": "adiv",
+    "english": "polite"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 3,
+    "global_num": 3,
+    "trans": "et",
+    "english": "me"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 4,
+    "global_num": 4,
+    "trans": "tova",
+    "english": "favor"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 5,
+    "global_num": 5,
+    "trans": "lemala",
+    "english": "up"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 6,
+    "global_num": 6,
+    "trans": "et",
+    "english": "us"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 7,
+    "global_num": 7,
+    "trans": "echad",
+    "english": "one by one"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 8,
+    "global_num": 8,
+    "trans": "davar",
+    "english": "thing, object; (in plural) words"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 9,
+    "global_num": 9,
+    "trans": "dugma",
+    "english": "example"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 10,
+    "global_num": 10,
+    "trans": "kmo",
+    "english": "like, as, similarly to"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 11,
+    "global_num": 11,
+    "trans": "paam",
+    "english": "once"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 12,
+    "global_num": 12,
+    "trans": "bevakasha",
+    "english": "please"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 13,
+    "global_num": 13,
+    "trans": "matos",
+    "english": "plane"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 14,
+    "global_num": 14,
+    "trans": "min",
+    "english": "from, of; than, compared to"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 15,
+    "global_num": 15,
+    "trans": "lemata",
+    "english": "down&nbsp;"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 16,
+    "global_num": 16,
+    "trans": "katan",
+    "english": "small"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 17,
+    "global_num": 17,
+    "trans": "gadol",
+    "english": "big"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 18,
+    "global_num": 18,
+    "trans": "iti",
+    "english": "slow"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 19,
+    "global_num": 19,
+    "trans": "mahir",
+    "english": "fast"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 20,
+    "global_num": 20,
+    "trans": "maher",
+    "english": "quickly"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 21,
+    "global_num": 21,
+    "trans": "achot",
+    "english": "sister"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 22,
+    "global_num": 22,
+    "trans": "ach",
+    "english": "brother"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 23,
+    "global_num": 23,
+    "trans": "ima",
+    "english": "mother"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 24,
+    "global_num": 24,
+    "trans": "aba",
+    "english": "dad, father"
+  },
+  {
+    "part": 1,
+    "subdeck": 1,
+    "subdeck_name": "Part 1 - Subdeck 1",
+    "card_num": 25,
+    "global_num": 25,
+    "trans": "dod",
+    "english": "uncle"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 26,
+    "global_num": 26,
+    "trans": "doda",
+    "english": "aunt"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 27,
+    "global_num": 27,
+    "trans": "ot",
+    "english": "sign, letter"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 28,
+    "global_num": 28,
+    "trans": "hi",
+    "english": "she"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 29,
+    "global_num": 29,
+    "trans": "emet",
+    "english": "truth"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 30,
+    "global_num": 30,
+    "trans": "geshem",
+    "english": "rain"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 31,
+    "global_num": 31,
+    "trans": "gashum",
+    "english": "rainy"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 32,
+    "global_num": 32,
+    "trans": "shemesh",
+    "english": "sun ðŸŒž"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 33,
+    "global_num": 33,
+    "trans": "anan",
+    "english": "cloud"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 34,
+    "global_num": 34,
+    "trans": "ken",
+    "english": "yes"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 35,
+    "global_num": 35,
+    "trans": "lo",
+    "english": "no"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 36,
+    "global_num": 36,
+    "trans": "efshar",
+    "english": "possible"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 37,
+    "global_num": 37,
+    "trans": "ana",
+    "english": "please (formal)"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 38,
+    "global_num": 38,
+    "trans": "makom",
+    "english": "place"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 39,
+    "global_num": 39,
+    "trans": "tzeva",
+    "english": "color"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 40,
+    "global_num": 40,
+    "trans": "adom",
+    "english": "red"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 41,
+    "global_num": 41,
+    "trans": "kachol",
+    "english": "blue"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 42,
+    "global_num": 42,
+    "trans": "tzahov",
+    "english": "yellow"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 43,
+    "global_num": 43,
+    "trans": "argaman",
+    "english": "purple"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 44,
+    "global_num": 44,
+    "trans": "lavan",
+    "english": "white"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 45,
+    "global_num": 45,
+    "trans": "varod",
+    "english": "pink"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 46,
+    "global_num": 46,
+    "trans": "shachor",
+    "english": "black"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 47,
+    "global_num": 47,
+    "trans": "kesef",
+    "english": "money; silver"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 48,
+    "global_num": 48,
+    "trans": "tmuna",
+    "english": "picture"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 49,
+    "global_num": 49,
+    "trans": "pilpel",
+    "english": "pepper ðŸŒ¶ï¸"
+  },
+  {
+    "part": 1,
+    "subdeck": 2,
+    "subdeck_name": "Part 1 - Subdeck 2",
+    "card_num": 50,
+    "global_num": 50,
+    "trans": "melach",
+    "english": "salt"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 51,
+    "global_num": 51,
+    "trans": "ulay",
+    "english": "maybe"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 52,
+    "global_num": 52,
+    "trans": "am",
+    "english": "people, nation"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 53,
+    "global_num": 53,
+    "trans": "achuz",
+    "english": "percent, per cent"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 54,
+    "global_num": 54,
+    "trans": "agas",
+    "english": "pear ðŸ"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 55,
+    "global_num": 55,
+    "trans": "tapuach",
+    "english": "apple ðŸŽ"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 56,
+    "global_num": 56,
+    "trans": "afarsek",
+    "english": "peach ðŸ‘"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 57,
+    "global_num": 57,
+    "trans": "avatiach",
+    "english": "watermelon"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 58,
+    "global_num": 58,
+    "trans": "darkon",
+    "english": "passport"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 59,
+    "global_num": 59,
+    "trans": "hore",
+    "english": "parents"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 60,
+    "global_num": 60,
+    "trans": "echad",
+    "english": "one"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 61,
+    "global_num": 61,
+    "trans": "shnayim",
+    "english": "two"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 62,
+    "global_num": 62,
+    "trans": "shalosh",
+    "english": "three"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 63,
+    "global_num": 63,
+    "trans": "arba",
+    "english": "four"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 64,
+    "global_num": 64,
+    "trans": "chamesh",
+    "english": "five"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 65,
+    "global_num": 65,
+    "trans": "shesh",
+    "english": "six"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 66,
+    "global_num": 66,
+    "trans": "sheva",
+    "english": "seven"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 67,
+    "global_num": 67,
+    "trans": "shmone",
+    "english": "eight"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 68,
+    "global_num": 68,
+    "trans": "tesha",
+    "english": "nine"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 69,
+    "global_num": 69,
+    "trans": "eser",
+    "english": "ten"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 70,
+    "global_num": 70,
+    "trans": "bilvad",
+    "english": "only, solely"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 71,
+    "global_num": 71,
+    "trans": "rak",
+    "english": "only, just"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 72,
+    "global_num": 72,
+    "trans": "paamayim",
+    "english": "twice"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 73,
+    "global_num": 73,
+    "trans": "al",
+    "english": "on"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 74,
+    "global_num": 74,
+    "trans": "zayit",
+    "english": "olive"
+  },
+  {
+    "part": 1,
+    "subdeck": 3,
+    "subdeck_name": "Part 1 - Subdeck 3",
+    "card_num": 75,
+    "global_num": 75,
+    "trans": "shemen",
+    "english": "oil"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 76,
+    "global_num": 76,
+    "trans": "betach",
+    "english": "certainly, of course"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 77,
+    "global_num": 77,
+    "trans": "kamuvan",
+    "english": "of course, certainly"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 78,
+    "global_num": 78,
+    "trans": "shel",
+    "english": "of, belonging to"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 79,
+    "global_num": 79,
+    "trans": "beseder",
+    "english": "all right, OK"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 80,
+    "global_num": 80,
+    "trans": "egoz",
+    "english": "nuts"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 81,
+    "global_num": 81,
+    "trans": "achot",
+    "english": "nurse"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 82,
+    "global_num": 82,
+    "trans": "achshav",
+    "english": "now"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 83,
+    "global_num": 83,
+    "trans": "igeret",
+    "english": "note, message"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 84,
+    "global_num": 84,
+    "trans": "af",
+    "english": "nose"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 85,
+    "global_num": 85,
+    "trans": "panim",
+    "english": "face"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 86,
+    "global_num": 86,
+    "trans": "rosh",
+    "english": "head"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 87,
+    "global_num": 87,
+    "trans": "rishon",
+    "english": "first"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 88,
+    "global_num": 88,
+    "trans": "guf",
+    "english": "body; person (grammar)"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 89,
+    "global_num": 89,
+    "trans": "regel",
+    "english": "leg; foot"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 90,
+    "global_num": 90,
+    "trans": "etzba",
+    "english": "finger"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 91,
+    "global_num": 91,
+    "trans": "agudal",
+    "english": "thumb"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 92,
+    "global_num": 92,
+    "trans": "layla",
+    "english": "night"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 93,
+    "global_num": 93,
+    "trans": "erev",
+    "english": "evening"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 94,
+    "global_num": 94,
+    "trans": "tzohorayim",
+    "english": "noon"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 95,
+    "global_num": 95,
+    "trans": "yom",
+    "english": "day"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 96,
+    "global_num": 96,
+    "trans": "hayom",
+    "english": "today"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 97,
+    "global_num": 97,
+    "trans": "boker",
+    "english": "morning"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 98,
+    "global_num": 98,
+    "trans": "shem",
+    "english": "name"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 99,
+    "global_num": 99,
+    "trans": "einsfor",
+    "english": "myriad, countless"
+  },
+  {
+    "part": 1,
+    "subdeck": 4,
+    "subdeck_name": "Part 1 - Subdeck 4",
+    "card_num": 100,
+    "global_num": 100,
+    "trans": "shem",
+    "english": "my name is..."
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 101,
+    "global_num": 101,
+    "trans": "ach",
+    "english": "my brother"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 102,
+    "global_num": 102,
+    "trans": "shavua",
+    "english": "week"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 103,
+    "global_num": 103,
+    "trans": "chodesh",
+    "english": "month"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 104,
+    "global_num": 104,
+    "trans": "shana",
+    "english": "year"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 105,
+    "global_num": 105,
+    "trans": "tzafon",
+    "english": "north"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 106,
+    "global_num": 106,
+    "trans": "darom",
+    "english": "south"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 107,
+    "global_num": 107,
+    "trans": "maarav",
+    "english": "west"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 108,
+    "global_num": 108,
+    "trans": "mizrach",
+    "english": "east"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 109,
+    "global_num": 109,
+    "trans": "daka",
+    "english": "minute"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 110,
+    "global_num": 110,
+    "trans": "shniya",
+    "english": "second (time)"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 111,
+    "global_num": 111,
+    "trans": "shaa",
+    "english": "hour"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 112,
+    "global_num": 112,
+    "trans": "yoter",
+    "english": "more"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 113,
+    "global_num": 113,
+    "trans": "ish",
+    "english": "men, people"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 114,
+    "global_num": 114,
+    "trans": "chalav",
+    "english": "milk"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 115,
+    "global_num": 115,
+    "trans": "emtza",
+    "english": "middle"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 116,
+    "global_num": 116,
+    "trans": "refua",
+    "english": "medicine; recovery"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 117,
+    "global_num": 117,
+    "trans": "zikaron",
+    "english": "memory"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 118,
+    "global_num": 118,
+    "trans": "basar",
+    "english": "meat"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 119,
+    "global_num": 119,
+    "trans": "muvan",
+    "english": "meaning, sense"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 120,
+    "global_num": 120,
+    "trans": "anachnu",
+    "english": "we"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 121,
+    "global_num": 121,
+    "trans": "anu",
+    "english": "we (formal)"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 122,
+    "global_num": 122,
+    "trans": "avir",
+    "english": "air"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 123,
+    "global_num": 123,
+    "trans": "adon",
+    "english": "sir"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 124,
+    "global_num": 124,
+    "trans": "ahava",
+    "english": "love"
+  },
+  {
+    "part": 1,
+    "subdeck": 5,
+    "subdeck_name": "Part 1 - Subdeck 5",
+    "card_num": 125,
+    "global_num": 125,
+    "trans": "ish",
+    "english": "man"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 126,
+    "global_num": 126,
+    "trans": "isha",
+    "english": "woman"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 127,
+    "global_num": 127,
+    "trans": "mashehu",
+    "english": "something"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 128,
+    "global_num": 128,
+    "trans": "mishehi",
+    "english": "someone (f.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 129,
+    "global_num": 129,
+    "trans": "mishehu",
+    "english": "someone (m.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 130,
+    "global_num": 130,
+    "trans": "zachar",
+    "english": "male"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 131,
+    "global_num": 131,
+    "trans": "machshev",
+    "english": "computer"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 132,
+    "global_num": 132,
+    "trans": "nekeva",
+    "english": "female"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 133,
+    "global_num": 133,
+    "trans": "bayit",
+    "english": "home, house"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 134,
+    "global_num": 134,
+    "trans": "aroch",
+    "english": "long"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 135,
+    "global_num": 135,
+    "trans": "arye",
+    "english": "lion ðŸ¦"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 136,
+    "global_num": 136,
+    "trans": "barak",
+    "english": "lightning, flash"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 137,
+    "global_num": 137,
+    "trans": "mishpacha",
+    "english": "family"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 138,
+    "global_num": 138,
+    "trans": "ata",
+    "english": "you (f.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 139,
+    "global_num": 139,
+    "trans": "ata",
+    "english": "you (m.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 140,
+    "global_num": 140,
+    "trans": "ata",
+    "english": "you (f. pl.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 141,
+    "global_num": 141,
+    "trans": "ata",
+    "english": "you (m. pl.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 142,
+    "global_num": 142,
+    "trans": "hen",
+    "english": "they (f.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 143,
+    "global_num": 143,
+    "trans": "hen",
+    "english": "they (m.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 144,
+    "global_num": 144,
+    "trans": "shel",
+    "english": "of mine&nbsp;"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 145,
+    "global_num": 145,
+    "trans": "kashe",
+    "english": "difficult, hard"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 146,
+    "global_num": 146,
+    "trans": "chashuv",
+    "english": "important"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 147,
+    "global_num": 147,
+    "trans": "kal",
+    "english": "easy"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 148,
+    "global_num": 148,
+    "trans": "eich",
+    "english": "how"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 149,
+    "global_num": 149,
+    "trans": "eize",
+    "english": "which"
+  },
+  {
+    "part": 1,
+    "subdeck": 6,
+    "subdeck_name": "Part 1 - Subdeck 6",
+    "card_num": 150,
+    "global_num": 150,
+    "trans": "eifo",
+    "english": "where"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 151,
+    "global_num": 151,
+    "trans": "eichshehu",
+    "english": "somehow"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 152,
+    "global_num": 152,
+    "trans": "alpayim",
+    "english": "two thousand, 2000"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 153,
+    "global_num": 153,
+    "trans": "afilu",
+    "english": "even"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 154,
+    "global_num": 154,
+    "trans": "even",
+    "english": "stone"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 155,
+    "global_num": 155,
+    "trans": "mayim",
+    "english": "water"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 156,
+    "global_num": 156,
+    "trans": "esh",
+    "english": "fire"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 157,
+    "global_num": 157,
+    "trans": "ilan",
+    "english": "tree ðŸŒ³"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 158,
+    "global_num": 158,
+    "trans": "degel",
+    "english": "flag, banner"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 159,
+    "global_num": 159,
+    "trans": "dag",
+    "english": "fish"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 160,
+    "global_num": 160,
+    "trans": "dira",
+    "english": "flat, apartment"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 161,
+    "global_num": 161,
+    "trans": "delet",
+    "english": "door"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 162,
+    "global_num": 162,
+    "trans": "dikduk",
+    "english": "grammar"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 163,
+    "global_num": 163,
+    "trans": "hadar",
+    "english": "citrus"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 164,
+    "global_num": 164,
+    "trans": "zvuv",
+    "english": "fly (insect)"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 165,
+    "global_num": 165,
+    "trans": "chag",
+    "english": "holiday"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 166,
+    "global_num": 166,
+    "trans": "chevrati",
+    "english": "social"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 167,
+    "global_num": 167,
+    "trans": "chadash",
+    "english": "new"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 168,
+    "global_num": 168,
+    "trans": "chadash",
+    "english": "news"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 169,
+    "global_num": 169,
+    "trans": "chay",
+    "english": "live, alive, living"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 170,
+    "global_num": 170,
+    "trans": "chalufi",
+    "english": "alternative"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 171,
+    "global_num": 171,
+    "trans": "chamud",
+    "english": "cute, sweet, charming; cutie, sweetie (as noun)"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 172,
+    "global_num": 172,
+    "trans": "nechmad",
+    "english": "nice, lovely"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 173,
+    "global_num": 173,
+    "trans": "bachutz",
+    "english": "outside"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 174,
+    "global_num": 174,
+    "trans": "bifnim",
+    "english": "inside"
+  },
+  {
+    "part": 1,
+    "subdeck": 7,
+    "subdeck_name": "Part 1 - Subdeck 7",
+    "card_num": 175,
+    "global_num": 175,
+    "trans": "bekalut",
+    "english": "easily"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 176,
+    "global_num": 176,
+    "trans": "bekarov",
+    "english": "soon, shortly"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 177,
+    "global_num": 177,
+    "trans": "chaval",
+    "english": "it's a pity; what a waste (×¢×œ); bad luck!"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 178,
+    "global_num": 178,
+    "trans": "yachad",
+    "english": "together"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 179,
+    "global_num": 179,
+    "trans": "kvar",
+    "english": "already"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 180,
+    "global_num": 180,
+    "trans": "kacha",
+    "english": "thus, so, this way"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 181,
+    "global_num": 181,
+    "trans": "zol",
+    "english": "cheap"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 182,
+    "global_num": 182,
+    "trans": "yakar",
+    "english": "expensive"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 183,
+    "global_num": 183,
+    "trans": "gam",
+    "english": "also, too"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 184,
+    "global_num": 184,
+    "trans": "aval",
+    "english": "but, however"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 185,
+    "global_num": 185,
+    "trans": "o",
+    "english": "or"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 186,
+    "global_num": 186,
+    "trans": "az",
+    "english": "so; then"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 187,
+    "global_num": 187,
+    "trans": "mi",
+    "english": "who"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 188,
+    "global_num": 188,
+    "trans": "im",
+    "english": "if, whether"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 189,
+    "global_num": 189,
+    "trans": "asher",
+    "english": "that, which"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 190,
+    "global_num": 190,
+    "trans": "ve",
+    "english": "and"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 191,
+    "global_num": 191,
+    "trans": "ki",
+    "english": "because, for, since"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 192,
+    "global_num": 192,
+    "trans": "ele",
+    "english": "these"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 193,
+    "global_num": 193,
+    "trans": "elu",
+    "english": "these"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 194,
+    "global_num": 194,
+    "trans": "ani",
+    "english": "I"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 195,
+    "global_num": 195,
+    "trans": "ma",
+    "english": "what"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 196,
+    "global_num": 196,
+    "trans": "klum",
+    "english": "nothing"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 197,
+    "global_num": 197,
+    "trans": "ze",
+    "english": "this (m.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 198,
+    "global_num": 198,
+    "trans": "zot",
+    "english": "this (f.)"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 199,
+    "global_num": 199,
+    "trans": "bli",
+    "english": "without"
+  },
+  {
+    "part": 1,
+    "subdeck": 8,
+    "subdeck_name": "Part 1 - Subdeck 8",
+    "card_num": 200,
+    "global_num": 200,
+    "trans": "lifnei",
+    "english": "before"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 201,
+    "global_num": 201,
+    "trans": "bifnei",
+    "english": "facing (someone)"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 202,
+    "global_num": 202,
+    "trans": "neged",
+    "english": "against"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 203,
+    "global_num": 203,
+    "trans": "avur",
+    "english": "for"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 204,
+    "global_num": 204,
+    "trans": "ad",
+    "english": "until, up to"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 205,
+    "global_num": 205,
+    "trans": "le",
+    "english": "to; for; of"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 206,
+    "global_num": 206,
+    "trans": "el",
+    "english": "to, towards, into"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 207,
+    "global_num": 207,
+    "trans": "be",
+    "english": "in; by&nbsp;"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 208,
+    "global_num": 208,
+    "trans": "ben",
+    "english": "between, amongst"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 209,
+    "global_num": 209,
+    "trans": "ben",
+    "english": "son"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 210,
+    "global_num": 210,
+    "trans": "bat",
+    "english": "daughter"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 211,
+    "global_num": 211,
+    "trans": "achar",
+    "english": "after"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 212,
+    "global_num": 212,
+    "trans": "leyad",
+    "english": "near, next to"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 213,
+    "global_num": 213,
+    "trans": "ba",
+    "english": "next, coming"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 214,
+    "global_num": 214,
+    "trans": "kama",
+    "english": "how much, how many"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 215,
+    "global_num": 215,
+    "trans": "kol",
+    "english": "all"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 216,
+    "global_num": 216,
+    "trans": "olam",
+    "english": "world"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 217,
+    "global_num": 217,
+    "trans": "eretz",
+    "english": "land; country"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 218,
+    "global_num": 218,
+    "trans": "medina",
+    "english": "state"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 219,
+    "global_num": 219,
+    "trans": "menora",
+    "english": "lamp, light"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 220,
+    "global_num": 220,
+    "trans": "pri-yaar",
+    "english": "berry ðŸ“ðŸ«ðŸ’"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 221,
+    "global_num": 221,
+    "trans": "aviv",
+    "english": "spring (season)"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 222,
+    "global_num": 222,
+    "trans": "choref",
+    "english": "winter"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 223,
+    "global_num": 223,
+    "trans": "stav",
+    "english": "autumn, fall"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 224,
+    "global_num": 224,
+    "trans": "kayitz",
+    "english": "summer"
+  },
+  {
+    "part": 1,
+    "subdeck": 9,
+    "subdeck_name": "Part 1 - Subdeck 9",
+    "card_num": 225,
+    "global_num": 225,
+    "trans": "tamid",
+    "english": "always"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 226,
+    "global_num": 226,
+    "trans": "she",
+    "english": "that (as a conjunction); which, who, whom; let, may"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 227,
+    "global_num": 227,
+    "trans": "et",
+    "english": "(used before a definite direct object)"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 228,
+    "global_num": 228,
+    "trans": "meod",
+    "english": "very, very much"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 229,
+    "global_num": 229,
+    "trans": "atzmi",
+    "english": "own, self"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 230,
+    "global_num": 230,
+    "trans": "od",
+    "english": "yet, still; more"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 231,
+    "global_num": 231,
+    "trans": "lavo",
+    "english": "come!"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 232,
+    "global_num": 232,
+    "trans": "hine",
+    "english": "here is"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 233,
+    "global_num": 233,
+    "trans": "barur",
+    "english": "clear, explicit, obvious"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 234,
+    "global_num": 234,
+    "trans": "klali",
+    "english": "general, common, universal"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 235,
+    "global_num": 235,
+    "trans": "siman",
+    "english": "symbol, sign"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 236,
+    "global_num": 236,
+    "trans": "daat",
+    "english": "opinion, view"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 237,
+    "global_num": 237,
+    "trans": "lefi",
+    "english": "according to"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 238,
+    "global_num": 238,
+    "trans": "meyuchad",
+    "english": "special, unique"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 239,
+    "global_num": 239,
+    "trans": "karega",
+    "english": "just, just now"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 240,
+    "global_num": 240,
+    "trans": "shalom",
+    "english": "hello, peace"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 241,
+    "global_num": 241,
+    "trans": "yeled",
+    "english": "boy"
+  },
+  {
+    "part": 1,
+    "subdeck": 10,
+    "subdeck_name": "Part 1 - Subdeck 10",
+    "card_num": 242,
+    "global_num": 242,
+    "trans": "yalda",
+    "english": "girl"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 1,
+    "global_num": 243,
+    "trans": "chacham",
+    "english": "wise, smart"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 2,
+    "global_num": 244,
+    "trans": "meachorei",
+    "english": "behind"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 3,
+    "global_num": 245,
+    "trans": "ulay",
+    "english": "maybe, perhaps"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 4,
+    "global_num": 246,
+    "trans": "achora",
+    "english": "backwards"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 5,
+    "global_num": 247,
+    "trans": "ilu",
+    "english": "if, if only"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 6,
+    "global_num": 248,
+    "trans": "omnam",
+    "english": "indeed, truly"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 7,
+    "global_num": 249,
+    "trans": "emesh",
+    "english": "last night"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 8,
+    "global_num": 250,
+    "trans": "gav",
+    "english": "back"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 9,
+    "global_num": 251,
+    "trans": "haim",
+    "english": "is it?"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 10,
+    "global_num": 252,
+    "trans": "harpatka",
+    "english": "adventure"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 11,
+    "global_num": 253,
+    "trans": "lihyot",
+    "english": "to be"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 12,
+    "global_num": 254,
+    "trans": "chodshayim",
+    "english": "two months"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 13,
+    "global_num": 255,
+    "trans": "er",
+    "english": "awake"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 14,
+    "global_num": 256,
+    "trans": "lekabel",
+    "english": "to receive, to get; to accept"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 15,
+    "global_num": 257,
+    "trans": "of",
+    "english": "chicken ðŸ”"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 16,
+    "global_num": 258,
+    "trans": "achila",
+    "english": "eating"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 17,
+    "global_num": 259,
+    "trans": "sevev",
+    "english": "round, turn, revolution"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 18,
+    "global_num": 260,
+    "trans": "mita",
+    "english": "bed"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 19,
+    "global_num": 261,
+    "trans": "mezeg",
+    "english": "weather"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 20,
+    "global_num": 262,
+    "trans": "bari",
+    "english": "healthy"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 21,
+    "global_num": 263,
+    "trans": "lishkoach",
+    "english": "to forget"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 22,
+    "global_num": 264,
+    "trans": "sham",
+    "english": "there"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 23,
+    "global_num": 265,
+    "trans": "rechov",
+    "english": "street"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 24,
+    "global_num": 266,
+    "trans": "be",
+    "english": "in; by"
+  },
+  {
+    "part": 2,
+    "subdeck": 1,
+    "subdeck_name": "Part 2 - Subdeck 1",
+    "card_num": 25,
+    "global_num": 267,
+    "trans": "po",
+    "english": "here"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 26,
+    "global_num": 268,
+    "trans": "atid",
+    "english": "future"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 27,
+    "global_num": 269,
+    "trans": "mamash",
+    "english": "really"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 28,
+    "global_num": 270,
+    "trans": "agav",
+    "english": "by the way"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 29,
+    "global_num": 271,
+    "trans": "klal",
+    "english": "at all"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 30,
+    "global_num": 272,
+    "trans": "hachi",
+    "english": "the most"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 31,
+    "global_num": 273,
+    "trans": "bimkom",
+    "english": "instead of"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 32,
+    "global_num": 274,
+    "trans": "mischak",
+    "english": "game"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 33,
+    "global_num": 275,
+    "trans": "ktzat",
+    "english": "a little"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 34,
+    "global_num": 276,
+    "trans": "ach",
+    "english": "but, yet, however"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 35,
+    "global_num": 277,
+    "trans": "efes",
+    "english": "zero; nothing"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 36,
+    "global_num": 278,
+    "trans": "etzel",
+    "english": "at"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 37,
+    "global_num": 279,
+    "trans": "arucha",
+    "english": "meal"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 38,
+    "global_num": 280,
+    "trans": "malon",
+    "english": "hotel"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 39,
+    "global_num": 281,
+    "trans": "kayom",
+    "english": "currently, presently, nowadays"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 40,
+    "global_num": 282,
+    "trans": "lishmoa",
+    "english": "to hear; to listen"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 41,
+    "global_num": 283,
+    "trans": "chibuk",
+    "english": "embrace, hug"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 42,
+    "global_num": 284,
+    "trans": "shum",
+    "english": "garlic ðŸ§„"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 43,
+    "global_num": 285,
+    "trans": "lev",
+    "english": "heart"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 44,
+    "global_num": 286,
+    "trans": "levad",
+    "english": "alone"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 45,
+    "global_num": 287,
+    "trans": "mesugal",
+    "english": "able"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 46,
+    "global_num": 288,
+    "trans": "lehosif",
+    "english": "to add"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 47,
+    "global_num": 289,
+    "trans": "lerochav",
+    "english": "across"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 48,
+    "global_num": 290,
+    "trans": "ktovet",
+    "english": "adress"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 49,
+    "global_num": 291,
+    "trans": "lehitvadot",
+    "english": "to confess"
+  },
+  {
+    "part": 2,
+    "subdeck": 2,
+    "subdeck_name": "Part 2 - Subdeck 2",
+    "card_num": 50,
+    "global_num": 292,
+    "trans": "shuv",
+    "english": "again"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 51,
+    "global_num": 293,
+    "trans": "kaus",
+    "english": "angry, irritated"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 52,
+    "global_num": 294,
+    "trans": "lishol",
+    "english": "to ask"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 53,
+    "global_num": 295,
+    "trans": "yefefe",
+    "english": "very beautiful"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 54,
+    "global_num": 296,
+    "trans": "tinok",
+    "english": "baby"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 55,
+    "global_num": 297,
+    "trans": "tzipor",
+    "english": "bird"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 56,
+    "global_num": 298,
+    "trans": "kufsa",
+    "english": "box"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 57,
+    "global_num": 299,
+    "trans": "livchor",
+    "english": "to choose"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 58,
+    "global_num": 300,
+    "trans": "nachon",
+    "english": "correct"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 59,
+    "global_num": 301,
+    "trans": "asuy",
+    "english": "done; likely to"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 60,
+    "global_num": 302,
+    "trans": "rek",
+    "english": "empty"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 61,
+    "global_num": 303,
+    "trans": "lishvot",
+    "english": "I&nbsp;am&nbsp;/ you&nbsp;are&nbsp;/ he / it&nbsp;is<b> equal</b>"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 62,
+    "global_num": 304,
+    "trans": "hitamlut",
+    "english": "exercise"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 63,
+    "global_num": 305,
+    "trans": "ayin",
+    "english": "eye"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 64,
+    "global_num": 306,
+    "trans": "yayin",
+    "english": "wine ðŸ·"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 65,
+    "global_num": 307,
+    "trans": "uvda",
+    "english": "fact"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 66,
+    "global_num": 308,
+    "trans": "rachok",
+    "english": "far"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 67,
+    "global_num": 309,
+    "trans": "ikar",
+    "english": "farmer"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 68,
+    "global_num": 310,
+    "trans": "bediyuk",
+    "english": "exactly"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 69,
+    "global_num": 311,
+    "trans": "metzuyan",
+    "english": "excellent"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 70,
+    "global_num": 312,
+    "trans": "shamen",
+    "english": "fat"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 71,
+    "global_num": 313,
+    "trans": "hargasha",
+    "english": "feel"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 72,
+    "global_num": 314,
+    "trans": "regel",
+    "english": "feet"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 73,
+    "global_num": 315,
+    "trans": "meat",
+    "english": "few, little"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 74,
+    "global_num": 316,
+    "trans": "seret",
+    "english": "film"
+  },
+  {
+    "part": 2,
+    "subdeck": 3,
+    "subdeck_name": "Part 2 - Subdeck 3",
+    "card_num": 75,
+    "global_num": 317,
+    "trans": "limtzo",
+    "english": "to find"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 76,
+    "global_num": 318,
+    "trans": "ritzpa",
+    "english": "floor"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 77,
+    "global_num": 319,
+    "trans": "asur",
+    "english": "forbidden"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 78,
+    "global_num": 320,
+    "trans": "koach",
+    "english": "force"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 79,
+    "global_num": 321,
+    "trans": "mazleg",
+    "english": "fork"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 80,
+    "global_num": 322,
+    "trans": "kadima",
+    "english": "forward"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 81,
+    "global_num": 323,
+    "trans": "agvaniya",
+    "english": "tomato ðŸ…&nbsp;"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 82,
+    "global_num": 324,
+    "trans": "idkun",
+    "english": "update"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 83,
+    "global_num": 325,
+    "trans": "ayit",
+    "english": "eagle"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 84,
+    "global_num": 326,
+    "trans": "zug",
+    "english": "couple"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 85,
+    "global_num": 327,
+    "trans": "siba",
+    "english": "cause, reason"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 86,
+    "global_num": 328,
+    "trans": "seder",
+    "english": "order, arrangement"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 87,
+    "global_num": 329,
+    "trans": "sod",
+    "english": "secret"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 88,
+    "global_num": 330,
+    "trans": "sof",
+    "english": "end"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 89,
+    "global_num": 331,
+    "trans": "mispar",
+    "english": "number"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 90,
+    "global_num": 332,
+    "trans": "misparayim",
+    "english": "scissors âœ‚ï¸"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 91,
+    "global_num": 333,
+    "trans": "matzlema",
+    "english": "photo camera"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 92,
+    "global_num": 334,
+    "trans": "merav",
+    "english": "maximum"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 93,
+    "global_num": 335,
+    "trans": "shachaf",
+    "english": "seagull&nbsp;"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 94,
+    "global_num": 336,
+    "trans": "moach",
+    "english": "brain; mind"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 95,
+    "global_num": 337,
+    "trans": "laakov",
+    "english": "to follow"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 96,
+    "global_num": 338,
+    "trans": "male",
+    "english": "full"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 97,
+    "global_num": 339,
+    "trans": "latuv",
+    "english": "good"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 98,
+    "global_num": 340,
+    "trans": "ekdach",
+    "english": "pistol, handgun"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 99,
+    "global_num": 341,
+    "trans": "ulam",
+    "english": "however"
+  },
+  {
+    "part": 2,
+    "subdeck": 4,
+    "subdeck_name": "Part 2 - Subdeck 4",
+    "card_num": 100,
+    "global_num": 342,
+    "trans": "saviv",
+    "english": "around"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 101,
+    "global_num": 343,
+    "trans": "harchek",
+    "english": "far away"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 102,
+    "global_num": 344,
+    "trans": "ke",
+    "english": "as"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 103,
+    "global_num": 345,
+    "trans": "keilu",
+    "english": "as if"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 104,
+    "global_num": 346,
+    "trans": "metav",
+    "english": "best"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 105,
+    "global_num": 347,
+    "trans": "meal",
+    "english": "above"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 106,
+    "global_num": 348,
+    "trans": "lehashlim",
+    "english": "to accept"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 107,
+    "global_num": 349,
+    "trans": "gil",
+    "english": "age (of a person)"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 108,
+    "global_num": 350,
+    "trans": "acher",
+    "english": "other"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 109,
+    "global_num": 351,
+    "trans": "tshuva",
+    "english": "answer"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 110,
+    "global_num": 352,
+    "trans": "mimela",
+    "english": "anyway"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 111,
+    "global_num": 353,
+    "trans": "kevan",
+    "english": "because"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 112,
+    "global_num": 354,
+    "trans": "im",
+    "english": "if; whether"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 113,
+    "global_num": 355,
+    "trans": "harei",
+    "english": "indeed (emphasizing word); here is"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 114,
+    "global_num": 356,
+    "trans": "meanyen",
+    "english": "interesting"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 115,
+    "global_num": 357,
+    "trans": "mizman",
+    "english": "long ago; since long ago"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 116,
+    "global_num": 358,
+    "trans": "chagiga",
+    "english": "celebration, fest"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 117,
+    "global_num": 359,
+    "trans": "stam",
+    "english": "without purpose"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 118,
+    "global_num": 360,
+    "trans": "kacha",
+    "english": "thus, so"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 119,
+    "global_num": 361,
+    "trans": "ratzon",
+    "english": "desire, intent, will"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 120,
+    "global_num": 362,
+    "trans": "mila",
+    "english": "word"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 121,
+    "global_num": 363,
+    "trans": "lehanot",
+    "english": "to enjoy"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 122,
+    "global_num": 364,
+    "trans": "bimyuchad",
+    "english": "especially"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 123,
+    "global_num": 365,
+    "trans": "chofshi",
+    "english": "free"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 124,
+    "global_num": 366,
+    "trans": "gina",
+    "english": "garden, small garden"
+  },
+  {
+    "part": 2,
+    "subdeck": 5,
+    "subdeck_name": "Part 2 - Subdeck 5",
+    "card_num": 125,
+    "global_num": 367,
+    "trans": "lenachesh",
+    "english": "to guess"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 126,
+    "global_num": 368,
+    "trans": "ladaat",
+    "english": "to know"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 127,
+    "global_num": 369,
+    "trans": "beyoter",
+    "english": "the most; extremely"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 128,
+    "global_num": 370,
+    "trans": "kalil",
+    "english": "completely"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 129,
+    "global_num": 371,
+    "trans": "kolel",
+    "english": "including"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 130,
+    "global_num": 372,
+    "trans": "bishvil",
+    "english": "for, for the sake of"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 131,
+    "global_num": 373,
+    "trans": "zulat",
+    "english": "apart from"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 132,
+    "global_num": 374,
+    "trans": "klapei",
+    "english": "in relation to, vis-a-vis"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 133,
+    "global_num": 375,
+    "trans": "lidei",
+    "english": "into the hands of"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 134,
+    "global_num": 376,
+    "trans": "tachat",
+    "english": "in exchange for"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 135,
+    "global_num": 377,
+    "trans": "biglal",
+    "english": "because of, due to"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 136,
+    "global_num": 378,
+    "trans": "brera",
+    "english": "choice, option"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 137,
+    "global_num": 379,
+    "trans": "gag",
+    "english": "roof"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 138,
+    "global_num": 380,
+    "trans": "meolam",
+    "english": "since always"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 139,
+    "global_num": 381,
+    "trans": "leolam",
+    "english": "forever; always (in the future)"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 140,
+    "global_num": 382,
+    "trans": "karagil",
+    "english": "as usual"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 141,
+    "global_num": 383,
+    "trans": "bekerev",
+    "english": "among, amidst"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 142,
+    "global_num": 384,
+    "trans": "leorech",
+    "english": "along"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 143,
+    "global_num": 385,
+    "trans": "kimat",
+    "english": "almost"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 144,
+    "global_num": 386,
+    "trans": "hekdem",
+    "english": "completing early, doing something ahead of time"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 145,
+    "global_num": 387,
+    "trans": "sikuy",
+    "english": "chance"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 146,
+    "global_num": 388,
+    "trans": "shone",
+    "english": "different"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 147,
+    "global_num": 389,
+    "trans": "laasot",
+    "english": "to do"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 148,
+    "global_num": 390,
+    "trans": "mukdam",
+    "english": "early"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 149,
+    "global_num": 391,
+    "trans": "bemahalach",
+    "english": "during"
+  },
+  {
+    "part": 2,
+    "subdeck": 6,
+    "subdeck_name": "Part 2 - Subdeck 6",
+    "card_num": 150,
+    "global_num": 392,
+    "trans": "bsisi",
+    "english": "basic"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 151,
+    "global_num": 393,
+    "trans": "livyatan",
+    "english": "whale ðŸ³"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 152,
+    "global_num": 394,
+    "trans": "tarmil",
+    "english": "bag"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 153,
+    "global_num": 395,
+    "trans": "tarnegolet",
+    "english": "hen ðŸ”"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 154,
+    "global_num": 396,
+    "trans": "leevod",
+    "english": "he / it&nbsp;was <b>lost</b>"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 155,
+    "global_num": 397,
+    "trans": "avak",
+    "english": "dust"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 156,
+    "global_num": 398,
+    "trans": "aviron",
+    "english": "airplane"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 157,
+    "global_num": 399,
+    "trans": "avaz",
+    "english": "goose"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 158,
+    "global_num": 400,
+    "trans": "oger",
+    "english": "hamster"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 159,
+    "global_num": 401,
+    "trans": "ofanayim",
+    "english": "bicycle ðŸš²"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 160,
+    "global_num": 402,
+    "trans": "ofanoa",
+    "english": "motorbike ðŸï¸"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 161,
+    "global_num": 403,
+    "trans": "ofe",
+    "english": "baker"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 162,
+    "global_num": 404,
+    "trans": "or",
+    "english": "light"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 163,
+    "global_num": 405,
+    "trans": "ozen",
+    "english": "ear"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 164,
+    "global_num": 406,
+    "trans": "i",
+    "english": "island"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 165,
+    "global_num": 407,
+    "trans": "azaka",
+    "english": "alarm"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 166,
+    "global_num": 408,
+    "trans": "ayal",
+    "english": "deer"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 167,
+    "global_num": 409,
+    "trans": "ayil",
+    "english": "ram ðŸ"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 168,
+    "global_num": 410,
+    "trans": "leechol",
+    "english": "he / it&nbsp;<b>ate</b>"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 169,
+    "global_num": 411,
+    "trans": "ambatya",
+    "english": "bathtub ðŸ›"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 170,
+    "global_num": 412,
+    "trans": "aruba",
+    "english": "chimney"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 171,
+    "global_num": 413,
+    "trans": "efroach",
+    "english": "chicken"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 172,
+    "global_num": 414,
+    "trans": "orez",
+    "english": "rice"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 173,
+    "global_num": 415,
+    "trans": "aron",
+    "english": "closet"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 174,
+    "global_num": 416,
+    "trans": "arnak",
+    "english": "wallet"
+  },
+  {
+    "part": 2,
+    "subdeck": 7,
+    "subdeck_name": "Part 2 - Subdeck 7",
+    "card_num": 175,
+    "global_num": 417,
+    "trans": "lavo",
+    "english": "he / it&nbsp;<strong>come(s)</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 176,
+    "global_num": 418,
+    "trans": "etmol",
+    "english": "yesterday"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 177,
+    "global_num": 419,
+    "trans": "et",
+    "english": "spade, shovel"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 178,
+    "global_num": 420,
+    "trans": "neyar",
+    "english": "paper"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 179,
+    "global_num": 421,
+    "trans": "derech",
+    "english": "way"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 180,
+    "global_num": 422,
+    "trans": "dror",
+    "english": "sparrow"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 181,
+    "global_num": 423,
+    "trans": "darga",
+    "english": "rank (military)"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 182,
+    "global_num": 424,
+    "trans": "dekel",
+    "english": "palm tree"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 183,
+    "global_num": 425,
+    "trans": "hege",
+    "english": "steering wheel"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 184,
+    "global_num": 426,
+    "trans": "hafsaka",
+    "english": "pause, break"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 185,
+    "global_num": 427,
+    "trans": "hala",
+    "english": "further on, onward"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 186,
+    "global_num": 428,
+    "trans": "har",
+    "english": "mountain"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 187,
+    "global_num": 429,
+    "trans": "haftaa",
+    "english": "surprise"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 188,
+    "global_num": 430,
+    "trans": "vrid",
+    "english": "vein (anatomy)"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 189,
+    "global_num": 431,
+    "trans": "vered",
+    "english": "rose (flower)"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 190,
+    "global_num": 432,
+    "trans": "vilon",
+    "english": "curtain"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 191,
+    "global_num": 433,
+    "trans": "vav",
+    "english": "hook"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 192,
+    "global_num": 434,
+    "trans": "zeev",
+    "english": "wolf"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 193,
+    "global_num": 435,
+    "trans": "katzar",
+    "english": "short"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 194,
+    "global_num": 436,
+    "trans": "kaved",
+    "english": "heavy"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 195,
+    "global_num": 437,
+    "trans": "dak",
+    "english": "thin"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 196,
+    "global_num": 438,
+    "trans": "harbe",
+    "english": "a lot, many"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 197,
+    "global_num": 439,
+    "trans": "namuch",
+    "english": "low"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 198,
+    "global_num": 440,
+    "trans": "yashar",
+    "english": "straight; honest"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 199,
+    "global_num": 441,
+    "trans": "zanav",
+    "english": "tail (of an animal)"
+  },
+  {
+    "part": 2,
+    "subdeck": 8,
+    "subdeck_name": "Part 2 - Subdeck 8",
+    "card_num": 200,
+    "global_num": 442,
+    "trans": "lizkor",
+    "english": "he / it&nbsp;<strong>remembered</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 201,
+    "global_num": 443,
+    "trans": "chol",
+    "english": "sand"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 202,
+    "global_num": 444,
+    "trans": "chazak",
+    "english": "strong"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 203,
+    "global_num": 445,
+    "trans": "tiyul",
+    "english": "walk, journey"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 204,
+    "global_num": 446,
+    "trans": "chaya",
+    "english": "animal"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 205,
+    "global_num": 447,
+    "trans": "chayal",
+    "english": "soldier"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 206,
+    "global_num": 448,
+    "trans": "chanut",
+    "english": "store"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 207,
+    "global_num": 449,
+    "trans": "charif",
+    "english": "spicy"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 208,
+    "global_num": 450,
+    "trans": "kruv",
+    "english": "cabbage"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 209,
+    "global_num": 451,
+    "trans": "tabaat",
+    "english": "ring, circle"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 210,
+    "global_num": 452,
+    "trans": "chatul",
+    "english": "cat ðŸˆ"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 211,
+    "global_num": 453,
+    "trans": "kelev",
+    "english": "dog ðŸ•"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 212,
+    "global_num": 454,
+    "trans": "tari",
+    "english": "fresh"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 213,
+    "global_num": 455,
+    "trans": "chavura",
+    "english": "group"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 214,
+    "global_num": 456,
+    "trans": "litmoch",
+    "english": "he / it&nbsp;<strong>supported</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 215,
+    "global_num": 457,
+    "trans": "tziburi",
+    "english": "public"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 216,
+    "global_num": 458,
+    "trans": "lehagid",
+    "english": "I&nbsp;<strong>will tell</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 217,
+    "global_num": 459,
+    "trans": "ledaber",
+    "english": "I / you&nbsp;/ he / it&nbsp;<strong>speak(s)</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 218,
+    "global_num": 460,
+    "trans": "ezrach",
+    "english": "<div>citizen; civilian</div>"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 219,
+    "global_num": 461,
+    "trans": "heskem",
+    "english": "agreement, accord, pact"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 220,
+    "global_num": 462,
+    "trans": "davka",
+    "english": "exactly, precisely; in fact"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 221,
+    "global_num": 463,
+    "trans": "aliya",
+    "english": "ascent, rise; immigration to Israel"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 222,
+    "global_num": 464,
+    "trans": "metziut",
+    "english": "reality; existence"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 223,
+    "global_num": 465,
+    "trans": "pitron",
+    "english": "solution (of a problem)"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 224,
+    "global_num": 466,
+    "trans": "hevdel",
+    "english": "difference"
+  },
+  {
+    "part": 2,
+    "subdeck": 9,
+    "subdeck_name": "Part 2 - Subdeck 9",
+    "card_num": 225,
+    "global_num": 467,
+    "trans": "ikar",
+    "english": "essence"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 226,
+    "global_num": 468,
+    "trans": "merkazi",
+    "english": "central"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 227,
+    "global_num": 469,
+    "trans": "lehatchil",
+    "english": "I / you&nbsp;/ he / it&nbsp;<strong>start(s)</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 228,
+    "global_num": 470,
+    "trans": "hotzaa",
+    "english": "removal; expense"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 229,
+    "global_num": 471,
+    "trans": "shuk",
+    "english": "market"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 230,
+    "global_num": 472,
+    "trans": "brit",
+    "english": "pact, alliance, treaty, covenant"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 231,
+    "global_num": 473,
+    "trans": "prati",
+    "english": "private, individual, personal"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 232,
+    "global_num": 474,
+    "trans": "lashir",
+    "english": "he / it&nbsp;<strong>sang</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 233,
+    "global_num": 475,
+    "trans": "mashal",
+    "english": "example; parable, allegory; proverb"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 234,
+    "global_num": 476,
+    "trans": "mesuyam",
+    "english": "specific, defined, certain"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 235,
+    "global_num": 477,
+    "trans": "bichlal",
+    "english": "in general"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 236,
+    "global_num": 478,
+    "trans": "kayam",
+    "english": "existing"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 237,
+    "global_num": 479,
+    "trans": "sameach",
+    "english": "happy, joyful"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 238,
+    "global_num": 480,
+    "trans": "amiti",
+    "english": "true; original"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 239,
+    "global_num": 481,
+    "trans": "legabei",
+    "english": "<div><div><div>regarding, concerning</div></div></div>"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 240,
+    "global_num": 482,
+    "trans": "leheasot",
+    "english": "he / it&nbsp;<strong>became</strong>"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 241,
+    "global_num": 483,
+    "trans": "kumkum",
+    "english": "kettle"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 242,
+    "global_num": 484,
+    "trans": "al-yedei",
+    "english": "by, via; by means of"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 243,
+    "global_num": 485,
+    "trans": "bahir",
+    "english": "bright"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 244,
+    "global_num": 486,
+    "trans": "tzarich",
+    "english": "need, should, must (<em>as a verb</em>)"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 245,
+    "global_num": 487,
+    "trans": "lashav",
+    "english": "for nothing, futilely, in vain"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 246,
+    "global_num": 488,
+    "trans": "me'ever",
+    "english": "beyond"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 247,
+    "global_num": 489,
+    "trans": "hataya",
+    "english": "bias"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 248,
+    "global_num": 490,
+    "trans": "kaspomat",
+    "english": "ATM, cash machine"
+  },
+  {
+    "part": 2,
+    "subdeck": 10,
+    "subdeck_name": "Part 2 - Subdeck 10",
+    "card_num": 249,
+    "global_num": 491,
+    "trans": "lehasbir",
+    "english": "he / it <b>explained</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 1,
+    "global_num": 492,
+    "trans": "akavish",
+    "english": "spider ðŸ•·ï¸"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 2,
+    "global_num": 493,
+    "trans": "lihyot",
+    "english": "he / it&nbsp;<b>was</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 3,
+    "global_num": 494,
+    "trans": "lomar",
+    "english": "he / it&nbsp;<b>said</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 4,
+    "global_num": 495,
+    "trans": "lirtzot",
+    "english": "he / it <b>wanted</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 5,
+    "global_num": 496,
+    "trans": "lirot",
+    "english": "he / it saw&nbsp;"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 6,
+    "global_num": 497,
+    "trans": "kedei",
+    "english": "in order to"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 7,
+    "global_num": 498,
+    "trans": "lalechet",
+    "english": "he / it&nbsp;<b>went&nbsp;</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 8,
+    "global_num": 499,
+    "trans": "tzarich",
+    "english": "need, should, must"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 9,
+    "global_num": 500,
+    "trans": "lachshov",
+    "english": "he / it&nbsp;<b>thought</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 10,
+    "global_num": 501,
+    "trans": "latet",
+    "english": "he / it&nbsp;<b>gave</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 11,
+    "global_num": 502,
+    "trans": "sefer",
+    "english": "book"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 12,
+    "global_num": 503,
+    "trans": "toda",
+    "english": "thank you"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 13,
+    "global_num": 504,
+    "trans": "lehachil",
+    "english": "he / it&nbsp;<b>included</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 14,
+    "global_num": 505,
+    "trans": "lehavin",
+    "english": "he / it&nbsp;understand(s)&nbsp;"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 15,
+    "global_num": 506,
+    "trans": "hirgish",
+    "english": "he / it&nbsp;felt&nbsp;"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 16,
+    "global_num": 507,
+    "trans": "kol",
+    "english": "all of them"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 17,
+    "global_num": 508,
+    "trans": "acharon",
+    "english": "last, final"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 18,
+    "global_num": 509,
+    "trans": "ofen",
+    "english": "method, fashion, manner"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 19,
+    "global_num": 510,
+    "trans": "tzad",
+    "english": "side"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 20,
+    "global_num": 511,
+    "trans": "limtzo",
+    "english": "he / it&nbsp;<b>found</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 21,
+    "global_num": 512,
+    "trans": "adayin",
+    "english": "still, yet"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 22,
+    "global_num": 513,
+    "trans": "lahafoch",
+    "english": "\"<span style=\"\"text-align: center;\"\">he / it&nbsp;</span><b><span style=\"\"box-sizing: border-box; text-align: center;\"\">turned over</span></b>\""
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 23,
+    "global_num": 514,
+    "trans": "kesher",
+    "english": "connection"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 24,
+    "global_num": 515,
+    "trans": "kodem",
+    "english": "preceding, previous"
+  },
+  {
+    "part": 3,
+    "subdeck": 1,
+    "subdeck_name": "Part 3 - Subdeck 1",
+    "card_num": 25,
+    "global_num": 516,
+    "trans": "kanire",
+    "english": "probably, apparently"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 26,
+    "global_num": 517,
+    "trans": "iver",
+    "english": "blind"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 27,
+    "global_num": 518,
+    "trans": "ez",
+    "english": "goat"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 28,
+    "global_num": 519,
+    "trans": "et",
+    "english": "pencil"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 29,
+    "global_num": 520,
+    "trans": "uga",
+    "english": "cake ðŸ°"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 30,
+    "global_num": 521,
+    "trans": "enav",
+    "english": "grapes ðŸ‡"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 31,
+    "global_num": 522,
+    "trans": "achbar",
+    "english": "mouseðŸ€ðŸ–±ï¸"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 32,
+    "global_num": 523,
+    "trans": "pil",
+    "english": "elephant"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 33,
+    "global_num": 524,
+    "trans": "patish",
+    "english": "hammer"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 34,
+    "global_num": 525,
+    "trans": "panas",
+    "english": "lamp, flashlight, torch"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 35,
+    "global_num": 526,
+    "trans": "para",
+    "english": "cow"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 36,
+    "global_num": 527,
+    "trans": "parva",
+    "english": "fur"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 37,
+    "global_num": 528,
+    "trans": "perach",
+    "english": "flower"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 38,
+    "global_num": 529,
+    "trans": "parpar",
+    "english": "butterfly"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 39,
+    "global_num": 530,
+    "trans": "tsabar",
+    "english": "cactus"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 40,
+    "global_num": 531,
+    "trans": "tzavar",
+    "english": "neck"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 41,
+    "global_num": 532,
+    "trans": "tzel",
+    "english": "shadow"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 42,
+    "global_num": 533,
+    "trans": "tzalachat",
+    "english": "plate, dish"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 43,
+    "global_num": 534,
+    "trans": "tziyur",
+    "english": "painting, drawing, picture"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 44,
+    "global_num": 535,
+    "trans": "litzchok",
+    "english": "he / it&nbsp;<strong>laughed</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 45,
+    "global_num": 536,
+    "trans": "tzame",
+    "english": "thirsty"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 46,
+    "global_num": 537,
+    "trans": "latzum",
+    "english": "fasted"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 47,
+    "global_num": 538,
+    "trans": "letzaltzel",
+    "english": "<div>he / it&nbsp;<strong>rang</strong><br></div>"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 48,
+    "global_num": 539,
+    "trans": "tzanchan",
+    "english": "paratrooper"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 49,
+    "global_num": 540,
+    "trans": "tzfardea",
+    "english": "frog ðŸ¸"
+  },
+  {
+    "part": 3,
+    "subdeck": 2,
+    "subdeck_name": "Part 3 - Subdeck 2",
+    "card_num": 50,
+    "global_num": 541,
+    "trans": "kof",
+    "english": "monkey, ape"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 51,
+    "global_num": 542,
+    "trans": "tzemer",
+    "english": "wool"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 52,
+    "global_num": 543,
+    "trans": "tzemach",
+    "english": "plant"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 53,
+    "global_num": 544,
+    "trans": "kol",
+    "english": "sound; voice"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 54,
+    "global_num": 545,
+    "trans": "katnoa",
+    "english": "scooter"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 55,
+    "global_num": 546,
+    "trans": "katar",
+    "english": "locomotive"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 56,
+    "global_num": 547,
+    "trans": "klipa",
+    "english": "peel, skin, bark, shell"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 57,
+    "global_num": 548,
+    "trans": "kir",
+    "english": "wall"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 58,
+    "global_num": 549,
+    "trans": "kalmar",
+    "english": "pencil case"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 59,
+    "global_num": 550,
+    "trans": "liknot",
+    "english": "he / it&nbsp;<strong>bought</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 60,
+    "global_num": 551,
+    "trans": "ken",
+    "english": "nest"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 61,
+    "global_num": 552,
+    "trans": "kemach",
+    "english": "flour"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 62,
+    "global_num": 553,
+    "trans": "kipod",
+    "english": "hedgehog ðŸ¦”"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 63,
+    "global_num": 554,
+    "trans": "keara",
+    "english": "bowl"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 64,
+    "global_num": 555,
+    "trans": "kar",
+    "english": "cold"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 65,
+    "global_num": 556,
+    "trans": "keren",
+    "english": "horn; ray, beam"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 66,
+    "global_num": 557,
+    "trans": "kerach",
+    "english": "ice"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 67,
+    "global_num": 558,
+    "trans": "likrot",
+    "english": "he / it&nbsp;<strong>happened</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 68,
+    "global_num": 559,
+    "trans": "likro",
+    "english": "he / it&nbsp;<strong>read</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 69,
+    "global_num": 560,
+    "trans": "katom",
+    "english": "orange (color)"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 70,
+    "global_num": 561,
+    "trans": "chum",
+    "english": "brown"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 71,
+    "global_num": 562,
+    "trans": "keshet",
+    "english": "bow; rainbow; arc, arch ðŸŒˆ"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 72,
+    "global_num": 563,
+    "trans": "rov",
+    "english": "most of, majority"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 73,
+    "global_num": 564,
+    "trans": "riba",
+    "english": "jam, jelly, marmalade"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 74,
+    "global_num": 565,
+    "trans": "sapa",
+    "english": "sofa"
+  },
+  {
+    "part": 3,
+    "subdeck": 3,
+    "subdeck_name": "Part 3 - Subdeck 3",
+    "card_num": 75,
+    "global_num": 566,
+    "trans": "kursa",
+    "english": "armchair, easy chair"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 76,
+    "global_num": 567,
+    "trans": "madaf",
+    "english": "shelf, ledge"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 77,
+    "global_num": 568,
+    "trans": "shulchan",
+    "english": "table"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 78,
+    "global_num": 569,
+    "trans": "kise",
+    "english": "chair"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 79,
+    "global_num": 570,
+    "trans": "aron",
+    "english": "cupboard, closet"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 80,
+    "global_num": 571,
+    "trans": "rofe",
+    "english": "doctor, physician"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 81,
+    "global_num": 572,
+    "trans": "roe",
+    "english": "sheperd"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 82,
+    "global_num": 573,
+    "trans": "ruach",
+    "english": "wind"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 83,
+    "global_num": 574,
+    "trans": "rove",
+    "english": "rifle"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 84,
+    "global_num": 575,
+    "trans": "rokeach",
+    "english": "pharmacist"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 85,
+    "global_num": 576,
+    "trans": "rachav",
+    "english": "wide, vast"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 86,
+    "global_num": 577,
+    "trans": "raze",
+    "english": "slim, thin, skinny"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 87,
+    "global_num": 578,
+    "trans": "rachutz",
+    "english": "washed, cleaned"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 88,
+    "global_num": 579,
+    "trans": "raev",
+    "english": "hungry"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 89,
+    "global_num": 580,
+    "trans": "rimon",
+    "english": "pomegranate"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 90,
+    "global_num": 581,
+    "trans": "rakevet",
+    "english": "train"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 91,
+    "global_num": 582,
+    "trans": "raam",
+    "english": "thunder"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 92,
+    "global_num": 583,
+    "trans": "larutz",
+    "english": "he / it <b>ran</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 93,
+    "global_num": 584,
+    "trans": "lashuv",
+    "english": "he / it&nbsp;<strong>returned</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 94,
+    "global_num": 585,
+    "trans": "reshet",
+    "english": "net"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 95,
+    "global_num": 586,
+    "trans": "chilazon",
+    "english": "snail"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 96,
+    "global_num": 587,
+    "trans": "shual",
+    "english": "fox ðŸ¦Š"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 97,
+    "global_num": 588,
+    "trans": "siach",
+    "english": "bush"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 98,
+    "global_num": 589,
+    "trans": "lismoach",
+    "english": "he / it&nbsp;<strong>is happy</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 99,
+    "global_num": 590,
+    "trans": "lasim",
+    "english": "he / it&nbsp;<strong>put</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 4,
+    "subdeck_name": "Part 3 - Subdeck 4",
+    "card_num": 100,
+    "global_num": 591,
+    "trans": "shamayim",
+    "english": "sky"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 101,
+    "global_num": 592,
+    "trans": "shen",
+    "english": "tooth"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 102,
+    "global_num": 593,
+    "trans": "shaon",
+    "english": "clock, watch, timer"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 103,
+    "global_num": 594,
+    "trans": "shafan",
+    "english": "rabbit; coward (slang)"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 104,
+    "global_num": 595,
+    "trans": "safa",
+    "english": "language"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 105,
+    "global_num": 596,
+    "trans": "sear",
+    "english": "hair"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 106,
+    "global_num": 597,
+    "trans": "shaar",
+    "english": "gate"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 107,
+    "global_num": 598,
+    "trans": "lashir",
+    "english": "he / it&nbsp; sang"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 108,
+    "global_num": 599,
+    "trans": "shoresh",
+    "english": "root"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 109,
+    "global_num": 600,
+    "trans": "sroch",
+    "english": "shoelace"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 110,
+    "global_num": 601,
+    "trans": "sheket",
+    "english": "silence"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 111,
+    "global_num": 602,
+    "trans": "taarich",
+    "english": "date (calendar)"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 112,
+    "global_num": 603,
+    "trans": "teena",
+    "english": "fig; fig tree"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 113,
+    "global_num": 604,
+    "trans": "tor",
+    "english": "queue, line; turn"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 114,
+    "global_num": 605,
+    "trans": "tut",
+    "english": "strawberry"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 115,
+    "global_num": 606,
+    "trans": "makak",
+    "english": "cockroach"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 116,
+    "global_num": 607,
+    "trans": "taltal",
+    "english": "curl, lock (hair)"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 117,
+    "global_num": 608,
+    "trans": "tuki",
+    "english": "parrot; copycat, imitator&nbsp;ðŸ¦œ"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 118,
+    "global_num": 609,
+    "trans": "tamar",
+    "english": "dates"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 119,
+    "global_num": 610,
+    "trans": "talmid",
+    "english": "student"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 120,
+    "global_num": 611,
+    "trans": "tapuach-adama",
+    "english": "potato ðŸ¥”"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 121,
+    "global_num": 612,
+    "trans": "tapuz",
+    "english": "orange (fruit)"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 122,
+    "global_num": 613,
+    "trans": "tof",
+    "english": "drum"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 123,
+    "global_num": 614,
+    "trans": "tanin",
+    "english": "crocodile"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 124,
+    "global_num": 615,
+    "trans": "tered",
+    "english": "spinach"
+  },
+  {
+    "part": 3,
+    "subdeck": 5,
+    "subdeck_name": "Part 3 - Subdeck 5",
+    "card_num": 125,
+    "global_num": 616,
+    "trans": "shida",
+    "english": "drawer"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 126,
+    "global_num": 617,
+    "trans": "seren",
+    "english": "captain"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 127,
+    "global_num": 618,
+    "trans": "hon",
+    "english": "capital (financial)"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 128,
+    "global_num": 619,
+    "trans": "batuach",
+    "english": "safely, surely"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 129,
+    "global_num": 620,
+    "trans": "bentayim",
+    "english": "meanwhile, in the meantime"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 130,
+    "global_num": 621,
+    "trans": "beitza",
+    "english": "egg"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 131,
+    "global_num": 622,
+    "trans": "bikur",
+    "english": "visit"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 132,
+    "global_num": 623,
+    "trans": "bira",
+    "english": "beer"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 133,
+    "global_num": 624,
+    "trans": "berur",
+    "english": "clarification"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 134,
+    "global_num": 625,
+    "trans": "beit-sefer",
+    "english": "school"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 135,
+    "global_num": 626,
+    "trans": "bechavana",
+    "english": "on purpose"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 136,
+    "global_num": 627,
+    "trans": "bechenut",
+    "english": "honestly"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 137,
+    "global_num": 628,
+    "trans": "balagan",
+    "english": "disorder, mess, confusion (slang)"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 138,
+    "global_num": 629,
+    "trans": "bilbul",
+    "english": "mix up, confusion"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 139,
+    "global_num": 630,
+    "trans": "bilti",
+    "english": "not, non-, -less"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 140,
+    "global_num": 631,
+    "trans": "gee",
+    "english": "proud, arrogant"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 141,
+    "global_num": 632,
+    "trans": "gvul",
+    "english": "&nbsp;limit, boundary"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 142,
+    "global_num": 633,
+    "trans": "gvina",
+    "english": "cheese"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 143,
+    "global_num": 634,
+    "trans": "govah",
+    "english": "height"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 144,
+    "global_num": 635,
+    "trans": "gaven",
+    "english": "shade"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 145,
+    "global_num": 636,
+    "trans": "golmi",
+    "english": "raw"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 146,
+    "global_num": 637,
+    "trans": "gumi",
+    "english": "rubber"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 147,
+    "global_num": 638,
+    "trans": "gufiya",
+    "english": "undershirt"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 148,
+    "global_num": 639,
+    "trans": "gay",
+    "english": "valley"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 149,
+    "global_num": 640,
+    "trans": "ligmor",
+    "english": "I / you&nbsp;m. sg.&nbsp;/ he / it&nbsp;<b>finish(es)</b>"
+  },
+  {
+    "part": 3,
+    "subdeck": 6,
+    "subdeck_name": "Part 3 - Subdeck 6",
+    "card_num": 150,
+    "global_num": 641,
+    "trans": "doar",
+    "english": "post, post office"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 151,
+    "global_num": 642,
+    "trans": "drisha",
+    "english": "demand"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 152,
+    "global_num": 643,
+    "trans": "dat",
+    "english": "religion"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 153,
+    "global_num": 644,
+    "trans": "dati",
+    "english": "religious"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 154,
+    "global_num": 645,
+    "trans": "hagana",
+    "english": "defense, protection"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 155,
+    "global_num": 646,
+    "trans": "hed",
+    "english": "echo"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 156,
+    "global_num": 647,
+    "trans": "hazmana",
+    "english": "invitation; order (in a restaurant, etc.)"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 157,
+    "global_num": 648,
+    "trans": "halevay",
+    "english": "if only, I wish"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 158,
+    "global_num": 649,
+    "trans": "hamon",
+    "english": "large number"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 159,
+    "global_num": 650,
+    "trans": "hatzlacha",
+    "english": "success"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 160,
+    "global_num": 651,
+    "trans": "hargasha",
+    "english": "feeling"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 161,
+    "global_num": 652,
+    "trans": "hashkaa",
+    "english": "investment"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 162,
+    "global_num": 653,
+    "trans": "hashraa",
+    "english": "inspiration"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 163,
+    "global_num": 654,
+    "trans": "hitpashtut",
+    "english": "expansion"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 164,
+    "global_num": 655,
+    "trans": "hitkadmut",
+    "english": "progress"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 165,
+    "global_num": 656,
+    "trans": "vadai",
+    "english": "certain"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 166,
+    "global_num": 657,
+    "trans": "shenit",
+    "english": "again; secondly"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 167,
+    "global_num": 658,
+    "trans": "zahir",
+    "english": "careful"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 168,
+    "global_num": 659,
+    "trans": "zulat",
+    "english": "except for"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 169,
+    "global_num": 660,
+    "trans": "zmani",
+    "english": "temporary"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 170,
+    "global_num": 661,
+    "trans": "zamin",
+    "english": "available"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 171,
+    "global_num": 662,
+    "trans": "zamar",
+    "english": "singer"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 172,
+    "global_num": 663,
+    "trans": "zar",
+    "english": "foreign"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 173,
+    "global_num": 664,
+    "trans": "zariz",
+    "english": "quick"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 174,
+    "global_num": 665,
+    "trans": "zerem",
+    "english": "current"
+  },
+  {
+    "part": 3,
+    "subdeck": 7,
+    "subdeck_name": "Part 3 - Subdeck 7",
+    "card_num": 175,
+    "global_num": 666,
+    "trans": "chaviv",
+    "english": "likeable"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 176,
+    "global_num": 667,
+    "trans": "chavita",
+    "english": "fried egg"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 177,
+    "global_num": 668,
+    "trans": "chevel",
+    "english": "rope&nbsp;"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 178,
+    "global_num": 669,
+    "trans": "chaval",
+    "english": "it's a pity"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 179,
+    "global_num": 670,
+    "trans": "chaver",
+    "english": "member"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 180,
+    "global_num": 671,
+    "trans": "chevra",
+    "english": "society"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 181,
+    "global_num": 672,
+    "trans": "chagora",
+    "english": "belt"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 182,
+    "global_num": 673,
+    "trans": "chad",
+    "english": "sharp"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 183,
+    "global_num": 674,
+    "trans": "chadgoni",
+    "english": "monotonous"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 184,
+    "global_num": 675,
+    "trans": "chole",
+    "english": "sick"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 185,
+    "global_num": 676,
+    "trans": "chultza",
+    "english": "shirt"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 186,
+    "global_num": 677,
+    "trans": "chom",
+    "english": "heat, warmth"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 187,
+    "global_num": 678,
+    "trans": "chometz",
+    "english": "vinegar"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 188,
+    "global_num": 679,
+    "trans": "chomer",
+    "english": "material"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 189,
+    "global_num": 680,
+    "trans": "choser",
+    "english": "lack of"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 190,
+    "global_num": 681,
+    "trans": "chofesh",
+    "english": "freedom"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 191,
+    "global_num": 682,
+    "trans": "chutz",
+    "english": "outside"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 192,
+    "global_num": 683,
+    "trans": "siyut",
+    "english": "nightmare"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 193,
+    "global_num": 684,
+    "trans": "chok",
+    "english": "law"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 194,
+    "global_num": 685,
+    "trans": "chuki",
+    "english": "legal"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 195,
+    "global_num": 686,
+    "trans": "lachkor",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>research(es)</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 196,
+    "global_num": 687,
+    "trans": "chursha",
+    "english": "grove, small forest"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 197,
+    "global_num": 688,
+    "trans": "lachush",
+    "english": "sense"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 198,
+    "global_num": 689,
+    "trans": "choshech",
+    "english": "darkness"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 199,
+    "global_num": 690,
+    "trans": "chaze",
+    "english": "chest"
+  },
+  {
+    "part": 3,
+    "subdeck": 8,
+    "subdeck_name": "Part 3 - Subdeck 8",
+    "card_num": 200,
+    "global_num": 691,
+    "trans": "chazir",
+    "english": "pig"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 201,
+    "global_num": 692,
+    "trans": "chazara",
+    "english": "return"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 202,
+    "global_num": 693,
+    "trans": "chay",
+    "english": "alive"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 203,
+    "global_num": 694,
+    "trans": "hitkashrut",
+    "english": "relationship"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 204,
+    "global_num": 695,
+    "trans": "chiyuv",
+    "english": "positivity"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 205,
+    "global_num": 696,
+    "trans": "chiyuvi",
+    "english": "positive"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 206,
+    "global_num": 697,
+    "trans": "chiyuni",
+    "english": "vital"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 207,
+    "global_num": 698,
+    "trans": "chayav",
+    "english": "owes, must&nbsp;"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 208,
+    "global_num": 699,
+    "trans": "chiloni",
+    "english": "non-religious"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 209,
+    "global_num": 700,
+    "trans": "chinam",
+    "english": "free, gratis"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 210,
+    "global_num": 701,
+    "trans": "chipus",
+    "english": "search"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 211,
+    "global_num": 702,
+    "trans": "chitzoni",
+    "english": "external"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 212,
+    "global_num": 703,
+    "trans": "chishuv",
+    "english": "calculation"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 213,
+    "global_num": 704,
+    "trans": "chalom",
+    "english": "dream"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 214,
+    "global_num": 705,
+    "trans": "kalush",
+    "english": "slight"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 215,
+    "global_num": 706,
+    "trans": "chamutz",
+    "english": "sour"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 216,
+    "global_num": 707,
+    "trans": "chanut",
+    "english": "shop, store"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 217,
+    "global_num": 708,
+    "trans": "chanaya",
+    "english": "parking"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 218,
+    "global_num": 709,
+    "trans": "chasinut",
+    "english": "immunity"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 219,
+    "global_num": 710,
+    "trans": "lachsor",
+    "english": "I / you&nbsp;/ he / it&nbsp;<strong>lack(s)</strong>"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 220,
+    "global_num": 711,
+    "trans": "chisaron",
+    "english": "drawback"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 221,
+    "global_num": 712,
+    "trans": "chatzot",
+    "english": "midnight"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 222,
+    "global_num": 713,
+    "trans": "chardal",
+    "english": "mustard"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 223,
+    "global_num": 714,
+    "trans": "chatich",
+    "english": "handsome, cute"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 224,
+    "global_num": 715,
+    "trans": "chatach",
+    "english": "cut"
+  },
+  {
+    "part": 3,
+    "subdeck": 9,
+    "subdeck_name": "Part 3 - Subdeck 9",
+    "card_num": 225,
+    "global_num": 716,
+    "trans": "chatzait",
+    "english": "skirt"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 226,
+    "global_num": 717,
+    "trans": "teva",
+    "english": "nature"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 227,
+    "global_num": 718,
+    "trans": "tivi",
+    "english": "natural"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 228,
+    "global_num": 719,
+    "trans": "tipesh",
+    "english": "foolish"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 229,
+    "global_num": 720,
+    "trans": "tisa",
+    "english": "flight"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 230,
+    "global_num": 721,
+    "trans": "tipa",
+    "english": "a bit, tiny amount"
+  },
+  {
+    "part": 3,
+    "subdeck": 10,
+    "subdeck_name": "Part 3 - Subdeck 10",
+    "card_num": 231,
+    "global_num": 722,
+    "trans": "pe",
+    "english": "mouth"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 1,
+    "global_num": 723,
+    "trans": "shoter",
+    "english": "policeman"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 2,
+    "global_num": 724,
+    "trans": "buba",
+    "english": "doll"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 3,
+    "global_num": 725,
+    "trans": "lehealem",
+    "english": "he / it&nbsp;<strong>disappeared</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 4,
+    "global_num": 726,
+    "trans": "lehagia",
+    "english": "he / it&nbsp;<strong>arrived</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 5,
+    "global_num": 727,
+    "trans": "lenasot",
+    "english": "he / it&nbsp;<strong>tried</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 6,
+    "global_num": 728,
+    "trans": "ragua",
+    "english": "relaxed, calm"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 7,
+    "global_num": 729,
+    "trans": "gamal",
+    "english": "camel"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 8,
+    "global_num": 730,
+    "trans": "almog",
+    "english": "coral"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 9,
+    "global_num": 731,
+    "trans": "karir",
+    "english": "cool"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 10,
+    "global_num": 732,
+    "trans": "hitmodedut",
+    "english": "coping, dealing with"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 11,
+    "global_num": 733,
+    "trans": "yeter",
+    "english": "rope, cord; hypotenuse"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 12,
+    "global_num": 734,
+    "trans": "heetek",
+    "english": "copy"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 13,
+    "global_num": 735,
+    "trans": "pagum",
+    "english": "damaged; corrupt"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 14,
+    "global_num": 736,
+    "trans": "shiul",
+    "english": "cough"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 15,
+    "global_num": 737,
+    "trans": "kutna",
+    "english": "cotton"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 16,
+    "global_num": 738,
+    "trans": "meshuga",
+    "english": "crazy, mad"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 17,
+    "global_num": 739,
+    "trans": "livro",
+    "english": "he / it&nbsp;<strong>created</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 18,
+    "global_num": 740,
+    "trans": "kriti",
+    "english": "critical; crucial"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 19,
+    "global_num": 741,
+    "trans": "benoni",
+    "english": "medium; mediocre"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 20,
+    "global_num": 742,
+    "trans": "bram",
+    "english": "however, but (aramaic)&nbsp;"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 21,
+    "global_num": 743,
+    "trans": "bozmani",
+    "english": "simultaneous"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 22,
+    "global_num": 744,
+    "trans": "bracha",
+    "english": "blessing"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 23,
+    "global_num": 745,
+    "trans": "boser",
+    "english": "unripe"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 24,
+    "global_num": 746,
+    "trans": "behechlet",
+    "english": "absolutely"
+  },
+  {
+    "part": 4,
+    "subdeck": 1,
+    "subdeck_name": "Part 4 - Subdeck 1",
+    "card_num": 25,
+    "global_num": 747,
+    "trans": "kadima",
+    "english": "forward, forwards, ahead"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 26,
+    "global_num": 748,
+    "trans": "yahalom",
+    "english": "diamond"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 27,
+    "global_num": 749,
+    "trans": "chiba",
+    "english": "affection"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 28,
+    "global_num": 750,
+    "trans": "kadum",
+    "english": "ancient"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 29,
+    "global_num": 751,
+    "trans": "pras",
+    "english": "prize, award"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 30,
+    "global_num": 752,
+    "trans": "kadursal",
+    "english": "basketball"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 31,
+    "global_num": 753,
+    "trans": "ambat",
+    "english": "bath"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 32,
+    "global_num": 754,
+    "trans": "masu'a",
+    "english": "torch; beacon"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 33,
+    "global_num": 755,
+    "trans": "zakan",
+    "english": "beard"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 34,
+    "global_num": 756,
+    "trans": "yofi",
+    "english": "beauty"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 35,
+    "global_num": 757,
+    "trans": "lehitafsher",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>become(s) possible</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 36,
+    "global_num": 758,
+    "trans": "lehatchil",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>start(s)</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 37,
+    "global_num": 759,
+    "trans": "lefachot",
+    "english": "at least"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 38,
+    "global_num": 760,
+    "trans": "emuna",
+    "english": "faith, trust, confidence"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 39,
+    "global_num": 761,
+    "trans": "neshima",
+    "english": "breath, breathing"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 40,
+    "global_num": 762,
+    "trans": "mavriq",
+    "english": "brilliant"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 41,
+    "global_num": 763,
+    "trans": "nehag",
+    "english": "cab driver"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 42,
+    "global_num": 764,
+    "trans": "hasva'a",
+    "english": "camouflage"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 43,
+    "global_num": 765,
+    "trans": "pach",
+    "english": "tin, can"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 44,
+    "global_num": 766,
+    "trans": "naal",
+    "english": "shoes"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 45,
+    "global_num": 767,
+    "trans": "mikrogal",
+    "english": "microwave oven"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 46,
+    "global_num": 768,
+    "trans": "machberet",
+    "english": "notebook, exercise book"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 47,
+    "global_num": 769,
+    "trans": "lefichach",
+    "english": "therefore, for this reason"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 48,
+    "global_num": 770,
+    "trans": "achor",
+    "english": "back, rear part"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 49,
+    "global_num": 771,
+    "trans": "achori",
+    "english": "posterior, rear"
+  },
+  {
+    "part": 4,
+    "subdeck": 2,
+    "subdeck_name": "Part 4 - Subdeck 2",
+    "card_num": 50,
+    "global_num": 772,
+    "trans": "leacher",
+    "english": "to be late"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 51,
+    "global_num": 773,
+    "trans": "achray",
+    "english": "responsible person"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 52,
+    "global_num": 774,
+    "trans": "achrai",
+    "english": "responsible"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 53,
+    "global_num": 775,
+    "trans": "acharit",
+    "english": "end, close"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 54,
+    "global_num": 776,
+    "trans": "le'achar",
+    "english": "after (a period of time; ×©Ö¾ if used with a clause)"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 55,
+    "global_num": 777,
+    "trans": "me'uchar",
+    "english": "late, later"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 56,
+    "global_num": 778,
+    "trans": "agada",
+    "english": "legend, fairy tale"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 57,
+    "global_num": 779,
+    "trans": "hagada",
+    "english": "saga, legend, epic"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 58,
+    "global_num": 780,
+    "trans": "hitnagdut",
+    "english": "resistance"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 59,
+    "global_num": 781,
+    "trans": "menugad",
+    "english": "opposite; contrary"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 60,
+    "global_num": 782,
+    "trans": "nagid",
+    "english": "ruler, leader"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 61,
+    "global_num": 783,
+    "trans": "nefach",
+    "english": "volume; capacity"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 62,
+    "global_num": 784,
+    "trans": "hesder",
+    "english": "agreement, arrangement, settlement"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 63,
+    "global_num": 785,
+    "trans": "misderon",
+    "english": "corridor"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 64,
+    "global_num": 786,
+    "trans": "sidra",
+    "english": "sequence, series"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 65,
+    "global_num": 787,
+    "trans": "latzet",
+    "english": "to exit, to go out"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 66,
+    "global_num": 788,
+    "trans": "likro",
+    "english": "we / you&nbsp;<em>m. pl.</em>&nbsp;/ they&nbsp;<em>m.</em>&nbsp;<strong>read / call</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 67,
+    "global_num": 789,
+    "trans": "lehistakel",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>look(s)</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 68,
+    "global_num": 790,
+    "trans": "otobus",
+    "english": "bus ðŸšŒ"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 69,
+    "global_num": 791,
+    "trans": "ochel",
+    "english": "food"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 70,
+    "global_num": 792,
+    "trans": "universita",
+    "english": "university"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 71,
+    "global_num": 793,
+    "trans": "hetev",
+    "english": "well, properly"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 72,
+    "global_num": 794,
+    "trans": "ein",
+    "english": "there isnâ€™t/arenâ€™t"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 73,
+    "global_num": 795,
+    "trans": "anglit",
+    "english": "english"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 74,
+    "global_num": 796,
+    "trans": "beged",
+    "english": "clothes"
+  },
+  {
+    "part": 4,
+    "subdeck": 3,
+    "subdeck_name": "Part 4 - Subdeck 3",
+    "card_num": 75,
+    "global_num": 797,
+    "trans": "batata",
+    "english": "sweet potato"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 76,
+    "global_num": 798,
+    "trans": "beten",
+    "english": "stomach"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 77,
+    "global_num": 799,
+    "trans": "benzin",
+    "english": "gasoline"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 78,
+    "global_num": 800,
+    "trans": "binyan",
+    "english": "building"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 79,
+    "global_num": 801,
+    "trans": "baal",
+    "english": "husband"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 80,
+    "global_num": 802,
+    "trans": "batzal",
+    "english": "onion&nbsp;"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 81,
+    "global_num": 803,
+    "trans": "bakar",
+    "english": "beef"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 82,
+    "global_num": 804,
+    "trans": "ilulei",
+    "english": "were it not for"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 83,
+    "global_num": 805,
+    "trans": "gezer",
+    "english": "carrot"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 84,
+    "global_num": 806,
+    "trans": "glida",
+    "english": "ice cream"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 85,
+    "global_num": 807,
+    "trans": "gerev",
+    "english": "socks"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 86,
+    "global_num": 808,
+    "trans": "duvdevan",
+    "english": "cherry ðŸ’"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 87,
+    "global_num": 809,
+    "trans": "bizrizut",
+    "english": "quickly, swiftly"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 88,
+    "global_num": 810,
+    "trans": "hove",
+    "english": "present time"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 89,
+    "global_num": 811,
+    "trans": "hafsaka",
+    "english": "break"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 90,
+    "global_num": 812,
+    "trans": "zaken",
+    "english": "old (person)"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 91,
+    "global_num": 813,
+    "trans": "chevra",
+    "english": "company"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 92,
+    "global_num": 814,
+    "trans": "cheder",
+    "english": "room"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 93,
+    "global_num": 815,
+    "trans": "chof",
+    "english": "beach"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 94,
+    "global_num": 816,
+    "trans": "chufsha",
+    "english": "vacation"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 95,
+    "global_num": 817,
+    "trans": "chala",
+    "english": "challah"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 96,
+    "global_num": 818,
+    "trans": "chiloni",
+    "english": "secular"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 97,
+    "global_num": 819,
+    "trans": "cham",
+    "english": "hot"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 98,
+    "global_num": 820,
+    "trans": "chema",
+    "english": "butter"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 99,
+    "global_num": 821,
+    "trans": "machmatz",
+    "english": "pickles"
+  },
+  {
+    "part": 4,
+    "subdeck": 4,
+    "subdeck_name": "Part 4 - Subdeck 4",
+    "card_num": 100,
+    "global_num": 822,
+    "trans": "chasa",
+    "english": "lettuce"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 101,
+    "global_num": 823,
+    "trans": "chetzi",
+    "english": "half (of something)"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 102,
+    "global_num": 824,
+    "trans": "cheshbon",
+    "english": "bill, check"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 103,
+    "global_num": 825,
+    "trans": "se",
+    "english": "lamb (male)"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 104,
+    "global_num": 826,
+    "trans": "televizya",
+    "english": "tv"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 105,
+    "global_num": 827,
+    "trans": "taim",
+    "english": "tasty"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 106,
+    "global_num": 828,
+    "trans": "yad",
+    "english": "arm"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 107,
+    "global_num": 829,
+    "trans": "yehudi",
+    "english": "jewish"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 108,
+    "global_num": 830,
+    "trans": "yachid",
+    "english": "singular; single (not married)"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 109,
+    "global_num": 831,
+    "trans": "lechan",
+    "english": "here (direction), hither"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 110,
+    "global_num": 832,
+    "trans": "yam",
+    "english": "sea"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 111,
+    "global_num": 833,
+    "trans": "yamin",
+    "english": "right (direction)"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 112,
+    "global_num": 834,
+    "trans": "yetzia",
+    "english": "exit"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 113,
+    "global_num": 835,
+    "trans": "yarok",
+    "english": "green"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 114,
+    "global_num": 836,
+    "trans": "yareach",
+    "english": "moon"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 115,
+    "global_num": 837,
+    "trans": "yarak",
+    "english": "vegetables"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 116,
+    "global_num": 838,
+    "trans": "yashan",
+    "english": "old (thing)"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 117,
+    "global_num": 839,
+    "trans": "yatush",
+    "english": "mosquito"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 118,
+    "global_num": 840,
+    "trans": "keev",
+    "english": "pain/ache"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 119,
+    "global_num": 841,
+    "trans": "kvish",
+    "english": "road, route&nbsp;"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 120,
+    "global_num": 842,
+    "trans": "kaduregel",
+    "english": "football âš½&nbsp;"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 121,
+    "global_num": 843,
+    "trans": "kova",
+    "english": "hat"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 122,
+    "global_num": 844,
+    "trans": "kochav",
+    "english": "star ðŸŒŸ"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 123,
+    "global_num": 845,
+    "trans": "kos",
+    "english": "glass, cup"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 124,
+    "global_num": 846,
+    "trans": "lichos",
+    "english": "angry"
+  },
+  {
+    "part": 4,
+    "subdeck": 5,
+    "subdeck_name": "Part 4 - Subdeck 5",
+    "card_num": 125,
+    "global_num": 847,
+    "trans": "kita",
+    "english": "classroom"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 126,
+    "global_num": 848,
+    "trans": "knisa",
+    "english": "entrance"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 127,
+    "global_num": 849,
+    "trans": "kaf",
+    "english": "spoon"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 128,
+    "global_num": 850,
+    "trans": "karit",
+    "english": "pillow"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 129,
+    "global_num": 851,
+    "trans": "kasher",
+    "english": "kosher"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 130,
+    "global_num": 852,
+    "trans": "ktovet",
+    "english": "address"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 131,
+    "global_num": 853,
+    "trans": "leat",
+    "english": "slowly"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 132,
+    "global_num": 854,
+    "trans": "lechayim",
+    "english": "cheers"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 133,
+    "global_num": 855,
+    "trans": "lechem",
+    "english": "bread"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 134,
+    "global_num": 856,
+    "trans": "letaa",
+    "english": "lizard"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 135,
+    "global_num": 857,
+    "trans": "maafe",
+    "english": "pastry"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 136,
+    "global_num": 858,
+    "trans": "maafiya",
+    "english": "bakery"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 137,
+    "global_num": 859,
+    "trans": "mivchan",
+    "english": "test/exam"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 138,
+    "global_num": 860,
+    "trans": "magevet",
+    "english": "towel"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 139,
+    "global_num": 861,
+    "trans": "midbar",
+    "english": "desert"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 140,
+    "global_num": 862,
+    "trans": "madan",
+    "english": "scientist"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 141,
+    "global_num": 863,
+    "trans": "madpeset",
+    "english": "printer"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 142,
+    "global_num": 864,
+    "trans": "midracha",
+    "english": "sidewalk"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 143,
+    "global_num": 865,
+    "trans": "mehandes",
+    "english": "engineer"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 144,
+    "global_num": 866,
+    "trans": "muzeon",
+    "english": "museum"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 145,
+    "global_num": 867,
+    "trans": "muzika",
+    "english": "music"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 146,
+    "global_num": 868,
+    "trans": "muchan",
+    "english": "ready, prepared"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 147,
+    "global_num": 869,
+    "trans": "monit",
+    "english": "taxi, cab&nbsp;ðŸš•"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 148,
+    "global_num": 870,
+    "trans": "more",
+    "english": "teacher"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 149,
+    "global_num": 871,
+    "trans": "mazgan",
+    "english": "air conditioner"
+  },
+  {
+    "part": 4,
+    "subdeck": 6,
+    "subdeck_name": "Part 4 - Subdeck 6",
+    "card_num": 150,
+    "global_num": 872,
+    "trans": "mitbach",
+    "english": "kitchen"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 151,
+    "global_num": 873,
+    "trans": "metugan",
+    "english": "fried"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 152,
+    "global_num": 874,
+    "trans": "milon",
+    "english": "dictionary"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 153,
+    "global_num": 875,
+    "trans": "mitz",
+    "english": "juice"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 154,
+    "global_num": 876,
+    "trans": "mechoar",
+    "english": "ugly"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 155,
+    "global_num": 877,
+    "trans": "michnasayim",
+    "english": "pants ðŸ‘–"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 156,
+    "global_num": 878,
+    "trans": "lehalhiv",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>excite(s)</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 157,
+    "global_num": 879,
+    "trans": "melafefon",
+    "english": "cucumber ðŸ¥’"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 158,
+    "global_num": 880,
+    "trans": "memshala",
+    "english": "government"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 159,
+    "global_num": 881,
+    "trans": "mana",
+    "english": "serving/portion"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 160,
+    "global_num": 882,
+    "trans": "menahel",
+    "english": "manager"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 161,
+    "global_num": 883,
+    "trans": "minhara",
+    "english": "tunnel"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 162,
+    "global_num": 884,
+    "trans": "misada",
+    "english": "restaurant"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 163,
+    "global_num": 885,
+    "trans": "lehasriach",
+    "english": "I / you&nbsp;<em>m. sg.</em>&nbsp;/ he / it&nbsp;<strong>stink(s)</strong>"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 164,
+    "global_num": 886,
+    "trans": "mapit",
+    "english": "napkin"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 165,
+    "global_num": 887,
+    "trans": "mafteach",
+    "english": "key"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 166,
+    "global_num": 888,
+    "trans": "matzchik",
+    "english": "funny"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 167,
+    "global_num": 889,
+    "trans": "mekarer",
+    "english": "refrigerator"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 168,
+    "global_num": 890,
+    "trans": "marak",
+    "english": "soup"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 169,
+    "global_num": 891,
+    "trans": "meshaamem",
+    "english": "boring"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 170,
+    "global_num": 892,
+    "trans": "mishkal",
+    "english": "weight"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 171,
+    "global_num": 893,
+    "trans": "misrad",
+    "english": "office"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 172,
+    "global_num": 894,
+    "trans": "navon",
+    "english": "intelligent"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 173,
+    "global_num": 895,
+    "trans": "nehag",
+    "english": "driver"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 174,
+    "global_num": 896,
+    "trans": "nahar",
+    "english": "river"
+  },
+  {
+    "part": 4,
+    "subdeck": 7,
+    "subdeck_name": "Part 4 - Subdeck 7",
+    "card_num": 175,
+    "global_num": 897,
+    "trans": "nemala",
+    "english": "ant ðŸœ"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 176,
+    "global_num": 898,
+    "trans": "nektarina",
+    "english": "nectarine"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 177,
+    "global_num": 899,
+    "trans": "naki",
+    "english": "clean"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 178,
+    "global_num": 900,
+    "trans": "nasuy",
+    "english": "married"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 179,
+    "global_num": 901,
+    "trans": "neshek",
+    "english": "weapon"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 180,
+    "global_num": 902,
+    "trans": "saba",
+    "english": "grandfather"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 181,
+    "global_num": 903,
+    "trans": "sabon",
+    "english": "soap"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 182,
+    "global_num": 904,
+    "trans": "savta",
+    "english": "grandmother"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 183,
+    "global_num": 905,
+    "trans": "sagol",
+    "english": "purple"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 184,
+    "global_num": 906,
+    "trans": "sagur",
+    "english": "closed"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 185,
+    "global_num": 907,
+    "trans": "sadin",
+    "english": "sheet"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 186,
+    "global_num": 908,
+    "trans": "sukar",
+    "english": "sugar"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 187,
+    "global_num": 909,
+    "trans": "sipur",
+    "english": "story&nbsp;"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 188,
+    "global_num": 910,
+    "trans": "sakin",
+    "english": "knife"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 189,
+    "global_num": 911,
+    "trans": "salat",
+    "english": "salad ðŸ¥—"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 190,
+    "global_num": 912,
+    "trans": "slicha",
+    "english": "sorry"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 191,
+    "global_num": 913,
+    "trans": "lehitztaer",
+    "english": "I'm sorry"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 192,
+    "global_num": 914,
+    "trans": "selek",
+    "english": "beet (root)"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 193,
+    "global_num": 915,
+    "trans": "kafkaf",
+    "english": "sandals"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 194,
+    "global_num": 916,
+    "trans": "sifriya",
+    "english": "library"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 195,
+    "global_num": 917,
+    "trans": "seret",
+    "english": "movie"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 196,
+    "global_num": 918,
+    "trans": "avar",
+    "english": "past"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 197,
+    "global_num": 919,
+    "trans": "ivri",
+    "english": "hebrew"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 198,
+    "global_num": 920,
+    "trans": "ovesh",
+    "english": "mold"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 199,
+    "global_num": 921,
+    "trans": "et",
+    "english": "pen"
+  },
+  {
+    "part": 4,
+    "subdeck": 8,
+    "subdeck_name": "Part 4 - Subdeck 8",
+    "card_num": 200,
+    "global_num": 922,
+    "trans": "ayef",
+    "english": "tired"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 201,
+    "global_num": 923,
+    "trans": "ir",
+    "english": "city"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 202,
+    "global_num": 924,
+    "trans": "iton",
+    "english": "newspaper"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 203,
+    "global_num": 925,
+    "trans": "ani",
+    "english": "poor"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 204,
+    "global_num": 926,
+    "trans": "atzlan",
+    "english": "lazy person"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 205,
+    "global_num": 927,
+    "trans": "etzem",
+    "english": "bone"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 206,
+    "global_num": 928,
+    "trans": "aravit",
+    "english": "arabic"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 207,
+    "global_num": 929,
+    "trans": "arutz",
+    "english": "channel (tv)"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 208,
+    "global_num": 930,
+    "trans": "ashir",
+    "english": "rich"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 209,
+    "global_num": 931,
+    "trans": "ashpa",
+    "english": "garbage can"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 210,
+    "global_num": 932,
+    "trans": "pitriya",
+    "english": "mushrooms"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 211,
+    "global_num": 933,
+    "trans": "pikeach",
+    "english": "smart"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 212,
+    "global_num": 934,
+    "trans": "psanter",
+    "english": "piano"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 213,
+    "global_num": 935,
+    "trans": "perek",
+    "english": "chapter"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 214,
+    "global_num": 936,
+    "trans": "pashut",
+    "english": "simple"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 215,
+    "global_num": 937,
+    "trans": "patuach",
+    "english": "open"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 216,
+    "global_num": 938,
+    "trans": "tzalachat",
+    "english": "plate"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 217,
+    "global_num": 939,
+    "trans": "kvutza",
+    "english": "team"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 218,
+    "global_num": 940,
+    "trans": "kabala",
+    "english": "reciept"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 219,
+    "global_num": 941,
+    "trans": "kishu",
+    "english": "squash, zucchini"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 220,
+    "global_num": 942,
+    "trans": "kanyon",
+    "english": "mall"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 221,
+    "global_num": 943,
+    "trans": "kashe",
+    "english": "difficult"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 222,
+    "global_num": 944,
+    "trans": "reva",
+    "english": "quarter (of something)"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 223,
+    "global_num": 945,
+    "trans": "rotev",
+    "english": "sauce"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 224,
+    "global_num": 946,
+    "trans": "ratov",
+    "english": "wet"
+  },
+  {
+    "part": 4,
+    "subdeck": 9,
+    "subdeck_name": "Part 4 - Subdeck 9",
+    "card_num": 225,
+    "global_num": 947,
+    "trans": "rach",
+    "english": "soft"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 226,
+    "global_num": 948,
+    "trans": "ra",
+    "english": "bad"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 227,
+    "global_num": 949,
+    "trans": "raayon",
+    "english": "idea"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 228,
+    "global_num": 950,
+    "trans": "sheela",
+    "english": "question"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 229,
+    "global_num": 951,
+    "trans": "shabat",
+    "english": "saturday"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 230,
+    "global_num": 952,
+    "trans": "tikra",
+    "english": "ceiling"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 231,
+    "global_num": 953,
+    "trans": "tnua",
+    "english": "traffic"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 232,
+    "global_num": 954,
+    "trans": "shtiya",
+    "english": "(a) drink"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 233,
+    "global_num": 955,
+    "trans": "sherutim",
+    "english": "toilet (bathroom)"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 234,
+    "global_num": 956,
+    "trans": "shlish",
+    "english": "third (of something)"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 235,
+    "global_num": 957,
+    "trans": "me'uban",
+    "english": "fossil"
+  },
+  {
+    "part": 4,
+    "subdeck": 10,
+    "subdeck_name": "Part 4 - Subdeck 10",
+    "card_num": 236,
+    "global_num": 958,
+    "trans": "agartal",
+    "english": "vase ðŸº"
+  }
+];
+
+let knownWords = new Set();
+
+function renderSubdecks() {
+    const container = document.getElementById('subdecksContainer');
+    const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+    container.innerHTML = '';
+    
+    // Group words by subdeck
+    const subdecks = {};
+    wordsData.forEach(word => {
+        if (!subdecks[word.subdeck_name]) {
+            subdecks[word.subdeck_name] = [];
+        }
+        subdecks[word.subdeck_name].push(word);
+    });
+    
+    // Render each subdeck
+    Object.keys(subdecks).sort().forEach(subdeckName => {
+        const words = subdecks[subdeckName];
+        
+        // Filter words by search
+        const filteredWords = words.filter(w =>
+            !searchTerm ||
+            w.english.toLowerCase().includes(searchTerm) ||
+            w.trans.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filteredWords.length === 0 && searchTerm) return;
+        
+        const knownInSubdeck = words.filter(w => knownWords.has(w.trans + '|' + w.english)).length;
+        
+        const subdeckDiv = document.createElement('div');
+        subdeckDiv.className = 'subdeck-container';
+        
+        subdeckDiv.innerHTML = `
+            <div class="subdeck-header" onclick="toggleSubdeck(this)">
+                <div class="subdeck-title">${subdeckName}</div>
+                <div class="subdeck-stats">${knownInSubdeck} / ${words.length} known</div>
+            </div>
+            <div class="subdeck-words">
+                ${filteredWords.map(word => `
+                    <div class="word-card ${knownWords.has(word.trans + '|' + word.english) ? 'known' : ''}" 
+                         onclick="toggleKnown('${word.trans.replace(/'/g, "\\'")}', '${word.english.replace(/'/g, "\\'")}')">
+                        <div class="word-trans">${word.trans}</div>
+                        <div class="word-english">${word.english}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        container.appendChild(subdeckDiv);
+    });
+}
+
+function toggleSubdeck(header) {
+    const wordsDiv = header.nextElementSibling;
+    wordsDiv.classList.toggle('collapsed');
+}
+
+function expandAll() {
+    document.querySelectorAll('.subdeck-words').forEach(div => {
+        div.classList.remove('collapsed');
+    });
+}
+
+function collapseAll() {
+    document.querySelectorAll('.subdeck-words').forEach(div => {
+        div.classList.add('collapsed');
+    });
+}
+
+function toggleKnown(trans, english) {
+    const key = trans + '|' + english;
+    if (knownWords.has(key)) {
+        knownWords.delete(key);
+    } else {
+        knownWords.add(key);
+    }
+    updateStats();
+    renderSubdecks();
+}
+
+function updateStats() {
+    document.getElementById('knownCount').textContent = knownWords.size;
+    const percent = ((knownWords.size / wordsData.length) * 100).toFixed(1);
+    document.getElementById('percentKnown').textContent = percent + '%';
+}
+
+function saveProgress() {
+    localStorage.setItem('easyHebrewDeckKnown', JSON.stringify(Array.from(knownWords)));
+    alert('✅ Progress saved!');
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem('easyHebrewDeckKnown');
+    if (saved) {
+        knownWords = new Set(JSON.parse(saved));
+        updateStats();
+        renderSubdecks();
+        alert('✅ Progress loaded!');
+    } else {
+        alert('No saved progress found.');
+    }
+}
+
+function exportKnown() {
+    const knownList = wordsData.filter(w => knownWords.has(w.trans + '|' + w.english));
+    let output = '# EASY HEBREW DECK - KNOWN WORDS\n';
+    output += '# Total: ' + knownList.length + ' words\n';
+    output += '# Export Date: ' + new Date().toISOString().split('T')[0] + '\n\n';
+    
+    knownList.forEach(w => {
+        output += `${w.trans}|${w.english}\n`;
+    });
+    
+    const blob = new Blob([output], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'EasyHebrewDeck_Known_Words_' + new Date().toISOString().split('T')[0] + '.txt';
+    a.click();
+}
+
+function clearAll() {
+    if (confirm('Clear all checkmarks?')) {
+        knownWords.clear();
+        updateStats();
+        renderSubdecks();
+    }
+}
+
+// Search functionality
+document.getElementById('searchBox').addEventListener('input', renderSubdecks);
+
+// Initialize
+renderSubdecks();
+updateStats();
+
+// Auto-load saved progress
+window.addEventListener('load', () => {
+    const saved = localStorage.setItem('easyHebrewDeckKnown');
+    if (saved) {
+        knownWords = new Set(JSON.parse(saved));
+        updateStats();
+        renderSubdecks();
+    }
+});
+    </script>
+</body>
+</html>
