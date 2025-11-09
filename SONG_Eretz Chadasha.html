@@ -99,7 +99,6 @@
         
         <!-- View Mode -->
         <div class="view-mode active" id="viewMode">
-            <button class="btn" onclick="switchToEdit()">✏️ EDIT LYRICS</button>
 <button class="btn" onclick="switchToEdit()">✏️ EDIT LYRICS</button>
 <button class="btn" onclick="location.href='Hebrew_Songs_Menu.html'">← BACK TO SONGS</button>            
             <div class="lyrics-section">
@@ -305,18 +304,22 @@ For Hebrew learners, this song is excellent because it uses modern, poetic Hebre
         const SONG_KEY = 'song_eretz_chadasha';
         
         function loadData() {
-            const data = localStorage.getItem(SONG_KEY);
-            if (data) {
-                const parsed = JSON.parse(data);
-                document.getElementById('englishDisplay').textContent = parsed.english || 'Click EDIT LYRICS to add English lyrics';
-                document.getElementById('transDisplay').textContent = parsed.trans || 'Click EDIT LYRICS to add transliteration';
-                document.getElementById('englishEdit').value = parsed.english || '';
-                document.getElementById('transEdit').value = parsed.trans || '';
-            } else {
-                document.getElementById('englishDisplay').textContent = 'Click EDIT LYRICS to add English lyrics';
-                document.getElementById('transDisplay').textContent = 'Click EDIT LYRICS to add transliteration';
-            }
-        }
+    const data = localStorage.getItem(SONG_KEY);
+    if (data) {
+        const parsed = JSON.parse(data);
+        // Convert newlines to <br> tags for display
+        const englishWithBreaks = parsed.english ? parsed.english.replace(/\n/g, '<br>') : 'Click EDIT LYRICS to add English lyrics';
+        const transWithBreaks = parsed.trans ? parsed.trans.replace(/\n/g, '<br>') : 'Click EDIT LYRICS to add transliteration';
+        
+        document.getElementById('englishDisplay').innerHTML = englishWithBreaks;
+        document.getElementById('transDisplay').innerHTML = transWithBreaks;
+        document.getElementById('englishEdit').value = parsed.english || '';
+        document.getElementById('transEdit').value = parsed.trans || '';
+    } else {
+        document.getElementById('englishDisplay').innerHTML = 'Click EDIT LYRICS to add English lyrics';
+        document.getElementById('transDisplay').innerHTML = 'Click EDIT LYRICS to add transliteration';
+    }
+}
         
         function switchToEdit() {
             document.getElementById('viewMode').classList.remove('active');
