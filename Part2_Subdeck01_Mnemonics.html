@@ -8,6 +8,60 @@
     <link rel="apple-touch-icon" href="mnemonicsBlue_image.png">
     <link rel="apple-touch-icon" sizes="180x180" href="mnemonicsBlue_image.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
+     .hide-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .hide-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .mnemonic-card.hidden {
+            display: none;
+        }
+        
+        .controls-header {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .show-hidden-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .show-hidden-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .show-hidden-toggle label {
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .stats {
+            font-size: 14px;
+            color: #888;
+        }
     <style>
         * {
             margin: 0;
