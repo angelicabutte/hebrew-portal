@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 2 - Subdeck 5 Mnemonics (05. Chomesh)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .chunk-section {
+            margin-bottom: 40px;
+        }
+        
+        .chunk-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        @media (max-width: 700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .mnemonic-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 6px solid;
+        }
+        
+        .mnemonic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        /* Color variations */
+        .mnemonic-card:nth-child(6n+1) { border-left-color: #ef4444; }
+        .mnemonic-card:nth-child(6n+2) { border-left-color: #f59e0b; }
+        .mnemonic-card:nth-child(6n+3) { border-left-color: #10b981; }
+        .mnemonic-card:nth-child(6n+4) { border-left-color: #3b82f6; }
+        .mnemonic-card:nth-child(6n+5) { border-left-color: #8b5cf6; }
+        .mnemonic-card:nth-child(6n+6) { border-left-color: #ec4899; }
+        
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .word-hebrew {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1f2937;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+        }
+        
+        .word-info {
+            text-align: right;
+        }
+        
+        .word-translit {
+            font-size: 14px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .word-english {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .mnemonic-hook {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 10px;
+        }
+        
+        .connection {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .pronunciation {
+            font-size: 14px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+        
+        .card-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .hide-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .hide-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .mnemonic-card.hidden {
+            display: none;
+        }
+        
+        .controls-header {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .show-hidden-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .show-hidden-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        #stats {
+            font-size: 16px;
+            color: #4b5563;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Part 2 - Subdeck 5 (05. Chomesh)</h1>
+            <p>Hebrew Vocabulary Mnemonics - 25 Words</p>
+        </div>
+        
+        <div class="controls-header">
+            <div class="show-hidden-toggle">
+                <input type="checkbox" id="showHidden" onchange="toggleShowHidden()">
+                <label for="showHidden">Show Hidden Cards</label>
+            </div>
+            <div id="stats"></div>
+        </div>
+        
+        <div class="chunk-section">
+            <div class="chunk-title">🚀 Subdeck 05: Chomesh - Complete Set</div>
+            <div class="cards-grid">
+                
+                <div class="mnemonic-card" data-word="hataya">
+                    <div class="word-header">
+                        <div class="word-hebrew">הטיה</div>
+                        <div class="word-info">
+                            <div class="word-translit">hataya</div>
+                            <div class="word-english">bias</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ha-TAY-ah = HAT AYE bias!</div>
+                    <div class="connection">HAT + EYE = biased view! Root: n-t-h (incline/lean). Prejudice word!</div>
+                    <div class="pronunciation">🔊 Sounds like: hah-tah-YAH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="meever">
+                    <div class="word-header">
+                        <div class="word-hebrew">מעבר</div>
+                        <div class="word-info">
+                            <div class="word-translit">me'ever</div>
+                            <div class="word-english">beyond</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">May-EH-ver = MAY EVER beyond!</div>
+                    <div class="connection">ME + EVER = beyond forever! Root: a-v-r (pass). "Me'ever la..." = beyond the...</div>
+                    <div class="pronunciation">🔊 Sounds like: meh-EH-ver</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="im">
+                    <div class="word-header">
+                        <div class="word-hebrew">אִם</div>
+                        <div class="word-info">
+                            <div class="word-translit">im</div>
+                            <div class="word-english">if; whether</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">EEM = if I'M!</div>
+                    <div class="connection">IM = IF! Most basic conditional! Also means "mother" (different context)!</div>
+                    <div class="pronunciation">🔊 Sounds like: EEM</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="sham">
+                    <div class="word-header">
+                        <div class="word-hebrew">שָׁם</div>
+                        <div class="word-info">
+                            <div class="word-translit">sham</div>
+                            <div class="word-english">there</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SHAM = there's a SHAM!</div>
+                    <div class="connection">SHAM = THERE! Opposite of "po" (here). Location pointer!</div>
+                    <div class="pronunciation">🔊 Sounds like: SHAHM</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="chofshi">
+                    <div class="word-header">
+                        <div class="word-hebrew">חָפְשִׁי</div>
+                        <div class="word-info">
+                            <div class="word-translit">chofshi</div>
+                            <div class="word-english">free</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">KHOF-she = COUGH SHE free!</div>
+                    <div class="connection">Root: ch-p-sh (free). "Chofesh" = vacation/freedom! Liberty word!</div>
+                    <div class="pronunciation">🔊 Sounds like: khof-SHEE</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="ilu">
+                    <div class="word-header">
+                        <div class="word-hebrew">אִילּוּ</div>
+                        <div class="word-info">
+                            <div class="word-translit">ilu</div>
+                            <div class="word-english">if, if only</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">EE-loo = HE KNEW if only!</div>
+                    <div class="connection">ILU = if only! Wishful thinking word! "Ilu yachol..." = if only could...</div>
+                    <div class="pronunciation">🔊 Sounds like: EE-loo</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="omnam">
+                    <div class="word-header">
+                        <div class="word-hebrew">אוֹמְנָם</div>
+                        <div class="word-info">
+                            <div class="word-translit">omnam</div>
+                            <div class="word-english">indeed, truly</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Om-NAHM = OM NAM indeed!</div>
+                    <div class="connection">OM + NAM = indeed true! Emphasis word! "Omnam ken" = indeed yes!</div>
+                    <div class="pronunciation">🔊 Sounds like: ohm-NAHM</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="chodshayim">
+                    <div class="word-header">
+                        <div class="word-hebrew">חוֹדְשַׁיִם</div>
+                        <div class="word-info">
+                            <div class="word-translit">chodshayim</div>
+                            <div class="word-english">two months</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Kho-desh-AYIM = CODE SHAME two months!</div>
+                    <div class="connection">Chodesh + AYIM (dual) = two months! Like "yomayim" = two days!</div>
+                    <div class="pronunciation">🔊 Sounds like: khohd-SHAH-yeem</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="sevev">
+                    <div class="word-header">
+                        <div class="word-hebrew">סֵבֶב</div>
+                        <div class="word-info">
+                            <div class="word-translit">sevev</div>
+                            <div class="word-english">round, turn</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">SEH-vev = SAVE EVE round!</div>
+                    <div class="connection">Root: s-b-b (turn/surround). "Saviv" = around! Rotation word!</div>
+                    <div class="pronunciation">🔊 Sounds like: SEH-vev</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="po">
+                    <div class="word-header">
+                        <div class="word-hebrew">פֹּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">po</div>
+                            <div class="word-english">here</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">POH = POINT here!</div>
+                    <div class="connection">PO = HERE! Most basic location word! "Ani po" = I'm here!</div>
+                    <div class="pronunciation">🔊 Sounds like: POH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="mamash">
+                    <div class="word-header">
+                        <div class="word-hebrew">מַמָּשׁ</div>
+                        <div class="word-info">
+                            <div class="word-translit">mamash</div>
+                            <div class="word-english">really</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ma-MASH = MAMA MASH really!</div>
+                    <div class="connection">MAMA'S MASH = really real! Israeli emphasis! "Mamash lo" = really not!</div>
+                    <div class="pronunciation">🔊 Sounds like: mah-MAHSH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="metav">
+                    <div class="word-header">
+                        <div class="word-hebrew">מֵיטָב</div>
+                        <div class="word-info">
+                            <div class="word-translit">metav</div>
+                            <div class="word-english">best</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">May-TAHV = MAY TAB best!</div>
+                    <div class="connection">From "tov" (good)! "Ha'metav" = the best! Top quality!</div>
+                    <div class="pronunciation">🔊 Sounds like: may-TAHV</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="harei">
+                    <div class="word-header">
+                        <div class="word-hebrew">הֲרֵי</div>
+                        <div class="word-info">
+                            <div class="word-translit">harei</div>
+                            <div class="word-english">indeed; here is</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Ha-RAY = HOORAY indeed!</div>
+                    <div class="connection">HERE + IS = indeed! Presentation word! "Harei ze..." = here it is...</div>
+                    <div class="pronunciation">🔊 Sounds like: hah-RAY</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="meanyen">
+                    <div class="word-header">
+                        <div class="word-hebrew">מְעַנְיֵן</div>
+                        <div class="word-info">
+                            <div class="word-translit">me'anyen</div>
+                            <div class="word-english">interesting</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Meh-ahn-YEN = MEN YEN interesting!</div>
+                    <div class="connection">Root: a-n-y (interest). "Ze me'anyen!" = That's interesting!</div>
+                    <div class="pronunciation">🔊 Sounds like: meh-ahn-YEN</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="mizman">
+                    <div class="word-header">
+                        <div class="word-hebrew">מִזְּמַן</div>
+                        <div class="word-info">
+                            <div class="word-translit">mizman</div>
+                            <div class="word-english">long ago</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Miz-MAHN = MISS MAN long ago!</div>
+                    <div class="connection">From "zman" (time)! "Mizman lo..." = long time no... Classic greeting!</div>
+                    <div class="pronunciation">🔊 Sounds like: meez-MAHN</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="chagiga">
+                    <div class="word-header">
+                        <div class="word-hebrew">חֲגִיגָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">chagiga</div>
+                            <div class="word-english">celebration, party</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Kha-GEE-gah = HAG GIGA party!</div>
+                    <div class="connection">From "chag" (holiday)! Big celebration! Party time word!</div>
+                    <div class="pronunciation">🔊 Sounds like: khah-gee-GAH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="stam">
+                    <div class="word-header">
+                        <div class="word-hebrew">סְתָם</div>
+                        <div class="word-info">
+                            <div class="word-translit">stam</div>
+                            <div class="word-english">just, simply</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">STAHM = STAMP just!</div>
+                    <div class="connection">STAM = just/simply! "Stam kacha" = just because. Israeli shrug!</div>
+                    <div class="pronunciation">🔊 Sounds like: STAHM</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="kacha">
+                    <div class="word-header">
+                        <div class="word-hebrew">כָּכָה</div>
+                        <div class="word-info">
+                            <div class="word-translit">kacha</div>
+                            <div class="word-english">thus, so, like this</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">KAH-khah = GOTCHA thus!</div>
+                    <div class="connection">KACHA = like this! Demo word! "Ase kacha" = do it like this!</div>
+                    <div class="pronunciation">🔊 Sounds like: KAH-khah</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="ratzon">
+                    <div class="word-header">
+                        <div class="word-hebrew">רָצוֹן</div>
+                        <div class="word-info">
+                            <div class="word-translit">ratzon</div>
+                            <div class="word-english">will, desire</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Rah-TSOHN = RATS ON will!</div>
+                    <div class="connection">Root: r-ts-h (want). "Yesh ratzon?" = Is there will? Motivation word!</div>
+                    <div class="pronunciation">🔊 Sounds like: rah-TSOHN</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="mila">
+                    <div class="word-header">
+                        <div class="word-hebrew">מִילָּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">mila</div>
+                            <div class="word-english">word</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Mee-LAH = ME LAH word!</div>
+                    <div class="connection">MILA = word! "Mila be'mila" = word for word! Language building block!</div>
+                    <div class="pronunciation">🔊 Sounds like: mee-LAH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="lehanot">
+                    <div class="word-header">
+                        <div class="word-hebrew">לֵהָנוֹת</div>
+                        <div class="word-info">
+                            <div class="word-translit">lehanot</div>
+                            <div class="word-english">to enjoy</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Leh-ha-NOTE = LAY NOTE enjoy!</div>
+                    <div class="connection">Root: h-n-h (enjoy). "Nehene" = enjoyed! Pleasure verb!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-hah-NOTE</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="bimyuchad">
+                    <div class="word-header">
+                        <div class="word-hebrew">בִּמְיֻחָד</div>
+                        <div class="word-info">
+                            <div class="word-translit">bimyuchad</div>
+                            <div class="word-english">especially</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Bim-yu-KHAD = BEAM YOU HAD especially!</div>
+                    <div class="connection">From "meyuchad" (special)! Extra emphasis! "Bimyuchad bishvilcha" = especially for you!</div>
+                    <div class="pronunciation">🔊 Sounds like: beem-yoo-KHAHD</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="gina">
+                    <div class="word-header">
+                        <div class="word-hebrew">גִּינָּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">gina</div>
+                            <div class="word-english">garden</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Gee-NAH = GINA's garden!</div>
+                    <div class="connection">GINA has a garden! "Gan" = big garden, "gina" = small garden!</div>
+                    <div class="pronunciation">🔊 Sounds like: gee-NAH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="lenachesh">
+                    <div class="word-header">
+                        <div class="word-hebrew">לְנַחֵשׁ</div>
+                        <div class="word-info">
+                            <div class="word-translit">lenachesh</div>
+                            <div class="word-english">to guess</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Le-na-KHESH = SNAKE HESH guess!</div>
+                    <div class="connection">Like "nachash" (snake)! Snakes guess prey! "Nichush" = a guess!</div>
+                    <div class="pronunciation">🔊 Sounds like: leh-nah-KHESH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+                <div class="mnemonic-card" data-word="harbe">
+                    <div class="word-header">
+                        <div class="word-hebrew">הַרְבֵּה</div>
+                        <div class="word-info">
+                            <div class="word-translit">harbe</div>
+                            <div class="word-english">a lot, many</div>
+                        </div>
+                    </div>
+                    <div class="mnemonic-hook">Har-BEH = HARBOR BAY lot!</div>
+                    <div class="connection">Root: r-b-h (multiply). "Harbe todah!" = Thanks a lot! Quantity word!</div>
+                    <div class="pronunciation">🔊 Sounds like: har-BEH</div>
+                    <div class="card-controls">
+                        <button class="hide-btn" onclick="hideCard(this)">Hide Card</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        const STORAGE_KEY = 'part2_subdeck05_hidden_cards';
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            loadHiddenCards();
+            updateStats();
+        });
+        
+        function hideCard(button) {
+            const card = button.closest('.mnemonic-card');
+            const wordId = card.getAttribute('data-word');
+            let hiddenCards = getHiddenCards();
+            hiddenCards.push(wordId);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(hiddenCards));
+            card.classList.add('hidden');
+            updateStats();
+        }
+        
+        function toggleShowHidden() {
+            const showHidden = document.getElementById('showHidden').checked;
+            const cards = document.querySelectorAll('.mnemonic-card');
+            cards.forEach(card => {
+                const wordId = card.getAttribute('data-word');
+                const hiddenCards = getHiddenCards();
+                if (hiddenCards.includes(wordId)) {
+                    if (showHidden) {
+                        card.classList.remove('hidden');
+                        const btn = card.querySelector('.hide-btn');
+                        if (btn) {
+                            btn.textContent = 'Unhide Card';
+                            btn.onclick = () => unhideCard(btn);
+                        }
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+            updateStats();
+        }
+        
+        function unhideCard(button) {
+            const card = button.closest('.mnemonic-card');
+            const wordId = card.getAttribute('data-word');
+            let hiddenCards = getHiddenCards();
+            hiddenCards = hiddenCards.filter(id => id !== wordId);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(hiddenCards));
+            button.textContent = 'Hide Card';
+            button.onclick = () => hideCard(button);
+            updateStats();
+        }
+        
+        function getHiddenCards() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+        
+        function loadHiddenCards() {
+            const hiddenCards = getHiddenCards();
+            document.querySelectorAll('.mnemonic-card').forEach(card => {
+                const wordId = card.getAttribute('data-word');
+                if (hiddenCards.includes(wordId)) {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+        
+        function updateStats() {
+            const totalCards = document.querySelectorAll('.mnemonic-card').length;
+            const hiddenCards = getHiddenCards().length;
+            const visibleCards = totalCards - hiddenCards;
+            const statsDiv = document.getElementById('stats');
+            if (document.getElementById('showHidden').checked) {
+                statsDiv.textContent = `${totalCards} cards total (${hiddenCards} hidden, showing all)`;
+            } else {
+                statsDiv.textContent = `${visibleCards} of ${totalCards} cards visible • ${hiddenCards} hidden`;
+            }
+        }
+    </script>
+</body>
+</html>
