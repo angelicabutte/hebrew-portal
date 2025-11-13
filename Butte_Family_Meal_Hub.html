@@ -853,7 +853,7 @@
             <h1>🍽️ Butte Family Meal Hub</h1>
             <div class="week-info" id="weekInfo" onclick="editWeekDates()">Week of November 11-16, 2025 ✏️</div>
             <div style="text-align: center; margin-top: 15px;">
-                <img src="eathere1.png" alt="Meal Hub Icon" style="width: 120px; height: 120px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.style.display='none'">
+                <img src="eathere1.png" alt="Meal Hub Icon" style="width: 120px; height: 120px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" onerror="this.style.display='none'">
             </div>
         </header>
         
@@ -865,17 +865,6 @@
             <button class="tab-button" onclick="switchTab('meals')">🍴 Meal Bank</button>
             <button class="tab-button" onclick="switchTab('spinner')">🎰 Spinner</button>
             <button class="tab-button icon-only" onclick="switchTab('ideas')" title="Future Ideas">💡</button>
-        </div>
-        
-        <div class="header-buttons">
-            <div class="button-row">
-                <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
-                <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
-            </div>
-            <div class="button-row">
-                <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
-                <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
-            </div>
         </div>
         
         <div class="tab-content active" id="tab-week">
@@ -923,7 +912,10 @@
                     <select class="sort-dropdown" id="mealSort" onchange="sortMealBank()">
                         <option value="category">By Category</option>
                         <option value="alphabetical">A-Z</option>
-                        <option value="favorites">Favorites First</option>
+                        <option value="favorites">Most Favorites</option>
+                        <option value="john-favs">John's Favorites</option>
+                        <option value="ang-favs">Ang's Favorites</option>
+                        <option value="izzy-favs">Izzy's Favorites</option>
                         <option value="time-asc">Quickest First</option>
                         <option value="time-desc">Longest First</option>
                     </select>
@@ -979,6 +971,18 @@
                 </div>
                 
                 <div id="ideasList"></div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons at Bottom -->
+        <div class="header-buttons" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #FFE66D;">
+            <div class="button-row">
+                <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
+                <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
+            </div>
+            <div class="button-row">
+                <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
+                <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
             </div>
         </div>
     </div>
@@ -1210,47 +1214,47 @@
             },
             ideas: {
                 "Kitchen Management": [
-                    { text: "Daily kitchen cleanup checklists", starred: false },
-                    { text: "Meal prep instructions and timelines", starred: false },
-                    { text: "Job assignments (who sets table, clears, etc.)", starred: false },
-                    { text: "Leftover inventory tracker", starred: false },
-                    { text: "Pantry stock levels", starred: false }
+                    { text: "Daily kitchen cleanup checklists", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Meal prep instructions and timelines", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Job assignments (who sets table, clears, etc.)", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Leftover inventory tracker", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Pantry stock levels", stars: { john: false, ang: false, izzy: false } }
                 ],
                 "Tracking & History": [
-                    { text: "Archive and view past weeks", starred: false },
-                    { text: "Cost tracking per meal/week", starred: false },
-                    { text: "Meal frequency analysis", starred: false },
-                    { text: "Pivot tracking (meals changed from original plan)", starred: false },
-                    { text: "Success rating system", starred: false }
+                    { text: "Archive and view past weeks", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Cost tracking per meal/week", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Meal frequency analysis", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Pivot tracking (meals changed from original plan)", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Success rating system", stars: { john: false, ang: false, izzy: false } }
                 ],
                 "Meal Details": [
-                    { text: "Full recipes with instructions", starred: false },
-                    { text: "Ingredient lists per meal", starred: false },
-                    { text: "Photo upload for meal results", starred: false },
-                    { text: "Nutrition information", starred: false },
-                    { text: "Cooking time breakdown", starred: false }
+                    { text: "Full recipes with instructions", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Ingredient lists per meal", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Photo upload for meal results", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Nutrition information", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Cooking time breakdown", stars: { john: false, ang: false, izzy: false } }
                 ],
                 "Automation & Integration": [
-                    { text: "Push notifications for meal time", starred: false },
-                    { text: "Google Calendar integration", starred: false },
-                    { text: "Auto-populate grocery list from meal selection", starred: false },
-                    { text: "Meal plan templates", starred: false },
-                    { text: "Recipe import from websites", starred: false },
-                    { text: "Shopping list sharing to phones", starred: false }
+                    { text: "Push notifications for meal time", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Google Calendar integration", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Auto-populate grocery list from meal selection", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Meal plan templates", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Recipe import from websites", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Shopping list sharing to phones", stars: { john: false, ang: false, izzy: false } }
                 ],
                 "User Experience": [
-                    { text: "Print-friendly weekly menu", starred: false },
-                    { text: "Drag-and-drop meal scheduling", starred: false },
-                    { text: "Undo/redo functionality", starred: false },
-                    { text: "Smart meal suggestions based on history", starred: false },
-                    { text: "Voice input for adding items", starred: false }
+                    { text: "Print-friendly weekly menu", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Drag-and-drop meal scheduling", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Undo/redo functionality", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Smart meal suggestions based on history", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Voice input for adding items", stars: { john: false, ang: false, izzy: false } }
                 ],
                 "Advanced Features": [
-                    { text: "User authentication", starred: false },
-                    { text: "Import/export meal plans", starred: false },
-                    { text: "Backup and restore data", starred: false },
-                    { text: "Multi-week planning view", starred: false },
-                    { text: "Collaborative meal suggestions", starred: false }
+                    { text: "User authentication", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Import/export meal plans", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Backup and restore data", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Multi-week planning view", stars: { john: false, ang: false, izzy: false } },
+                    { text: "Collaborative meal suggestions", stars: { john: false, ang: false, izzy: false } }
                 ]
             }
         };
@@ -1279,9 +1283,19 @@
                     if (savedData.weekOf) mealData.weekOf = savedData.weekOf;
                     if (savedData.meals) mealData.meals = savedData.meals;
                     if (savedData.groceryList) mealData.groceryList = savedData.groceryList;
+                    if (savedData.ideas) mealData.ideas = savedData.ideas;
                     
                     document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
                 }
+                // Force initial render
+                renderMeals();
+                renderGrocery();
+                renderMealBank();
+                renderIdeas();
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                // Render with default data even if Firebase fails
                 renderMeals();
                 renderGrocery();
                 renderMealBank();
@@ -1378,7 +1392,20 @@
         }
         
         function startNewWeek() {
-            if (!confirm("Start a new week? This will reset the current week.")) return;
+            const confirmMsg = "Start a new week? This will:\n\n" +
+                "✓ Reset all meal statuses to 'Planned'\n" +
+                "✓ Uncheck all grocery items\n" +
+                "✓ Update to next week's dates\n" +
+                "✓ Keep all your meals in Meal Bank\n\n" +
+                "After clicking OK:\n" +
+                "1. Have your Sunday planning session\n" +
+                "2. Click meal names in 'This Week' to enter this week's meals\n" +
+                "3. Click chef names to assign who's cooking\n" +
+                "4. Go to Grocery tab to build shopping list\n" +
+                "5. Everyone adds their items!\n\n" +
+                "Continue?";
+            
+            if (!confirm(confirmMsg)) return;
             
             mealData.meals.forEach(meal => {
                 meal.status = 'planned';
@@ -1400,6 +1427,13 @@
             saveData();
             renderMeals();
             renderGrocery();
+            
+            alert("✅ New week started!\n\n" +
+                  "Now do your Sunday planning:\n" +
+                  "1. Go to Meal Bank and pick meals\n" +
+                  "2. Click meal names in This Week to enter them\n" +
+                  "3. Assign chefs\n" +
+                  "4. Build grocery list together!");
         }
         
         function renderMeals() {
@@ -1608,6 +1642,18 @@
                             const bFav = Object.values(b.favorites).filter(f => f).length;
                             return bFav - aFav || a.name.localeCompare(b.name);
                         });
+                        break;
+                    case 'john-favs':
+                        allMeals = allMeals.filter(meal => meal.favorites.john);
+                        allMeals.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'ang-favs':
+                        allMeals = allMeals.filter(meal => meal.favorites.ang);
+                        allMeals.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'izzy-favs':
+                        allMeals = allMeals.filter(meal => meal.favorites.izzy);
+                        allMeals.sort((a, b) => a.name.localeCompare(b.name));
                         break;
                     case 'time-asc':
                         allMeals.sort((a, b) => {
@@ -1846,18 +1892,27 @@
             container.innerHTML = Object.keys(mealData.ideas).map(category => `
                 <div class="ideas-category">
                     <h3>${categoryEmojis[category] || "✨"} ${category}</h3>
-                    <ul>
+                    <ul style="list-style: none; padding-left: 0;">
                         ${mealData.ideas[category].map((idea, index) => {
                             const ideaText = typeof idea === 'string' ? idea : idea.text;
-                            const starred = typeof idea === 'string' ? false : idea.starred;
+                            const stars = typeof idea === 'string' ? { john: false, ang: false, izzy: false } : (idea.stars || { john: false, ang: false, izzy: false });
+                            
                             return `
-                                <li style="display: flex; align-items: center; gap: 8px;">
-                                    <span onclick="toggleIdeaStar('${category}', ${index})" 
-                                          style="cursor: pointer; font-size: 1.2em; ${starred ? 'opacity: 1;' : 'opacity: 0.2;'}" 
-                                          title="Click to ${starred ? 'unstar' : 'star'} this idea">⭐</span>
+                                <li style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #eee;">
+                                    <div style="display: flex; gap: 3px; min-width: 60px;">
+                                        <span onclick="toggleIdeaStar('${category}', ${index}, 'john')" 
+                                              style="cursor: pointer; font-size: 1.2em; color: #FF6B6B; ${stars.john ? 'opacity: 1;' : 'opacity: 0.2;'}" 
+                                              title="${stars.john ? 'John wants this' : 'Click if John wants this'}">⭐</span>
+                                        <span onclick="toggleIdeaStar('${category}', ${index}, 'ang')" 
+                                              style="cursor: pointer; font-size: 1.2em; color: #4ECDC4; ${stars.ang ? 'opacity: 1;' : 'opacity: 0.2;'}" 
+                                              title="${stars.ang ? 'Ang wants this' : 'Click if Ang wants this'}">⭐</span>
+                                        <span onclick="toggleIdeaStar('${category}', ${index}, 'izzy')" 
+                                              style="cursor: pointer; font-size: 1.2em; color: #FFD93D; ${stars.izzy ? 'opacity: 1;' : 'opacity: 0.2;'}" 
+                                              title="${stars.izzy ? 'Izzy wants this' : 'Click if Izzy wants this'}">⭐</span>
+                                    </div>
                                     <span style="flex: 1;">${ideaText}</span>
                                     <button onclick="deleteIdea('${category}', ${index})" 
-                                            style="padding: 2px 8px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.8em;">
+                                            style="padding: 4px 10px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.85em;">
                                         ✕
                                     </button>
                                 </li>
@@ -1868,14 +1923,22 @@
             `).join('');
         }
         
-        function toggleIdeaStar(category, index) {
+        function toggleIdeaStar(category, index, person) {
             const idea = mealData.ideas[category][index];
-            // Convert string to object if needed
+            
+            // Convert old format to new format if needed
             if (typeof idea === 'string') {
-                mealData.ideas[category][index] = { text: idea, starred: true };
-            } else {
-                idea.starred = !idea.starred;
+                mealData.ideas[category][index] = { 
+                    text: idea, 
+                    stars: { john: false, ang: false, izzy: false }
+                };
+            } else if (!idea.stars) {
+                idea.stars = { john: false, ang: false, izzy: false };
             }
+            
+            // Toggle the specific person's star
+            mealData.ideas[category][index].stars[person] = !mealData.ideas[category][index].stars[person];
+            
             renderIdeas();
             saveData();
         }
@@ -1891,7 +1954,10 @@
                 mealData.ideas[category] = [];
             }
             
-            mealData.ideas[category].push({ text: ideaText, starred: false });
+            mealData.ideas[category].push({ 
+                text: ideaText, 
+                stars: { john: false, ang: false, izzy: false }
+            });
             document.getElementById('newIdeaText').value = '';
             renderIdeas();
             saveData();
