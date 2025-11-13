@@ -65,7 +65,15 @@
             gap: 10px;
             justify-content: center;
             margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 10px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .header-btn {
@@ -77,6 +85,11 @@
             font-family: 'Fredoka', sans-serif;
             transition: all 0.3s;
             font-size: 0.95em;
+        }
+        
+        .header-btn.small {
+            padding: 6px 12px;
+            font-size: 0.8em;
         }
         
         .header-btn:hover {
@@ -210,13 +223,13 @@
         }
         
         .status-progress {
-            background: #FFF3E0;
-            color: #F57C00;
+            background: #FFF9C4;
+            color: #F57F17;
         }
         
         .status-done {
-            background: #E8F5E9;
-            color: #388E3C;
+            background: #FFEBEE;
+            color: #C62828;
         }
         
         .meal-name, .meal-chef {
@@ -824,10 +837,14 @@
             <h1>🍽️ Butte Family Meal Hub</h1>
             <div class="week-info" id="weekInfo" onclick="editWeekDates()">Week of November 11-16, 2025 ✏️</div>
             <div class="header-buttons">
-                <button class="header-btn btn-export" onclick="exportWeek()">📥 Export JSON</button>
-                <button class="header-btn btn-export-html" onclick="exportHTML()">📄 Export HTML</button>
-                <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
-                <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
+                <div class="button-row">
+                    <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
+                    <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
+                </div>
+                <div class="button-row">
+                    <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
+                    <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
+                </div>
             </div>
         </header>
         
@@ -919,72 +936,24 @@
             <div class="ideas-content">
                 <h2 style="color: #FF6B6B; margin-bottom: 20px;">Future Enhancement Ideas</h2>
                 
-                <div class="ideas-category">
-                    <h3>🏠 Kitchen Management</h3>
-                    <ul>
-                        <li>Daily kitchen cleanup checklists</li>
-                        <li>Meal prep instructions and timelines</li>
-                        <li>Job assignments (who sets table, clears, etc.)</li>
-                        <li>Leftover inventory tracker</li>
-                        <li>Pantry stock levels</li>
-                    </ul>
+                <div class="add-item-section" style="margin-bottom: 30px;">
+                    <h3>💡 Add Your Own Ideas</h3>
+                    <div class="add-item-form">
+                        <input type="text" id="newIdeaText" placeholder="Your idea..." style="flex: 2;">
+                        <select id="newIdeaCategory">
+                            <option value="Kitchen Management">🏠 Kitchen Management</option>
+                            <option value="Tracking & History">📊 Tracking & History</option>
+                            <option value="Meal Details">📝 Meal Details</option>
+                            <option value="Automation & Integration">🔔 Automation & Integration</option>
+                            <option value="User Experience">🎨 User Experience</option>
+                            <option value="Advanced Features">🔐 Advanced Features</option>
+                            <option value="Custom">✨ Custom Category</option>
+                        </select>
+                        <button onclick="addNewIdea()">Add Idea</button>
+                    </div>
                 </div>
                 
-                <div class="ideas-category">
-                    <h3>📊 Tracking & History</h3>
-                    <ul>
-                        <li>Archive and view past weeks</li>
-                        <li>Cost tracking per meal/week</li>
-                        <li>Meal frequency analysis</li>
-                        <li>Pivot tracking (meals changed from original plan)</li>
-                        <li>Success rating system</li>
-                    </ul>
-                </div>
-                
-                <div class="ideas-category">
-                    <h3>📝 Meal Details</h3>
-                    <ul>
-                        <li>Full recipes with instructions</li>
-                        <li>Ingredient lists per meal</li>
-                        <li>Photo upload for meal results</li>
-                        <li>Nutrition information</li>
-                        <li>Cooking time breakdown</li>
-                    </ul>
-                </div>
-                
-                <div class="ideas-category">
-                    <h3>🔔 Automation & Integration</h3>
-                    <ul>
-                        <li>Push notifications for meal time</li>
-                        <li>Google Calendar integration</li>
-                        <li>Auto-populate grocery list from meal selection</li>
-                        <li>Meal plan templates</li>
-                        <li>Recipe import from websites</li>
-                        <li>Shopping list sharing to phones</li>
-                    </ul>
-                </div>
-                
-                <div class="ideas-category">
-                    <h3>🎨 User Experience</h3>
-                    <ul>
-                        <li>Print-friendly weekly menu</li>
-                        <li>Drag-and-drop meal scheduling</li>
-                        <li>Undo/redo functionality</li>
-                        <li>Smart meal suggestions based on history</li>
-                        <li>Voice input for adding items</li>
-                    </ul>
-                </div>
-                
-                <div class="ideas-category">
-                    <h3>🔐 Advanced Features</h3>
-                    <ul>
-                        <li>User authentication</li>
-                        <li>Import/export meal plans</li>
-                        <li>Backup and restore data</li>
-                        <li>Multi-week planning view</li>
-                        <li>Collaborative meal suggestions</li>
-                    </ul>
-                </div>
+                <div id="ideasList"></div>
             </div>
         </div>
     </div>
@@ -1020,6 +989,24 @@
                     <option value="dinner">🍽️ Dinner</option>
                     <option value="snack">🍿 Snack</option>
                 </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Mark as Favorite For:</label>
+                <div style="display: flex; gap: 20px; padding: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favJohn" style="width: 18px; height: 18px;">
+                        <span style="color: #FF6B6B; font-weight: 600;">⭐ John</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favAng" style="width: 18px; height: 18px;">
+                        <span style="color: #4ECDC4; font-weight: 600;">⭐ Ang</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favIzzy" style="width: 18px; height: 18px;">
+                        <span style="color: #FFD93D; font-weight: 600;">⭐ Izzy</span>
+                    </label>
+                </div>
             </div>
             
             <div class="form-group">
@@ -1195,6 +1182,51 @@
                     { name: "Fruit", emoji: "🍎", time: "2 min", favorites: { john: false, ang: true, izzy: false } },
                     { name: "Yogurt", emoji: "🥣", time: "2 min", favorites: { john: false, ang: true, izzy: false } }
                 ]
+            },
+            ideas: {
+                "Kitchen Management": [
+                    "Daily kitchen cleanup checklists",
+                    "Meal prep instructions and timelines",
+                    "Job assignments (who sets table, clears, etc.)",
+                    "Leftover inventory tracker",
+                    "Pantry stock levels"
+                ],
+                "Tracking & History": [
+                    "Archive and view past weeks",
+                    "Cost tracking per meal/week",
+                    "Meal frequency analysis",
+                    "Pivot tracking (meals changed from original plan)",
+                    "Success rating system"
+                ],
+                "Meal Details": [
+                    "Full recipes with instructions",
+                    "Ingredient lists per meal",
+                    "Photo upload for meal results",
+                    "Nutrition information",
+                    "Cooking time breakdown"
+                ],
+                "Automation & Integration": [
+                    "Push notifications for meal time",
+                    "Google Calendar integration",
+                    "Auto-populate grocery list from meal selection",
+                    "Meal plan templates",
+                    "Recipe import from websites",
+                    "Shopping list sharing to phones"
+                ],
+                "User Experience": [
+                    "Print-friendly weekly menu",
+                    "Drag-and-drop meal scheduling",
+                    "Undo/redo functionality",
+                    "Smart meal suggestions based on history",
+                    "Voice input for adding items"
+                ],
+                "Advanced Features": [
+                    "User authentication",
+                    "Import/export meal plans",
+                    "Backup and restore data",
+                    "Multi-week planning view",
+                    "Collaborative meal suggestions"
+                ]
             }
         };
         
@@ -1228,6 +1260,7 @@
                 renderMeals();
                 renderGrocery();
                 renderMealBank();
+                renderIdeas();
             });
         
         function switchTab(tabName) {
@@ -1349,7 +1382,7 @@
             const grid = document.getElementById('mealGrid');
             
             grid.innerHTML = mealData.meals
-                .filter(meal => !hideCompleted || meal.status !== 'done')
+                .filter(meal => hideCompleted ? meal.status !== 'done' : true)
                 .map((meal, index) => `
                     <div class="meal-card">
                         <div class="meal-day">${meal.emoji} ${meal.day}</div>
@@ -1597,6 +1630,11 @@
             document.getElementById('editMealIngredients').value = meal.ingredients ? meal.ingredients.join('\n') : '';
             document.getElementById('editMealNotes').value = meal.notes || '';
             
+            // Set favorite checkboxes
+            document.getElementById('favJohn').checked = meal.favorites.john;
+            document.getElementById('favAng').checked = meal.favorites.ang;
+            document.getElementById('favIzzy').checked = meal.favorites.izzy;
+            
             document.getElementById('categoryGroup').style.display = 'none';
             document.getElementById('saveModalBtn').onclick = saveMealEdit;
             document.getElementById('editMealModal').classList.add('show');
@@ -1613,6 +1651,11 @@
             document.getElementById('editMealCategory').value = 'dinner';
             document.getElementById('editMealIngredients').value = '';
             document.getElementById('editMealNotes').value = '';
+            
+            // Clear favorite checkboxes
+            document.getElementById('favJohn').checked = false;
+            document.getElementById('favAng').checked = false;
+            document.getElementById('favIzzy').checked = false;
             
             document.getElementById('categoryGroup').style.display = 'block';
             document.getElementById('saveModalBtn').onclick = saveNewMeal;
@@ -1637,6 +1680,11 @@
             meal.ingredients = ingredientsText ? ingredientsText.split('\n').filter(i => i.trim()) : [];
             meal.notes = document.getElementById('editMealNotes').value;
             
+            // Save favorites
+            meal.favorites.john = document.getElementById('favJohn').checked;
+            meal.favorites.ang = document.getElementById('favAng').checked;
+            meal.favorites.izzy = document.getElementById('favIzzy').checked;
+            
             closeMealModal();
             renderMealBank();
             saveData();
@@ -1649,7 +1697,11 @@
                 name: document.getElementById('editMealName').value,
                 emoji: document.getElementById('editMealEmoji').value || '🍽️',
                 time: document.getElementById('editMealTime').value,
-                favorites: { john: false, ang: false, izzy: false },
+                favorites: { 
+                    john: document.getElementById('favJohn').checked,
+                    ang: document.getElementById('favAng').checked,
+                    izzy: document.getElementById('favIzzy').checked
+                },
                 ingredients: document.getElementById('editMealIngredients').value.split('\n').filter(i => i.trim()),
                 notes: document.getElementById('editMealNotes').value
             };
@@ -1716,6 +1768,64 @@
                 result.textContent = `${randomMeal.name} (${randomMeal.time})`;
                 button.disabled = false;
             }, 3000);
+        }
+        
+        function renderIdeas() {
+            const container = document.getElementById('ideasList');
+            const categoryEmojis = {
+                "Kitchen Management": "🏠",
+                "Tracking & History": "📊",
+                "Meal Details": "📝",
+                "Automation & Integration": "🔔",
+                "User Experience": "🎨",
+                "Advanced Features": "🔐"
+            };
+            
+            container.innerHTML = Object.keys(mealData.ideas).map(category => `
+                <div class="ideas-category">
+                    <h3>${categoryEmojis[category] || "✨"} ${category}</h3>
+                    <ul>
+                        ${mealData.ideas[category].map((idea, index) => `
+                            <li>
+                                ${idea}
+                                <button onclick="deleteIdea('${category}', ${index})" 
+                                        style="margin-left: 10px; padding: 2px 8px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.8em;">
+                                    ✕
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        function addNewIdea() {
+            const ideaText = document.getElementById('newIdeaText').value.trim();
+            const category = document.getElementById('newIdeaCategory').value;
+            
+            if (!ideaText) return;
+            
+            // If custom category doesn't exist, create it
+            if (!mealData.ideas[category]) {
+                mealData.ideas[category] = [];
+            }
+            
+            mealData.ideas[category].push(ideaText);
+            document.getElementById('newIdeaText').value = '';
+            renderIdeas();
+            saveData();
+        }
+        
+        function deleteIdea(category, index) {
+            if (confirm('Delete this idea?')) {
+                mealData.ideas[category].splice(index, 1);
+                // If category is empty, remove it
+                if (mealData.ideas[category].length === 0) {
+                    delete mealData.ideas[category];
+                }
+                renderIdeas();
+                saveData();
+            }
         }
         
         function saveData() {
