@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Butte Family Meal Hub 🍽️</title>
+    <link rel="icon" type="image/png" href="eathere1.png">
+    <link rel="apple-touch-icon" href="eathere1.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="eathere1.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #FF6B6B;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #FF6B6B;
+            margin-bottom: 10px;
+        }
+        
+        .week-info {
+            font-size: 1.2em;
+            color: #666;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .week-info:hover {
+            background: #fff5f5;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .button-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .header-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .header-btn.small {
+            padding: 6px 12px;
+            font-size: 0.8em;
+        }
+        
+        .header-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-export {
+            background: #4ECDC4;
+            color: white;
+        }
+        
+        .btn-export-html {
+            background: #9B59B6;
+            color: white;
+        }
+        
+        .btn-new-week {
+            background: #FFE66D;
+            color: #333;
+        }
+        
+        .btn-add-meal {
+            background: #2ECC71;
+            color: white;
+        }
+        
+        .auto-save {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4ECDC4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        
+        .auto-save.show {
+            opacity: 1;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            border: 2px solid #FFE66D;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+        
+        .tab-button.icon-only {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button.active {
+            background: #FFE66D;
+            border-color: #FF6B6B;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .meal-card {
+            background: #fff;
+            border: 3px solid #FFE66D;
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .meal-day {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #FF6B6B;
+            margin-bottom: 10px;
+        }
+        
+        .meal-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .status-planned {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .status-progress {
+            background: #FFF9C4;
+            color: #F57F17;
+        }
+        
+        .status-done {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        .meal-name, .meal-chef {
+            font-size: 1.1em;
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .meal-name:hover, .meal-chef:hover {
+            background: #f5f5f5;
+        }
+        
+        .meal-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .chef-label {
+            font-weight: 700;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .status-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .status-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-btn.active {
+            border-color: #FF6B6B;
+            border-width: 3px;
+        }
+        
+        .hide-completed-toggle {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hide-completed-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .hide-completed-toggle label {
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .grocery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .grocery-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 15px;
+        }
+        
+        .grocery-sort-btn {
+            padding: 8px 16px;
+            border: 2px solid #FFE66D;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .grocery-sort-btn.active {
+            background: #FFE66D;
+            border-color: #FF6B6B;
+        }
+        
+        .grocery-category {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FFE66D;
+        }
+        
+        .grocery-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        
+        .grocery-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+        
+        .grocery-item.checked {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        
+        .grocery-item-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .added-by-tag {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .add-item-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 15px;
+        }
+        
+        .add-item-section h3 {
+            margin-bottom: 15px;
+            color: #FF6B6B;
+        }
+        
+        .add-item-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .add-item-form input, .add-item-form select {
+            padding: 12px;
+            border: 2px solid #FFE66D;
+            border-radius: 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1em;
+        }
+        
+        .add-item-form input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .add-item-form select {
+            min-width: 150px;
+        }
+        
+        .add-item-form button {
+            padding: 12px 24px;
+            background: #4ECDC4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .add-item-form button:hover {
+            transform: translateY(-2px);
+            background: #3BA89C;
+        }
+        
+        .meal-bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .meal-bank-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .view-btn {
+            width: 40px;
+            height: 40px;
+            background: #f5f5f5;
+            border: 2px solid #FFE66D;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .view-btn.active {
+            background: #FFE66D;
+            border-color: #FF6B6B;
+        }
+        
+        .sort-dropdown {
+            padding: 10px;
+            border: 2px solid #FFE66D;
+            border-radius: 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .meal-bank-category {
+            margin-bottom: 40px;
+        }
+        
+        .meal-bank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .meal-bank-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .meal-bank-item {
+            background: white;
+            border: 2px solid #FFE66D;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .meal-bank-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #FF6B6B;
+        }
+        
+        .meal-bank-item.list-view {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            padding: 12px 15px;
+        }
+        
+        .meal-bank-item.list-view .emoji {
+            font-size: 1.8em;
+            margin-bottom: 0;
+        }
+        
+        .meal-bank-item.list-view .name {
+            flex: 1;
+        }
+        
+        .meal-bank-item.list-view .time {
+            margin-top: 0;
+            min-width: 60px;
+        }
+        
+        .favorite-stars {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 3px;
+            z-index: 10;
+        }
+        
+        .favorite-star {
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+        }
+        
+        .favorite-star:hover {
+            transform: scale(1.3);
+        }
+        
+        .favorite-star.john { color: #FF6B6B; }
+        .favorite-star.ang { color: #4ECDC4; }
+        .favorite-star.izzy { color: #FFD93D; }
+        .favorite-star.inactive { opacity: 0.2; }
+        
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .time {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .spinner-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .spinner-filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #FFE66D;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: #FFE66D;
+            border-color: #FF6B6B;
+        }
+        
+        .spinner-wheel {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+            border: 10px solid #FF6B6B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .spinner-wheel.spinning {
+            animation: spin 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1800deg); }
+        }
+        
+        .spinner-result {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #FF6B6B;
+            margin-top: 20px;
+            min-height: 40px;
+        }
+        
+        .spin-button {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            background: #4ECDC4;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .spin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .ideas-content {
+            padding: 20px;
+        }
+        
+        .ideas-category {
+            margin-bottom: 30px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .ideas-category h3 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .ideas-category ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+        
+        .ideas-category li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #FF6B6B;
+        }
+        
+        .close-modal {
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+        }
+        
+        .close-modal:hover {
+            color: #FF6B6B;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFE66D;
+            border-radius: 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1em;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn-cancel {
+            background: #ddd;
+            color: #333;
+        }
+        
+        .modal-btn-save {
+            background: #4ECDC4;
+            color: white;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .meal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .meal-bank-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .spinner-wheel {
+                width: 200px;
+                height: 200px;
+                font-size: 2em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .meal-bank-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Butte Family Meal Hub</h1>
+            <div class="week-info" id="weekInfo" onclick="editWeekDates()">Week of November 11-16, 2025 ✏️</div>
+            <div class="header-buttons">
+                <div class="button-row">
+                    <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
+                    <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
+                </div>
+                <div class="button-row">
+                    <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
+                    <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="auto-save" id="autoSave">✓ Saved</div>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('week')">📅 This Week</button>
+            <button class="tab-button" onclick="switchTab('grocery')">🛒 Grocery</button>
+            <button class="tab-button" onclick="switchTab('meals')">🍴 Meal Bank</button>
+            <button class="tab-button" onclick="switchTab('spinner')">🎰 Spinner</button>
+            <button class="tab-button icon-only" onclick="switchTab('ideas')" title="Future Ideas">💡</button>
+        </div>
+        
+        <div class="tab-content active" id="tab-week">
+            <div class="hide-completed-toggle">
+                <input type="checkbox" id="hideCompleted" onchange="renderMeals()">
+                <label for="hideCompleted">Hide Completed Meals</label>
+            </div>
+            <div class="meal-grid" id="mealGrid"></div>
+        </div>
+        
+        <div class="tab-content" id="tab-grocery">
+            <div class="grocery-controls">
+                <button class="grocery-sort-btn active" onclick="sortGrocery('category')">By Category</button>
+                <button class="grocery-sort-btn" onclick="sortGrocery('person')">By Person</button>
+                <button class="grocery-sort-btn" onclick="sortGrocery('checked')">Unchecked First</button>
+            </div>
+            <div class="grocery-list" id="groceryList"></div>
+            <div class="add-item-section">
+                <h3>Add Item</h3>
+                <div class="add-item-form">
+                    <input type="text" id="newItemName" placeholder="Item name" onkeypress="if(event.key==='Enter') addGroceryItem()">
+                    <select id="newItemPerson">
+                        <option value="John">John</option>
+                        <option value="Ang">Ang</option>
+                        <option value="Izzy">Izzy</option>
+                    </select>
+                    <select id="newItemCategory">
+                        <option value="PRODUCE">Produce</option>
+                        <option value="MEAT">Meat</option>
+                        <option value="DAIRY & EGGS">Dairy & Eggs</option>
+                        <option value="PANTRY">Pantry</option>
+                        <option value="CUSTOM">Custom</option>
+                    </select>
+                    <button onclick="addGroceryItem()">Add</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="tab-meals">
+            <div class="meal-bank-header">
+                <h2>Complete Meal Library</h2>
+                <div class="meal-bank-controls">
+                    <select class="sort-dropdown" id="mealSort" onchange="sortMealBank()">
+                        <option value="category">By Category</option>
+                        <option value="alphabetical">A-Z</option>
+                        <option value="favorites">Favorites First</option>
+                        <option value="time-asc">Quickest First</option>
+                        <option value="time-desc">Longest First</option>
+                    </select>
+                    <div class="view-toggle">
+                        <button class="view-btn active" onclick="setView('grid')" title="Grid View">⊞</button>
+                        <button class="view-btn" onclick="setView('list')" title="List View">☰</button>
+                    </div>
+                </div>
+            </div>
+            <div id="mealBank"></div>
+        </div>
+        
+        <div class="tab-content" id="tab-spinner">
+            <div class="spinner-container">
+                <h2 style="color: #FF6B6B; margin-bottom: 30px;">What Should We Eat?</h2>
+                <div class="spinner-filters">
+                    <button class="filter-btn active" onclick="setSpinnerFilter('all')">All Meals</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('breakfast')">🍳 Breakfast</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('lunch')">🥪 Lunch</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('dinner')">🍽️ Dinner</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('snack')">🍿 Snack</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('quick')">Quick (15min)</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('favorites')">⭐ Favorites</button>
+                </div>
+                <div class="spinner-wheel" id="spinnerWheel">🍽️</div>
+                <button class="spin-button" id="spinButton" onclick="spinWheel()">SPIN!</button>
+                <div class="spinner-result" id="spinnerResult"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="tab-ideas">
+            <div class="ideas-content">
+                <h2 style="color: #FF6B6B; margin-bottom: 20px;">Future Enhancement Ideas</h2>
+                
+                <div class="add-item-section" style="margin-bottom: 30px;">
+                    <h3>💡 Add Your Own Ideas</h3>
+                    <div class="add-item-form">
+                        <input type="text" id="newIdeaText" placeholder="Your idea..." style="flex: 2;">
+                        <select id="newIdeaCategory">
+                            <option value="Kitchen Management">🏠 Kitchen Management</option>
+                            <option value="Tracking & History">📊 Tracking & History</option>
+                            <option value="Meal Details">📝 Meal Details</option>
+                            <option value="Automation & Integration">🔔 Automation & Integration</option>
+                            <option value="User Experience">🎨 User Experience</option>
+                            <option value="Advanced Features">🔐 Advanced Features</option>
+                            <option value="Custom">✨ Custom Category</option>
+                        </select>
+                        <button onclick="addNewIdea()">Add Idea</button>
+                    </div>
+                </div>
+                
+                <div id="ideasList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit/Add Meal Modal -->
+    <div class="modal" id="editMealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Edit Meal</h2>
+                <button class="close-modal" onclick="closeMealModal()">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Meal Name</label>
+                <input type="text" id="editMealName">
+            </div>
+            
+            <div class="form-group">
+                <label>Emoji</label>
+                <input type="text" id="editMealEmoji" placeholder="🍽️">
+            </div>
+            
+            <div class="form-group">
+                <label>Cooking Time</label>
+                <input type="text" id="editMealTime" placeholder="30 min">
+            </div>
+            
+            <div class="form-group" id="categoryGroup">
+                <label>Category</label>
+                <select id="editMealCategory">
+                    <option value="breakfast">🍳 Breakfast</option>
+                    <option value="lunch">🥪 Lunch</option>
+                    <option value="dinner">🍽️ Dinner</option>
+                    <option value="snack">🍿 Snack</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Mark as Favorite For:</label>
+                <div style="display: flex; gap: 20px; padding: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favJohn" style="width: 18px; height: 18px;">
+                        <span style="color: #FF6B6B; font-weight: 600;">⭐ John</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favAng" style="width: 18px; height: 18px;">
+                        <span style="color: #4ECDC4; font-weight: 600;">⭐ Ang</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="favIzzy" style="width: 18px; height: 18px;">
+                        <span style="color: #FFD93D; font-weight: 600;">⭐ Izzy</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Ingredients (one per line)</label>
+                <textarea id="editMealIngredients" placeholder="Ground beef&#10;Taco shells&#10;Cheese"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Cooking Notes</label>
+                <textarea id="editMealNotes" placeholder="Special instructions..."></textarea>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeMealModal()">Cancel</button>
+                <button class="modal-btn modal-btn-save" id="saveModalBtn" onclick="saveMealEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8s54BFjfqlExHMaWfhTgI2K7xIKB8GQg",
+            authDomain: "ang-s-hebrew-tracker.firebaseapp.com",
+            projectId: "ang-s-hebrew-tracker",
+            storageBucket: "ang-s-hebrew-tracker.firebasestorage.app",
+            messagingSenderId: "683842746164",
+            appId: "1:683842746164:web:88dd4cdf6dbd7be40c48ce"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        let mealData = {
+            weekOf: "November 11-16, 2025",
+            meals: [
+                { day: "Tuesday, Nov 11", meal: "Daddy Chicken", chef: "John", status: "done", notes: "Pivoted from tacos", emoji: "🍗" },
+                { day: "Wednesday, Nov 12", meal: "Tacos", chef: "John", status: "progress", notes: "", emoji: "🌮" },
+                { day: "Thursday, Nov 13", meal: "Kraft Mac/Hot Dogs", chef: "Ang", status: "planned", notes: "", emoji: "🧀" },
+                { day: "Friday, Nov 14", meal: "Pizza", chef: "Takeout", status: "planned", notes: "", emoji: "🍕" },
+                { day: "Saturday, Nov 15", meal: "Fend/Leftovers", chef: "Everyone", status: "planned", notes: "", emoji: "🥡" },
+                { day: "Sunday, Nov 16", meal: "Hibachi", chef: "John", status: "planned", notes: "", emoji: "🥢" }
+            ],
+            groceryList: [
+                {
+                    category: "PRODUCE",
+                    items: [
+                        { name: "Lettuce (iceberg)", checked: false, addedBy: "John" },
+                        { name: "Tomatoes (Roma)", checked: false, addedBy: "John" },
+                        { name: "Avocados (3)", checked: false, addedBy: "Ang" },
+                        { name: "Onion (white)", checked: false, addedBy: "John" },
+                        { name: "Cilantro", checked: false, addedBy: "John" },
+                        { name: "Bell peppers", checked: false, addedBy: "John" }
+                    ]
+                },
+                {
+                    category: "MEAT",
+                    items: [
+                        { name: "Ground beef (2-3 lbs)", checked: false, addedBy: "John" },
+                        { name: "Chicken breasts", checked: false, addedBy: "John" }
+                    ]
+                },
+                {
+                    category: "DAIRY & EGGS",
+                    items: [
+                        { name: "Shredded cheese", checked: false, addedBy: "John" },
+                        { name: "Sour cream", checked: false, addedBy: "Ang" },
+                        { name: "Milk", checked: false, addedBy: "Ang" }
+                    ]
+                },
+                {
+                    category: "PANTRY",
+                    items: [
+                        { name: "Taco shells", checked: false, addedBy: "John" },
+                        { name: "Taco seasoning", checked: false, addedBy: "John" },
+                        { name: "Hot dogs", checked: false, addedBy: "Ang" },
+                        { name: "Kraft Mac & Cheese", checked: false, addedBy: "Ang" }
+                    ]
+                },
+                {
+                    category: "ALREADY HAVE",
+                    items: [
+                        { name: "Rice", checked: true, addedBy: "John" },
+                        { name: "Soy sauce", checked: true, addedBy: "John" },
+                        { name: "Olive oil", checked: true, addedBy: "Ang" }
+                    ]
+                }
+            ],
+            mealBank: {
+                breakfast: [
+                    { name: "Eggs Your Way", emoji: "🍳", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Eggs Goldenrod", emoji: "🥚", time: "20 min", favorites: { john: true, ang: false, izzy: false } },
+                    { name: "Birdies", emoji: "🍳", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "French Toast", emoji: "🍞", time: "25 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Omelettes", emoji: "🍳", time: "20 min", favorites: { john: true, ang: true, izzy: false } },
+                    { name: "Breakfast Sandwiches", emoji: "🥪", time: "15 min", favorites: { john: false, ang: true, izzy: true } },
+                    { name: "Bagels", emoji: "🥯", time: "10 min", favorites: { john: false, ang: true, izzy: true } },
+                    { name: "Toast", emoji: "🍞", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Hash Browns/Tots", emoji: "🥔", time: "20 min", favorites: { john: false, ang: false, izzy: true } },
+                    { name: "Cinnamon Toast", emoji: "🍞", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Waffles", emoji: "🧇", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Pancakes", emoji: "🥞", time: "20 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Crepes", emoji: "🥞", time: "30 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Oatmeal", emoji: "🥣", time: "10 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Bacon", emoji: "🥓", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Sausage", emoji: "🌭", time: "15 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Cereal", emoji: "🥣", time: "2 min", favorites: { john: false, ang: true, izzy: true } },
+                    { name: "Hard Boiled Egg", emoji: "🥚", time: "15 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Smoothie", emoji: "🥤", time: "5 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Parfait", emoji: "🥣", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Pound Cake", emoji: "🍰", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Banana Bread", emoji: "🍌", time: "5 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Donuts", emoji: "🍩", time: "0 min", favorites: { john: true, ang: true, izzy: true } }
+                ],
+                lunch: [
+                    { name: "Grilled Cheese", emoji: "🧀", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Burritos", emoji: "🌯", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Mac n Cheese", emoji: "🧀", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Pizza", emoji: "🍕", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Hot Dogs", emoji: "🌭", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Quesadillas", emoji: "🌯", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Wings", emoji: "🍗", time: "20 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Chicken Sticks", emoji: "🍗", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Chicken Taquitos", emoji: "🌯", time: "15 min", favorites: { john: false, ang: false, izzy: true } },
+                    { name: "Leftovers", emoji: "🥡", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Meatballs", emoji: "🍝", time: "20 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Edamame", emoji: "🫘", time: "10 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Tomato Soup", emoji: "🍲", time: "15 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Egg Salad", emoji: "🥚", time: "15 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Hamburgers", emoji: "🍔", time: "20 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Nachos", emoji: "🧀", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Eggs & Avocado", emoji: "🥑", time: "10 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Sandwiches", emoji: "🥪", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Tuna/Wheat Thins", emoji: "🐟", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Salami", emoji: "🥓", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "PB&J", emoji: "🥪", time: "5 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Cheese Sticks", emoji: "🧀", time: "2 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Hummus & Pita", emoji: "🫓", time: "5 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Caprese", emoji: "🍅", time: "10 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Ramen", emoji: "🍜", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Avocado Toast", emoji: "🥑", time: "10 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Fruit", emoji: "🍎", time: "2 min", favorites: { john: false, ang: false, izzy: false } }
+                ],
+                dinner: [
+                    { name: "Tacos", emoji: "🌮", time: "45 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Daddy Chicken", emoji: "🍗", time: "60 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Hibachi/Griddle", emoji: "🥢", time: "50 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "In and Out Burgers", emoji: "🍔", time: "35 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Italian Pasta", emoji: "🍝", time: "30 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Breakfast Dinner", emoji: "🥞", time: "40 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Potstickers", emoji: "🥟", time: "20 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "TGIF Wings", emoji: "🍗", time: "30 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Fro Mac", emoji: "🧀", time: "45 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Matzo Ball Soup", emoji: "🍲", time: "45 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Spaghetti/Meatballs", emoji: "🍝", time: "40 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Baked Potato", emoji: "🥔", time: "60 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Chicken Rice", emoji: "🍚", time: "35 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Green Bean Casserole", emoji: "🥗", time: "45 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Caprese Salad", emoji: "🍅", time: "15 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Alfredo Noodles", emoji: "🍜", time: "25 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Totino's Pizza", emoji: "🍕", time: "15 min", favorites: { john: false, ang: false, izzy: false } },
+                    { name: "Pizza Rolls", emoji: "🍕", time: "12 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Quesadillas", emoji: "🌯", time: "20 min", favorites: { john: true, ang: true, izzy: true } }
+                ],
+                snack: [
+                    { name: "Pretzels & Cream Cheese", emoji: "🥨", time: "2 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Brie & Fruit", emoji: "🧀", time: "5 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Heluva & Scoops", emoji: "🥨", time: "2 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Nachos", emoji: "🧀", time: "5 min", favorites: { john: true, ang: true, izzy: true } },
+                    { name: "Cheese & Crackers", emoji: "🧀", time: "2 min", favorites: { john: true, ang: true, izzy: false } },
+                    { name: "Fruit", emoji: "🍎", time: "2 min", favorites: { john: false, ang: true, izzy: false } },
+                    { name: "Yogurt", emoji: "🥣", time: "2 min", favorites: { john: false, ang: true, izzy: false } }
+                ]
+            },
+            ideas: {
+                "Kitchen Management": [
+                    "Daily kitchen cleanup checklists",
+                    "Meal prep instructions and timelines",
+                    "Job assignments (who sets table, clears, etc.)",
+                    "Leftover inventory tracker",
+                    "Pantry stock levels"
+                ],
+                "Tracking & History": [
+                    "Archive and view past weeks",
+                    "Cost tracking per meal/week",
+                    "Meal frequency analysis",
+                    "Pivot tracking (meals changed from original plan)",
+                    "Success rating system"
+                ],
+                "Meal Details": [
+                    "Full recipes with instructions",
+                    "Ingredient lists per meal",
+                    "Photo upload for meal results",
+                    "Nutrition information",
+                    "Cooking time breakdown"
+                ],
+                "Automation & Integration": [
+                    "Push notifications for meal time",
+                    "Google Calendar integration",
+                    "Auto-populate grocery list from meal selection",
+                    "Meal plan templates",
+                    "Recipe import from websites",
+                    "Shopping list sharing to phones"
+                ],
+                "User Experience": [
+                    "Print-friendly weekly menu",
+                    "Drag-and-drop meal scheduling",
+                    "Undo/redo functionality",
+                    "Smart meal suggestions based on history",
+                    "Voice input for adding items"
+                ],
+                "Advanced Features": [
+                    "User authentication",
+                    "Import/export meal plans",
+                    "Backup and restore data",
+                    "Multi-week planning view",
+                    "Collaborative meal suggestions"
+                ]
+            }
+        };
+        
+        const familyColors = {
+            'John': { bg: '#FFE5E5', border: '#FF6B6B', text: '#CC5555' },
+            'Ang': { bg: '#E5F5FF', border: '#4ECDC4', text: '#3BA89C' },
+            'Izzy': { bg: '#FFF5E5', border: '#FFD93D', text: '#CCA030' }
+        };
+        
+        let autoSaveTimeout;
+        let currentSpinnerFilter = 'all';
+        let currentView = 'grid';
+        let currentMealSort = 'category';
+        let currentGrocerySort = 'category';
+        let currentEditMeal = null;
+        let isAddingNew = false;
+        
+        // Load data from Firebase
+        db.collection('familyData').doc('meals').get()
+            .then(doc => {
+                if (doc.exists) {
+                    const savedData = doc.data();
+                    // Merge saved data with default structure
+                    if (savedData.mealBank) mealData.mealBank = savedData.mealBank;
+                    if (savedData.weekOf) mealData.weekOf = savedData.weekOf;
+                    if (savedData.meals) mealData.meals = savedData.meals;
+                    if (savedData.groceryList) mealData.groceryList = savedData.groceryList;
+                    
+                    document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
+                }
+                renderMeals();
+                renderGrocery();
+                renderMealBank();
+                renderIdeas();
+            });
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function editWeekDates() {
+            const newWeek = prompt("Enter new week dates (e.g., November 18-23, 2025):", mealData.weekOf);
+            if (newWeek && newWeek.trim()) {
+                mealData.weekOf = newWeek.trim();
+                document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
+                saveData();
+            }
+        }
+        
+        function exportWeek() {
+            const dataStr = JSON.stringify(mealData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `meal-plan-${mealData.weekOf.replace(/[^a-zA-Z0-9]/g, '-')}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportHTML() {
+            const html = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Meal Plan - Week of ${mealData.weekOf}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { color: #FF6B6B; }
+        h2 { color: #333; margin-top: 30px; }
+        .meal { border: 2px solid #FFE66D; padding: 15px; margin: 10px 0; border-radius: 10px; }
+        .status-done { background: #e6f9f7; }
+        .grocery-section { margin: 30px 0; }
+        .checked { text-decoration: line-through; opacity: 0.5; }
+        .person-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.9em; margin-left: 8px; }
+        .john { background: #FFE5E5; color: #CC5555; }
+        .ang { background: #E5F5FF; color: #3BA89C; }
+        .izzy { background: #FFF5E5; color: #CCA030; }
+    </style>
+</head>
+<body>
+    <h1>🍽️ Butte Family Meal Plan</h1>
+    <h2>Week of ${mealData.weekOf}</h2>
+    
+    <h3>Meals This Week:</h3>
+    ${mealData.meals.map(meal => `
+        <div class="meal ${meal.status === 'done' ? 'status-done' : ''}">
+            <strong>${meal.emoji} ${meal.day}:</strong> ${meal.meal}<br>
+            <em>CHEF: ${meal.chef}</em> | Status: ${meal.status.toUpperCase()}
+            ${meal.notes ? `<br>Notes: ${meal.notes}` : ''}
+        </div>
+    `).join('')}
+    
+    <h2>Grocery List:</h2>
+    ${mealData.groceryList.map(section => `
+        <div class="grocery-section">
+            <h3>${section.category}</h3>
+            <ul>
+                ${section.items.map(item => `
+                    <li class="${item.checked ? 'checked' : ''}">
+                        ${item.name}
+                        <span class="person-tag ${item.addedBy.toLowerCase()}">${item.addedBy}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+    `).join('')}
+    
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #FFE66D; text-align: center; color: #999;">
+        Generated on ${new Date().toLocaleDateString()} | Butte Family Meal Hub
+    </div>
+</body>
+</html>`;
+            
+            const blob = new Blob([html], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `meal-plan-${mealData.weekOf.replace(/[^a-zA-Z0-9]/g, '-')}.html`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function startNewWeek() {
+            if (!confirm("Start a new week? This will reset the current week.")) return;
+            
+            mealData.meals.forEach(meal => {
+                meal.status = 'planned';
+                meal.notes = '';
+            });
+            
+            mealData.groceryList.forEach(section => {
+                section.items.forEach(item => item.checked = false);
+            });
+            
+            const today = new Date();
+            const nextWeek = new Date(today.setDate(today.getDate() + 7));
+            const weekStart = nextWeek.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+            nextWeek.setDate(nextWeek.getDate() + 5);
+            const weekEnd = nextWeek.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            mealData.weekOf = `${weekStart}-${weekEnd}`;
+            
+            document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
+            saveData();
+            renderMeals();
+            renderGrocery();
+        }
+        
+        function renderMeals() {
+            const hideCompleted = document.getElementById('hideCompleted').checked;
+            const grid = document.getElementById('mealGrid');
+            
+            grid.innerHTML = mealData.meals
+                .filter(meal => hideCompleted ? meal.status !== 'done' : true)
+                .map((meal, index) => `
+                    <div class="meal-card">
+                        <div class="meal-day">${meal.emoji} ${meal.day}</div>
+                        <div class="meal-status status-${meal.status}">
+                            ${meal.status === 'planned' ? '📋 Planned' : 
+                              meal.status === 'progress' ? '🔄 In Progress' : '✅ Done'}
+                        </div>
+                        <div class="meal-name" onclick="editMealField(${index}, 'meal')">
+                            ${meal.meal}
+                        </div>
+                        <div class="meal-chef" onclick="editMealField(${index}, 'chef')">
+                            <span class="chef-label">CHEF:</span> ${meal.chef}
+                        </div>
+                        ${meal.notes ? `<div style="margin-top: 10px; font-size: 0.9em; color: #666;">Notes: ${meal.notes}</div>` : ''}
+                        <div class="status-buttons">
+                            <button class="status-btn ${meal.status === 'planned' ? 'active' : ''}" 
+                                    onclick="updateMealStatus(${index}, 'planned')">📋 Planned</button>
+                            <button class="status-btn ${meal.status === 'progress' ? 'active' : ''}" 
+                                    onclick="updateMealStatus(${index}, 'progress')">🔄 In Progress</button>
+                            <button class="status-btn ${meal.status === 'done' ? 'active' : ''}" 
+                                    onclick="updateMealStatus(${index}, 'done')">✅ Done</button>
+                        </div>
+                    </div>
+                `).join('');
+        }
+        
+        function editMealField(index, field) {
+            const newValue = prompt(`Enter ${field}:`, mealData.meals[index][field]);
+            if (newValue !== null && newValue.trim()) {
+                mealData.meals[index][field] = newValue.trim();
+                renderMeals();
+                saveData();
+            }
+        }
+        
+        function updateMealStatus(index, status) {
+            mealData.meals[index].status = status;
+            renderMeals();
+            saveData();
+        }
+        
+        function sortGrocery(sortBy) {
+            currentGrocerySort = sortBy;
+            document.querySelectorAll('.grocery-sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGrocery();
+        }
+        
+        function renderGrocery() {
+            const container = document.getElementById('groceryList');
+            let displayList;
+            
+            if (currentGrocerySort === 'person') {
+                // Group by person
+                const byPerson = { John: [], Ang: [], Izzy: [] };
+                mealData.groceryList.forEach(section => {
+                    section.items.forEach(item => {
+                        byPerson[item.addedBy].push({...item, category: section.category});
+                    });
+                });
+                
+                displayList = Object.keys(byPerson).map(person => ({
+                    category: `${person}'s Items`,
+                    items: byPerson[person]
+                }));
+            } else if (currentGrocerySort === 'checked') {
+                // Unchecked first
+                const allItems = [];
+                mealData.groceryList.forEach(section => {
+                    section.items.forEach(item => {
+                        allItems.push({...item, category: section.category});
+                    });
+                });
+                allItems.sort((a, b) => a.checked - b.checked);
+                displayList = [{ category: 'All Items', items: allItems }];
+            } else {
+                // By category (default)
+                displayList = mealData.groceryList;
+            }
+            
+            container.innerHTML = displayList.map((section, sectionIndex) => `
+                <div class="grocery-category">
+                    <div class="category-title">${section.category}</div>
+                    ${section.items.map((item, itemIndex) => {
+                        const colors = familyColors[item.addedBy];
+                        return `
+                            <div class="grocery-item ${item.checked ? 'checked' : ''}" 
+                                 style="background: ${colors.bg}; border-left: 4px solid ${colors.border};">
+                                <input type="checkbox" ${item.checked ? 'checked' : ''} 
+                                       onchange="toggleGroceryItem('${section.category}', ${itemIndex})">
+                                <span class="grocery-item-text">${item.name}</span>
+                                <span class="added-by-tag" style="background: ${colors.border}; color: white;">
+                                    ${item.addedBy}
+                                </span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+        
+        function toggleGroceryItem(category, itemIndex) {
+            const section = mealData.groceryList.find(s => s.category === category);
+            if (section) {
+                section.items[itemIndex].checked = !section.items[itemIndex].checked;
+                renderGrocery();
+                saveData();
+            }
+        }
+        
+        function addGroceryItem() {
+            const name = document.getElementById('newItemName').value.trim();
+            const person = document.getElementById('newItemPerson').value;
+            const category = document.getElementById('newItemCategory').value;
+            
+            if (!name) return;
+            
+            let section = mealData.groceryList.find(s => s.category === category);
+            if (!section) {
+                section = { category: category, items: [] };
+                mealData.groceryList.push(section);
+            }
+            
+            section.items.push({ name, checked: false, addedBy: person });
+            document.getElementById('newItemName').value = '';
+            renderGrocery();
+            saveData();
+        }
+        
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderMealBank();
+        }
+        
+        function sortMealBank() {
+            currentMealSort = document.getElementById('mealSort').value;
+            renderMealBank();
+        }
+        
+        function renderMealBank() {
+            const container = document.getElementById('mealBank');
+            
+            if (currentMealSort === 'category') {
+                // Render by category
+                const categories = [
+                    { key: 'breakfast', title: '🍳 BREAKFAST' },
+                    { key: 'lunch', title: '🥪 LUNCH' },
+                    { key: 'dinner', title: '🍽️ DINNER' },
+                    { key: 'snack', title: '🍿 SNACKS' }
+                ];
+                
+                container.innerHTML = categories.map(cat => `
+                    <div class="meal-bank-category">
+                        <h3>${cat.title}</h3>
+                        <div class="${currentView === 'grid' ? 'meal-bank-grid' : 'meal-bank-list'}">
+                            ${mealData.mealBank[cat.key].map((meal, index) => renderMealBankItem(meal, cat.key, index)).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                // Create flat sorted array
+                let allMeals = [];
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach((meal, index) => {
+                        allMeals.push({...meal, category: cat, index});
+                    });
+                });
+                
+                // Sort
+                switch(currentMealSort) {
+                    case 'alphabetical':
+                        allMeals.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                    case 'favorites':
+                        allMeals.sort((a, b) => {
+                            const aFav = Object.values(a.favorites).filter(f => f).length;
+                            const bFav = Object.values(b.favorites).filter(f => f).length;
+                            return bFav - aFav || a.name.localeCompare(b.name);
+                        });
+                        break;
+                    case 'time-asc':
+                        allMeals.sort((a, b) => {
+                            const timeA = parseInt(a.time) || 999;
+                            const timeB = parseInt(b.time) || 999;
+                            return timeA - timeB;
+                        });
+                        break;
+                    case 'time-desc':
+                        allMeals.sort((a, b) => {
+                            const timeA = parseInt(a.time) || 0;
+                            const timeB = parseInt(b.time) || 0;
+                            return timeB - timeA;
+                        });
+                        break;
+                }
+                
+                container.innerHTML = `
+                    <div class="${currentView === 'grid' ? 'meal-bank-grid' : 'meal-bank-list'}">
+                        ${allMeals.map(meal => renderMealBankItem(meal, meal.category, meal.index)).join('')}
+                    </div>
+                `;
+            }
+        }
+        
+        function renderMealBankItem(meal, category, index) {
+            const viewClass = currentView === 'list' ? 'list-view' : '';
+            return `
+                <div class="meal-bank-item ${viewClass}" onclick="openEditMealModal('${category}', ${index})">
+                    <div class="favorite-stars">
+                        <span class="favorite-star john ${meal.favorites.john ? '' : 'inactive'}" 
+                              onclick="event.stopPropagation(); toggleFavorite('${category}', ${index}, 'john')" 
+                              title="John's favorite">⭐</span>
+                        <span class="favorite-star ang ${meal.favorites.ang ? '' : 'inactive'}" 
+                              onclick="event.stopPropagation(); toggleFavorite('${category}', ${index}, 'ang')" 
+                              title="Ang's favorite">⭐</span>
+                        <span class="favorite-star izzy ${meal.favorites.izzy ? '' : 'inactive'}" 
+                              onclick="event.stopPropagation(); toggleFavorite('${category}', ${index}, 'izzy')" 
+                              title="Izzy's favorite">⭐</span>
+                    </div>
+                    <div class="emoji">${meal.emoji}</div>
+                    <div class="name">${meal.name}</div>
+                    <div class="time">${meal.time}</div>
+                </div>
+            `;
+        }
+        
+        function toggleFavorite(category, index, person) {
+            mealData.mealBank[category][index].favorites[person] = !mealData.mealBank[category][index].favorites[person];
+            renderMealBank();
+            saveData();
+        }
+        
+        function openEditMealModal(category, index) {
+            isAddingNew = false;
+            currentEditMeal = { category, index };
+            const meal = mealData.mealBank[category][index];
+            
+            document.getElementById('modalTitle').textContent = 'Edit Meal';
+            document.getElementById('editMealName').value = meal.name;
+            document.getElementById('editMealEmoji').value = meal.emoji;
+            document.getElementById('editMealTime').value = meal.time;
+            document.getElementById('editMealCategory').value = category;
+            document.getElementById('editMealIngredients').value = meal.ingredients ? meal.ingredients.join('\n') : '';
+            document.getElementById('editMealNotes').value = meal.notes || '';
+            
+            // Set favorite checkboxes
+            document.getElementById('favJohn').checked = meal.favorites.john;
+            document.getElementById('favAng').checked = meal.favorites.ang;
+            document.getElementById('favIzzy').checked = meal.favorites.izzy;
+            
+            document.getElementById('categoryGroup').style.display = 'none';
+            document.getElementById('saveModalBtn').onclick = saveMealEdit;
+            document.getElementById('editMealModal').classList.add('show');
+        }
+        
+        function openAddMealModal() {
+            isAddingNew = true;
+            currentEditMeal = null;
+            
+            document.getElementById('modalTitle').textContent = 'Add New Meal';
+            document.getElementById('editMealName').value = '';
+            document.getElementById('editMealEmoji').value = '🍽️';
+            document.getElementById('editMealTime').value = '';
+            document.getElementById('editMealCategory').value = 'dinner';
+            document.getElementById('editMealIngredients').value = '';
+            document.getElementById('editMealNotes').value = '';
+            
+            // Clear favorite checkboxes
+            document.getElementById('favJohn').checked = false;
+            document.getElementById('favAng').checked = false;
+            document.getElementById('favIzzy').checked = false;
+            
+            document.getElementById('categoryGroup').style.display = 'block';
+            document.getElementById('saveModalBtn').onclick = saveNewMeal;
+            document.getElementById('editMealModal').classList.add('show');
+        }
+        
+        function closeMealModal() {
+            document.getElementById('editMealModal').classList.remove('show');
+            currentEditMeal = null;
+            isAddingNew = false;
+        }
+        
+        function saveMealEdit() {
+            if (!currentEditMeal) return;
+            
+            const meal = mealData.mealBank[currentEditMeal.category][currentEditMeal.index];
+            meal.name = document.getElementById('editMealName').value;
+            meal.emoji = document.getElementById('editMealEmoji').value || '🍽️';
+            meal.time = document.getElementById('editMealTime').value;
+            
+            const ingredientsText = document.getElementById('editMealIngredients').value;
+            meal.ingredients = ingredientsText ? ingredientsText.split('\n').filter(i => i.trim()) : [];
+            meal.notes = document.getElementById('editMealNotes').value;
+            
+            // Save favorites
+            meal.favorites.john = document.getElementById('favJohn').checked;
+            meal.favorites.ang = document.getElementById('favAng').checked;
+            meal.favorites.izzy = document.getElementById('favIzzy').checked;
+            
+            closeMealModal();
+            renderMealBank();
+            saveData();
+        }
+        
+        function saveNewMeal() {
+            const category = document.getElementById('editMealCategory').value;
+            
+            const newMeal = {
+                name: document.getElementById('editMealName').value,
+                emoji: document.getElementById('editMealEmoji').value || '🍽️',
+                time: document.getElementById('editMealTime').value,
+                favorites: { 
+                    john: document.getElementById('favJohn').checked,
+                    ang: document.getElementById('favAng').checked,
+                    izzy: document.getElementById('favIzzy').checked
+                },
+                ingredients: document.getElementById('editMealIngredients').value.split('\n').filter(i => i.trim()),
+                notes: document.getElementById('editMealNotes').value
+            };
+            
+            mealData.mealBank[category].push(newMeal);
+            
+            closeMealModal();
+            renderMealBank();
+            saveData();
+        }
+        
+        function setSpinnerFilter(filter) {
+            currentSpinnerFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function spinWheel() {
+            const button = document.getElementById('spinButton');
+            const wheel = document.getElementById('spinnerWheel');
+            const result = document.getElementById('spinnerResult');
+            
+            button.disabled = true;
+            result.textContent = '';
+            
+            // Get filtered meals
+            let meals = [];
+            if (currentSpinnerFilter === 'all') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    meals.push(...mealData.mealBank[cat]);
+                });
+            } else if (currentSpinnerFilter === 'quick') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach(meal => {
+                        const time = parseInt(meal.time);
+                        if (time <= 15) meals.push(meal);
+                    });
+                });
+            } else if (currentSpinnerFilter === 'favorites') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach(meal => {
+                        if (Object.values(meal.favorites).some(f => f)) {
+                            meals.push(meal);
+                        }
+                    });
+                });
+            } else {
+                meals = mealData.mealBank[currentSpinnerFilter];
+            }
+            
+            if (meals.length === 0) {
+                result.textContent = 'No meals match this filter!';
+                button.disabled = false;
+                return;
+            }
+            
+            const randomMeal = meals[Math.floor(Math.random() * meals.length)];
+            
+            wheel.classList.add('spinning');
+            
+            setTimeout(() => {
+                wheel.textContent = randomMeal.emoji;
+                wheel.classList.remove('spinning');
+                result.textContent = `${randomMeal.name} (${randomMeal.time})`;
+                button.disabled = false;
+            }, 3000);
+        }
+        
+        function renderIdeas() {
+            const container = document.getElementById('ideasList');
+            const categoryEmojis = {
+                "Kitchen Management": "🏠",
+                "Tracking & History": "📊",
+                "Meal Details": "📝",
+                "Automation & Integration": "🔔",
+                "User Experience": "🎨",
+                "Advanced Features": "🔐"
+            };
+            
+            container.innerHTML = Object.keys(mealData.ideas).map(category => `
+                <div class="ideas-category">
+                    <h3>${categoryEmojis[category] || "✨"} ${category}</h3>
+                    <ul>
+                        ${mealData.ideas[category].map((idea, index) => `
+                            <li>
+                                ${idea}
+                                <button onclick="deleteIdea('${category}', ${index})" 
+                                        style="margin-left: 10px; padding: 2px 8px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.8em;">
+                                    ✕
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        function addNewIdea() {
+            const ideaText = document.getElementById('newIdeaText').value.trim();
+            const category = document.getElementById('newIdeaCategory').value;
+            
+            if (!ideaText) return;
+            
+            // If custom category doesn't exist, create it
+            if (!mealData.ideas[category]) {
+                mealData.ideas[category] = [];
+            }
+            
+            mealData.ideas[category].push(ideaText);
+            document.getElementById('newIdeaText').value = '';
+            renderIdeas();
+            saveData();
+        }
+        
+        function deleteIdea(category, index) {
+            if (confirm('Delete this idea?')) {
+                mealData.ideas[category].splice(index, 1);
+                // If category is empty, remove it
+                if (mealData.ideas[category].length === 0) {
+                    delete mealData.ideas[category];
+                }
+                renderIdeas();
+                saveData();
+            }
+        }
+        
+        function saveData() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                db.collection('familyData').doc('meals').set(mealData)
+                    .then(() => {
+                        const indicator = document.getElementById('autoSave');
+                        indicator.classList.add('show');
+                        setTimeout(() => indicator.classList.remove('show'), 2000);
+                    })
+                    .catch(error => console.error('Error saving:', error));
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
