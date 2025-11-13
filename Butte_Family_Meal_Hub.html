@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Butte Family Meal Hub 🍽️</title>
-     <link rel="icon" type="image/png" href="eathere1.png">
-    <link rel="apple-touch-icon" href="eathere1.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="eathere1.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -50,6 +46,47 @@
         .week-info {
             font-size: 1.2em;
             color: #666;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .week-info:hover {
+            background: #fff5f5;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .header-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .header-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-export {
+            background: #4ECDC4;
+            color: white;
+        }
+        
+        .btn-new-week {
+            background: #FFE66D;
+            color: #333;
         }
         
         /* Auto-save indicator */
@@ -121,6 +158,15 @@
         }
         
         /* Weekly Meal Plan */
+        .week-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
         .meal-card {
             background: linear-gradient(135deg, #fff5f5 0%, #fffef5 100%);
             border: 3px solid #FFE66D;
@@ -128,6 +174,10 @@
             padding: 20px;
             margin-bottom: 15px;
             transition: all 0.3s;
+        }
+        
+        .meal-card.hidden {
+            display: none;
         }
         
         .meal-card:hover {
@@ -140,6 +190,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .meal-day {
@@ -148,16 +200,33 @@
             color: #FF6B6B;
         }
         
-        .meal-status {
+        .status-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .status-btn {
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9em;
             font-weight: 600;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
-        .status-done {
-            background: #4ECDC4;
-            color: white;
+        .status-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .status-btn.active {
+            border-color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .status-planned {
+            background: #f0f0f0;
+            color: #666;
         }
         
         .status-progress {
@@ -165,9 +234,9 @@
             color: #333;
         }
         
-        .status-planned {
-            background: #f0f0f0;
-            color: #666;
+        .status-done {
+            background: #4ECDC4;
+            color: white;
         }
         
         .meal-details {
@@ -224,6 +293,7 @@
             border-radius: 10px;
             margin-bottom: 8px;
             transition: all 0.2s;
+            border-left: 4px solid transparent;
         }
         
         .grocery-item:hover {
@@ -267,8 +337,8 @@
             font-family: 'Fredoka', sans-serif;
         }
         
-        .add-item-input button {
-            padding: 12px 30px;
+        .add-item-input button, .add-item-input select {
+            padding: 12px 20px;
             background: #4ECDC4;
             color: white;
             border: none;
@@ -277,6 +347,7 @@
             font-size: 1em;
             cursor: pointer;
             transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
         }
         
         .add-item-input button:hover {
@@ -325,6 +396,30 @@
             background: linear-gradient(135deg, #fff5f5 0%, #fffef5 100%);
             border-radius: 20px;
             margin-bottom: 30px;
+        }
+        
+        .spinner-filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: 2px solid #FFE66D;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .filter-btn.active {
+            background: #FFE66D;
+            border-color: #FF6B6B;
         }
         
         .spinner-container {
@@ -415,7 +510,13 @@
     <div class="container">
         <header>
             <h1>🍽️ Butte Family Meal Hub</h1>
-            <div class="week-info" id="weekInfo">Week of November 11-16, 2025</div>
+            <div class="week-info" id="weekInfo" onclick="editWeekDates()" title="Click to edit week dates">
+                Week of November 11-16, 2025 ✏️
+            </div>
+            <div class="header-buttons">
+                <button class="header-btn btn-export" onclick="exportWeek()">📥 Export This Week</button>
+                <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
+            </div>
         </header>
         
         <!-- Tab Navigation -->
@@ -428,6 +529,13 @@
         
         <!-- THIS WEEK TAB -->
         <div id="tab-week" class="tab-content active">
+            <div class="week-controls">
+                <h2 style="color: #FF6B6B; margin: 0;">Weekly Schedule</h2>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; color: #666;">
+                    <input type="checkbox" id="hideCompletedToggle" onchange="toggleCompletedMeals()" style="width: 20px; height: 20px;">
+                    Hide Completed Meals
+                </label>
+            </div>
             <div id="weeklyMeals"></div>
         </div>
         
@@ -439,6 +547,12 @@
                 <h3 style="color: #FF6B6B; margin-bottom: 15px;">➕ Add Item</h3>
                 <div class="add-item-input">
                     <input type="text" id="newItemInput" placeholder="Enter grocery item..." onkeypress="if(event.key==='Enter') addGroceryItem()">
+                    <select id="personSelect" style="background: white; color: #333;">
+                        <option value="">Who?</option>
+                        <option value="John">John</option>
+                        <option value="Ang">Ang</option>
+                        <option value="Izzy">Izzy</option>
+                    </select>
                     <button onclick="addGroceryItem()">Add</button>
                 </div>
             </div>
@@ -454,6 +568,14 @@
         <div id="tab-spinner" class="tab-content">
             <div class="spinner-section">
                 <h2 style="color: #FF6B6B; margin-bottom: 20px;">🎰 Can't Decide? Spin the Wheel!</h2>
+                
+                <div class="spinner-filters">
+                    <button class="filter-btn active" data-filter="all" onclick="setSpinnerFilter('all')">All Meals</button>
+                    <button class="filter-btn" data-filter="quick" onclick="setSpinnerFilter('quick')">Quick & Easy</button>
+                    <button class="filter-btn" data-filter="john" onclick="setSpinnerFilter('john')">John's Specialties</button>
+                    <button class="filter-btn" data-filter="takout" onclick="setSpinnerFilter('takeout')">Include Takeout</button>
+                </div>
+                
                 <div class="spinner-container">
                     <div class="spinner-wheel" id="spinnerWheel">
                         <div class="spinner-result" id="spinnerResult">Click below to spin!</div>
@@ -496,90 +618,167 @@
             ],
             groceryList: [
                 { category: "PRODUCE", items: [
-                    { name: "Lettuce (for tacos)", checked: false },
-                    { name: "Tomatoes (for tacos)", checked: false },
-                    { name: "2 Avocados (for Daddy Chicken)", checked: false },
-                    { name: "Cilantro (for Daddy Chicken)", checked: false },
-                    { name: "Squash (for hibachi)", checked: false },
-                    { name: "Potatoes (for hibachi)", checked: false }
+                    { name: "Lettuce (for tacos)", checked: false, addedBy: "John" },
+                    { name: "Tomatoes (for tacos)", checked: false, addedBy: "John" },
+                    { name: "2 Avocados (for Daddy Chicken)", checked: false, addedBy: "John" },
+                    { name: "Cilantro (for Daddy Chicken)", checked: false, addedBy: "John" },
+                    { name: "Squash (for hibachi)", checked: false, addedBy: "John" },
+                    { name: "Potatoes (for hibachi)", checked: false, addedBy: "John" }
                 ]},
                 { category: "MEAT", items: [
-                    { name: "3 lbs ground beef (for tacos)", checked: false },
-                    { name: "2 lbs sliced chicken breasts (for Daddy Chicken)", checked: false }
+                    { name: "3 lbs ground beef (for tacos)", checked: false, addedBy: "John" },
+                    { name: "2 lbs sliced chicken breasts (for Daddy Chicken)", checked: false, addedBy: "John" }
                 ]},
                 { category: "DAIRY & EGGS", items: [
-                    { name: "2 dozen eggs (for Daddy Chicken)", checked: false },
-                    { name: "Shredded cheese (for tacos)", checked: false },
-                    { name: "Sour cream (for tacos)", checked: false },
-                    { name: "Polly-O", checked: false }
+                    { name: "2 dozen eggs (for Daddy Chicken)", checked: false, addedBy: "John" },
+                    { name: "Shredded cheese (for tacos)", checked: false, addedBy: "John" },
+                    { name: "Sour cream (for tacos)", checked: false, addedBy: "John" },
+                    { name: "Polly-O", checked: false, addedBy: "Ang" }
                 ]},
                 { category: "PANTRY", items: [
-                    { name: "Taco shells", checked: false },
-                    { name: "Taco seasoning", checked: false },
-                    { name: "Breadcrumbs (for Daddy Chicken)", checked: false },
-                    { name: "Packaged mashed potatoes (for Ang)", checked: false }
+                    { name: "Taco shells", checked: false, addedBy: "John" },
+                    { name: "Taco seasoning", checked: false, addedBy: "John" },
+                    { name: "Breadcrumbs (for Daddy Chicken)", checked: false, addedBy: "John" },
+                    { name: "Packaged mashed potatoes (for Ang)", checked: false, addedBy: "Ang" }
                 ]},
                 { category: "ALREADY HAVE", items: [
-                    { name: "Hot dogs & buns", checked: true },
-                    { name: "Kraft Mac boxes", checked: true },
-                    { name: "Hibachi protein (from previous purchase)", checked: true },
-                    { name: "KIND bars & yogurt (Izzy)", checked: true }
+                    { name: "Hot dogs & buns", checked: true, addedBy: "John" },
+                    { name: "Kraft Mac boxes", checked: true, addedBy: "John" },
+                    { name: "Hibachi protein (from previous purchase)", checked: true, addedBy: "John" },
+                    { name: "KIND bars & yogurt (Izzy)", checked: true, addedBy: "Izzy" }
                 ]}
             ],
             mealBank: [
-                { name: "Tacos", emoji: "🌮", time: "45 min" },
-                { name: "Daddy Chicken", emoji: "🍗", time: "60 min" },
-                { name: "Hibachi/Griddle", emoji: "🥢", time: "50 min" },
-                { name: "In and Out Burgers", emoji: "🍔", time: "35 min" },
-                { name: "Italian (Pasta)", emoji: "🍝", time: "30 min" },
-                { name: "Breakfast Dinner", emoji: "🥞", time: "40 min" },
-                { name: "Hot Dogs", emoji: "🌭", time: "15 min" },
-                { name: "Kraft Mac & Cheese", emoji: "🧀", time: "10 min" },
-                { name: "Potstickers", emoji: "🥟", time: "20 min" },
-                { name: "Pizza", emoji: "🍕", time: "Takeout" },
-                { name: "Alfredo Noodles", emoji: "🍜", time: "25 min" },
-                { name: "TGIF Wings", emoji: "🍗", time: "30 min" },
-                { name: "Quesadillas", emoji: "🌯", time: "20 min" },
-                { name: "Matzo Ball Soup", emoji: "🍲", time: "45 min" },
-                { name: "Grilled Cheese", emoji: "🧀", time: "15 min" }
+                { name: "Tacos", emoji: "🌮", time: "45 min", category: "john", quick: false },
+                { name: "Daddy Chicken", emoji: "🍗", time: "60 min", category: "john", quick: false },
+                { name: "Hibachi/Griddle", emoji: "🥢", time: "50 min", category: "john", quick: false },
+                { name: "In and Out Burgers", emoji: "🍔", time: "35 min", category: "john", quick: false },
+                { name: "Italian (Pasta)", emoji: "🍝", time: "30 min", category: "john", quick: false },
+                { name: "Breakfast Dinner", emoji: "🥞", time: "40 min", category: "john", quick: false },
+                { name: "Hot Dogs", emoji: "🌭", time: "15 min", category: "easy", quick: true },
+                { name: "Kraft Mac & Cheese", emoji: "🧀", time: "10 min", category: "easy", quick: true },
+                { name: "Potstickers", emoji: "🥟", time: "20 min", category: "easy", quick: true },
+                { name: "Pizza", emoji: "🍕", time: "Takeout", category: "takeout", quick: true },
+                { name: "Alfredo Noodles", emoji: "🍜", time: "25 min", category: "easy", quick: true },
+                { name: "TGIF Wings", emoji: "🍗", time: "30 min", category: "easy", quick: false },
+                { name: "Quesadillas", emoji: "🌯", time: "20 min", category: "easy", quick: true },
+                { name: "Matzo Ball Soup", emoji: "🍲", time: "45 min", category: "john", quick: false },
+                { name: "Grilled Cheese", emoji: "🧀", time: "15 min", category: "easy", quick: true }
             ]
         };
         
         // Family member colors
         const familyColors = {
-            'John': { bg: '#FFE5E5', border: '#FF6B6B', text: '#CC5555' },      // Coral/Red
-            'Ang': { bg: '#E5F5FF', border: '#4ECDC4', text: '#3BA89C' },       // Teal/Blue
-            'Izzy': { bg: '#FFF5E5', border: '#FFD93D', text: '#CCA030' }       // Yellow/Gold
+            'John': { bg: '#FFE5E5', border: '#FF6B6B', text: '#CC5555' },
+            'Ang': { bg: '#E5F5FF', border: '#4ECDC4', text: '#3BA89C' },
+            'Izzy': { bg: '#FFF5E5', border: '#FFD93D', text: '#CCA030' }
         };
         
         let autoSaveTimeout;
+        let currentSpinnerFilter = 'all';
         
         // Tab Switching
         function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             
-            // Show selected tab
             document.getElementById('tab-' + tabName).classList.add('active');
             event.target.classList.add('active');
+        }
+        
+        // Edit Week Dates
+        function editWeekDates() {
+            const newWeek = prompt("Enter new week dates (e.g., November 18-23, 2025):", mealData.weekOf);
+            if (newWeek && newWeek.trim()) {
+                mealData.weekOf = newWeek.trim();
+                document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
+                saveData();
+            }
+        }
+        
+        // Export Week
+        function exportWeek() {
+            const dataStr = JSON.stringify(mealData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `meal-plan-${mealData.weekOf.replace(/[^a-zA-Z0-9]/g, '-')}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Start New Week
+        function startNewWeek() {
+            if (!confirm("Start a new week? This will archive current week and create a blank schedule.")) return;
+            
+            // Could add archive functionality here
+            const today = new Date();
+            const nextWeek = new Date(today.setDate(today.getDate() + 7));
+            const weekStart = nextWeek.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+            const weekEnd = new Date(nextWeek.setDate(nextWeek.getDate() + 6)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            mealData.weekOf = `${weekStart} - ${weekEnd}`;
+            mealData.meals.forEach(meal => {
+                meal.meal = "";
+                meal.chef = "";
+                meal.status = "planned";
+                meal.notes = "";
+            });
+            
+            // Reset grocery list
+            mealData.groceryList.forEach(section => {
+                section.items.forEach(item => {
+                    item.checked = false;
+                });
+            });
+            
+            renderWeeklyMeals();
+            renderGroceryList();
+            saveData();
+            alert("✅ New week started! Fill in your meal plan.");
+        }
+        
+        // Toggle Completed Meals
+        function toggleCompletedMeals() {
+            const hide = document.getElementById('hideCompletedToggle').checked;
+            document.querySelectorAll('.meal-card').forEach(card => {
+                const status = card.getAttribute('data-status');
+                if (status === 'done' && hide) {
+                    card.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+        }
+        
+        // Change Meal Status
+        function changeMealStatus(index, newStatus) {
+            mealData.meals[index].status = newStatus;
+            renderWeeklyMeals();
+            saveData();
         }
         
         // Render Weekly Meals
         function renderWeeklyMeals() {
             const container = document.getElementById('weeklyMeals');
             container.innerHTML = mealData.meals.map((meal, index) => `
-                <div class="meal-card">
+                <div class="meal-card" data-status="${meal.status}">
                     <div class="meal-header">
                         <div class="meal-day">${meal.emoji} ${meal.day}</div>
-                        <div class="meal-status status-${meal.status}">
-                            ${meal.status === 'done' ? '✅ DONE' : 
-                              meal.status === 'progress' ? '🔄 IN PROGRESS' : 
-                              '📋 PLANNED'}
+                        <div class="status-buttons">
+                            <button class="status-btn status-planned ${meal.status === 'planned' ? 'active' : ''}" 
+                                    onclick="changeMealStatus(${index}, 'planned')">
+                                📋 Planned
+                            </button>
+                            <button class="status-btn status-progress ${meal.status === 'progress' ? 'active' : ''}" 
+                                    onclick="changeMealStatus(${index}, 'progress')">
+                                🔄 In Progress
+                            </button>
+                            <button class="status-btn status-done ${meal.status === 'done' ? 'active' : ''}" 
+                                    onclick="changeMealStatus(${index}, 'done')">
+                                ✅ Done
+                            </button>
                         </div>
                     </div>
                     <div class="meal-details">
@@ -587,7 +786,7 @@
                             <div class="meal-name" contenteditable="true" onblur="updateMealName(${index}, this.textContent)">${meal.meal}</div>
                         </div>
                         <div class="meal-chef">
-                            <strong>Chef:</strong> 
+                            <strong>CHEF:</strong> 
                             <span contenteditable="true" onblur="updateMealChef(${index}, this.textContent)">${meal.chef}</span>
                         </div>
                     </div>
@@ -624,7 +823,7 @@
         function renderMealBank() {
             const container = document.getElementById('mealBank');
             container.innerHTML = mealData.mealBank.map(meal => `
-                <div class="meal-bank-item" onclick="alert('${meal.name} selected! Add this to your week plan.')">
+                <div class="meal-bank-item" onclick="alert('${meal.name} selected! You can add this to your week plan manually.')">
                     <div class="emoji">${meal.emoji}</div>
                     <div class="name">${meal.name}</div>
                     <div style="color: #999; margin-top: 5px; font-size: 0.9em;">${meal.time}</div>
@@ -635,18 +834,21 @@
         // Add Grocery Item
         function addGroceryItem() {
             const input = document.getElementById('newItemInput');
+            const personSelect = document.getElementById('personSelect');
             const itemName = input.value.trim();
+            const person = personSelect.value;
             
-            if (!itemName) return;
-            
-            // Prompt for who's adding
-            const person = prompt("Who's adding this? (John, Ang, or Izzy)", "John");
-            if (!person || !familyColors[person]) {
-                alert("Please enter John, Ang, or Izzy");
+            if (!itemName) {
+                alert("Please enter an item name");
                 return;
             }
             
-            // Find or create "Custom Items" category
+            if (!person) {
+                alert("Please select who's adding this (John, Ang, or Izzy)");
+                return;
+            }
+            
+            // Find or create "CUSTOM ITEMS" category
             let customSection = mealData.groceryList.find(s => s.category === "CUSTOM ITEMS");
             if (!customSection) {
                 customSection = { category: "CUSTOM ITEMS", items: [] };
@@ -660,6 +862,7 @@
             });
             
             input.value = '';
+            personSelect.value = '';
             renderGroceryList();
             saveData();
         }
@@ -684,9 +887,35 @@
             saveData();
         }
         
+        // Spinner Filter
+        function setSpinnerFilter(filter) {
+            currentSpinnerFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
         // Spinner
         function spinMeal() {
-            const meals = mealData.mealBank.filter(m => m.time !== 'Takeout');
+            let meals = mealData.mealBank;
+            
+            // Apply filter
+            if (currentSpinnerFilter === 'quick') {
+                meals = meals.filter(m => m.quick);
+            } else if (currentSpinnerFilter === 'john') {
+                meals = meals.filter(m => m.category === 'john');
+            } else if (currentSpinnerFilter === 'takeout') {
+                meals = meals.filter(m => m.category === 'takeout' || m.time !== 'Takeout');
+            } else {
+                meals = meals.filter(m => m.time !== 'Takeout');
+            }
+            
+            if (meals.length === 0) {
+                alert("No meals match this filter!");
+                return;
+            }
+            
             const randomMeal = meals[Math.floor(Math.random() * meals.length)];
             
             const wheel = document.getElementById('spinnerWheel');
@@ -721,7 +950,7 @@
                 const snapshot = await mealDoc.get();
                 if (snapshot.exists && snapshot.data().mealData) {
                     mealData = snapshot.data().mealData;
-                    document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf}`;
+                    document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
                 }
             } catch (e) {
                 console.error('Error loading data:', e);
@@ -744,10 +973,15 @@
         // Real-time listener for multi-user updates
         mealDoc.onSnapshot((doc) => {
             if (doc.exists && doc.data().mealData) {
-                mealData = doc.data().mealData;
-                renderWeeklyMeals();
-                renderGroceryList();
-                renderMealBank();
+                const newData = doc.data().mealData;
+                // Only update if data is actually different (avoid infinite loops)
+                if (JSON.stringify(newData) !== JSON.stringify(mealData)) {
+                    mealData = newData;
+                    document.getElementById('weekInfo').textContent = `Week of ${mealData.weekOf} ✏️`;
+                    renderWeeklyMeals();
+                    renderGroceryList();
+                    renderMealBank();
+                }
             }
         });
         
