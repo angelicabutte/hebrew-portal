@@ -279,9 +279,25 @@
             transform: translateY(-2px);
         }
         
-        .status-btn.active {
-            border-color: #FF6B6B;
+        .status-btn.active.btn-planned {
+            border-color: #1976D2;
             border-width: 3px;
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .status-btn.active.btn-progress {
+            border-color: #F57F17;
+            border-width: 3px;
+            background: #FFF9C4;
+            color: #F57F17;
+        }
+        
+        .status-btn.active.btn-done {
+            border-color: #C62828;
+            border-width: 3px;
+            background: #FFEBEE;
+            color: #C62828;
         }
         
         .hide-completed-toggle {
@@ -836,15 +852,8 @@
         <header>
             <h1>🍽️ Butte Family Meal Hub</h1>
             <div class="week-info" id="weekInfo" onclick="editWeekDates()">Week of November 11-16, 2025 ✏️</div>
-            <div class="header-buttons">
-                <div class="button-row">
-                    <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
-                    <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
-                </div>
-                <div class="button-row">
-                    <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
-                    <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
-                </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <img src="eathere1.png" alt="Meal Hub Icon" style="width: 80px; height: 80px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.style.display='none'">
             </div>
         </header>
         
@@ -856,6 +865,17 @@
             <button class="tab-button" onclick="switchTab('meals')">🍴 Meal Bank</button>
             <button class="tab-button" onclick="switchTab('spinner')">🎰 Spinner</button>
             <button class="tab-button icon-only" onclick="switchTab('ideas')" title="Future Ideas">💡</button>
+        </div>
+        
+        <div class="header-buttons">
+            <div class="button-row">
+                <button class="header-btn btn-new-week" onclick="startNewWeek()">🆕 Start New Week</button>
+                <button class="header-btn btn-add-meal" onclick="openAddMealModal()">➕ Add Meal</button>
+            </div>
+            <div class="button-row">
+                <button class="header-btn btn-export small" onclick="exportWeek()">📥 Export JSON</button>
+                <button class="header-btn btn-export-html small" onclick="exportHTML()">📄 Export HTML</button>
+            </div>
         </div>
         
         <div class="tab-content active" id="tab-week">
@@ -871,6 +891,7 @@
                 <button class="grocery-sort-btn active" onclick="sortGrocery('category')">By Category</button>
                 <button class="grocery-sort-btn" onclick="sortGrocery('person')">By Person</button>
                 <button class="grocery-sort-btn" onclick="sortGrocery('checked')">Unchecked First</button>
+                <button class="grocery-sort-btn" onclick="sortGrocery('meal')">By Meal</button>
             </div>
             <div class="grocery-list" id="groceryList"></div>
             <div class="add-item-section">
@@ -889,6 +910,7 @@
                         <option value="PANTRY">Pantry</option>
                         <option value="CUSTOM">Custom</option>
                     </select>
+                    <input type="text" id="newItemMeal" placeholder="For meal (optional)" style="min-width: 150px;">
                     <button onclick="addGroceryItem()">Add</button>
                 </div>
             </div>
@@ -924,7 +946,10 @@
                     <button class="filter-btn" onclick="setSpinnerFilter('dinner')">🍽️ Dinner</button>
                     <button class="filter-btn" onclick="setSpinnerFilter('snack')">🍿 Snack</button>
                     <button class="filter-btn" onclick="setSpinnerFilter('quick')">Quick (15min)</button>
-                    <button class="filter-btn" onclick="setSpinnerFilter('favorites')">⭐ Favorites</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('favorites')">⭐ Any Favorites</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('john-favs')" style="color: #FF6B6B;">⭐ John's</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('ang-favs')" style="color: #4ECDC4;">⭐ Ang's</button>
+                    <button class="filter-btn" onclick="setSpinnerFilter('izzy-favs')" style="color: #FFD93D;">⭐ Izzy's</button>
                 </div>
                 <div class="spinner-wheel" id="spinnerWheel">🍽️</div>
                 <button class="spin-button" id="spinButton" onclick="spinWheel()">SPIN!</button>
@@ -1056,44 +1081,44 @@
                 {
                     category: "PRODUCE",
                     items: [
-                        { name: "Lettuce (iceberg)", checked: false, addedBy: "John" },
-                        { name: "Tomatoes (Roma)", checked: false, addedBy: "John" },
-                        { name: "Avocados (3)", checked: false, addedBy: "Ang" },
-                        { name: "Onion (white)", checked: false, addedBy: "John" },
-                        { name: "Cilantro", checked: false, addedBy: "John" },
-                        { name: "Bell peppers", checked: false, addedBy: "John" }
+                        { name: "Lettuce (iceberg)", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Tomatoes (Roma)", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Avocados (3)", checked: false, addedBy: "Ang", meal: "General" },
+                        { name: "Onion (white)", checked: false, addedBy: "John", meal: "Hibachi" },
+                        { name: "Cilantro", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Bell peppers", checked: false, addedBy: "John", meal: "Hibachi" }
                     ]
                 },
                 {
                     category: "MEAT",
                     items: [
-                        { name: "Ground beef (2-3 lbs)", checked: false, addedBy: "John" },
-                        { name: "Chicken breasts", checked: false, addedBy: "John" }
+                        { name: "Ground beef (2-3 lbs)", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Chicken breasts", checked: false, addedBy: "John", meal: "Daddy Chicken" }
                     ]
                 },
                 {
                     category: "DAIRY & EGGS",
                     items: [
-                        { name: "Shredded cheese", checked: false, addedBy: "John" },
-                        { name: "Sour cream", checked: false, addedBy: "Ang" },
-                        { name: "Milk", checked: false, addedBy: "Ang" }
+                        { name: "Shredded cheese", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Sour cream", checked: false, addedBy: "Ang", meal: "Tacos" },
+                        { name: "Milk", checked: false, addedBy: "Ang", meal: "General" }
                     ]
                 },
                 {
                     category: "PANTRY",
                     items: [
-                        { name: "Taco shells", checked: false, addedBy: "John" },
-                        { name: "Taco seasoning", checked: false, addedBy: "John" },
-                        { name: "Hot dogs", checked: false, addedBy: "Ang" },
-                        { name: "Kraft Mac & Cheese", checked: false, addedBy: "Ang" }
+                        { name: "Taco shells", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Taco seasoning", checked: false, addedBy: "John", meal: "Tacos" },
+                        { name: "Hot dogs", checked: false, addedBy: "Ang", meal: "Mac & Hot Dogs" },
+                        { name: "Kraft Mac & Cheese", checked: false, addedBy: "Ang", meal: "Mac & Hot Dogs" }
                     ]
                 },
                 {
                     category: "ALREADY HAVE",
                     items: [
-                        { name: "Rice", checked: true, addedBy: "John" },
-                        { name: "Soy sauce", checked: true, addedBy: "John" },
-                        { name: "Olive oil", checked: true, addedBy: "Ang" }
+                        { name: "Rice", checked: true, addedBy: "John", meal: "Hibachi" },
+                        { name: "Soy sauce", checked: true, addedBy: "John", meal: "Hibachi" },
+                        { name: "Olive oil", checked: true, addedBy: "Ang", meal: "General" }
                     ]
                 }
             ],
@@ -1185,47 +1210,47 @@
             },
             ideas: {
                 "Kitchen Management": [
-                    "Daily kitchen cleanup checklists",
-                    "Meal prep instructions and timelines",
-                    "Job assignments (who sets table, clears, etc.)",
-                    "Leftover inventory tracker",
-                    "Pantry stock levels"
+                    { text: "Daily kitchen cleanup checklists", starred: false },
+                    { text: "Meal prep instructions and timelines", starred: false },
+                    { text: "Job assignments (who sets table, clears, etc.)", starred: false },
+                    { text: "Leftover inventory tracker", starred: false },
+                    { text: "Pantry stock levels", starred: false }
                 ],
                 "Tracking & History": [
-                    "Archive and view past weeks",
-                    "Cost tracking per meal/week",
-                    "Meal frequency analysis",
-                    "Pivot tracking (meals changed from original plan)",
-                    "Success rating system"
+                    { text: "Archive and view past weeks", starred: false },
+                    { text: "Cost tracking per meal/week", starred: false },
+                    { text: "Meal frequency analysis", starred: false },
+                    { text: "Pivot tracking (meals changed from original plan)", starred: false },
+                    { text: "Success rating system", starred: false }
                 ],
                 "Meal Details": [
-                    "Full recipes with instructions",
-                    "Ingredient lists per meal",
-                    "Photo upload for meal results",
-                    "Nutrition information",
-                    "Cooking time breakdown"
+                    { text: "Full recipes with instructions", starred: false },
+                    { text: "Ingredient lists per meal", starred: false },
+                    { text: "Photo upload for meal results", starred: false },
+                    { text: "Nutrition information", starred: false },
+                    { text: "Cooking time breakdown", starred: false }
                 ],
                 "Automation & Integration": [
-                    "Push notifications for meal time",
-                    "Google Calendar integration",
-                    "Auto-populate grocery list from meal selection",
-                    "Meal plan templates",
-                    "Recipe import from websites",
-                    "Shopping list sharing to phones"
+                    { text: "Push notifications for meal time", starred: false },
+                    { text: "Google Calendar integration", starred: false },
+                    { text: "Auto-populate grocery list from meal selection", starred: false },
+                    { text: "Meal plan templates", starred: false },
+                    { text: "Recipe import from websites", starred: false },
+                    { text: "Shopping list sharing to phones", starred: false }
                 ],
                 "User Experience": [
-                    "Print-friendly weekly menu",
-                    "Drag-and-drop meal scheduling",
-                    "Undo/redo functionality",
-                    "Smart meal suggestions based on history",
-                    "Voice input for adding items"
+                    { text: "Print-friendly weekly menu", starred: false },
+                    { text: "Drag-and-drop meal scheduling", starred: false },
+                    { text: "Undo/redo functionality", starred: false },
+                    { text: "Smart meal suggestions based on history", starred: false },
+                    { text: "Voice input for adding items", starred: false }
                 ],
                 "Advanced Features": [
-                    "User authentication",
-                    "Import/export meal plans",
-                    "Backup and restore data",
-                    "Multi-week planning view",
-                    "Collaborative meal suggestions"
+                    { text: "User authentication", starred: false },
+                    { text: "Import/export meal plans", starred: false },
+                    { text: "Backup and restore data", starred: false },
+                    { text: "Multi-week planning view", starred: false },
+                    { text: "Collaborative meal suggestions", starred: false }
                 ]
             }
         };
@@ -1398,11 +1423,11 @@
                         </div>
                         ${meal.notes ? `<div style="margin-top: 10px; font-size: 0.9em; color: #666;">Notes: ${meal.notes}</div>` : ''}
                         <div class="status-buttons">
-                            <button class="status-btn ${meal.status === 'planned' ? 'active' : ''}" 
+                            <button class="status-btn btn-planned ${meal.status === 'planned' ? 'active' : ''}" 
                                     onclick="updateMealStatus(${index}, 'planned')">📋 Planned</button>
-                            <button class="status-btn ${meal.status === 'progress' ? 'active' : ''}" 
+                            <button class="status-btn btn-progress ${meal.status === 'progress' ? 'active' : ''}" 
                                     onclick="updateMealStatus(${index}, 'progress')">🔄 In Progress</button>
-                            <button class="status-btn ${meal.status === 'done' ? 'active' : ''}" 
+                            <button class="status-btn btn-done ${meal.status === 'done' ? 'active' : ''}" 
                                     onclick="updateMealStatus(${index}, 'done')">✅ Done</button>
                         </div>
                     </div>
@@ -1458,6 +1483,23 @@
                 });
                 allItems.sort((a, b) => a.checked - b.checked);
                 displayList = [{ category: 'All Items', items: allItems }];
+            } else if (currentGrocerySort === 'meal') {
+                // Group by meal
+                const byMeal = {};
+                mealData.groceryList.forEach(section => {
+                    section.items.forEach(item => {
+                        const mealName = item.meal || 'General';
+                        if (!byMeal[mealName]) {
+                            byMeal[mealName] = [];
+                        }
+                        byMeal[mealName].push({...item, category: section.category});
+                    });
+                });
+                
+                displayList = Object.keys(byMeal).sort().map(meal => ({
+                    category: `For: ${meal}`,
+                    items: byMeal[meal]
+                }));
             } else {
                 // By category (default)
                 displayList = mealData.groceryList;
@@ -1497,6 +1539,7 @@
             const name = document.getElementById('newItemName').value.trim();
             const person = document.getElementById('newItemPerson').value;
             const category = document.getElementById('newItemCategory').value;
+            const meal = document.getElementById('newItemMeal').value.trim() || 'General';
             
             if (!name) return;
             
@@ -1506,8 +1549,9 @@
                 mealData.groceryList.push(section);
             }
             
-            section.items.push({ name, checked: false, addedBy: person });
+            section.items.push({ name, checked: false, addedBy: person, meal: meal });
             document.getElementById('newItemName').value = '';
+            document.getElementById('newItemMeal').value = '';
             renderGrocery();
             saveData();
         }
@@ -1748,6 +1792,24 @@
                         }
                     });
                 });
+            } else if (currentSpinnerFilter === 'john-favs') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach(meal => {
+                        if (meal.favorites.john) meals.push(meal);
+                    });
+                });
+            } else if (currentSpinnerFilter === 'ang-favs') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach(meal => {
+                        if (meal.favorites.ang) meals.push(meal);
+                    });
+                });
+            } else if (currentSpinnerFilter === 'izzy-favs') {
+                ['breakfast', 'lunch', 'dinner', 'snack'].forEach(cat => {
+                    mealData.mealBank[cat].forEach(meal => {
+                        if (meal.favorites.izzy) meals.push(meal);
+                    });
+                });
             } else {
                 meals = mealData.mealBank[currentSpinnerFilter];
             }
@@ -1785,18 +1847,37 @@
                 <div class="ideas-category">
                     <h3>${categoryEmojis[category] || "✨"} ${category}</h3>
                     <ul>
-                        ${mealData.ideas[category].map((idea, index) => `
-                            <li>
-                                ${idea}
-                                <button onclick="deleteIdea('${category}', ${index})" 
-                                        style="margin-left: 10px; padding: 2px 8px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.8em;">
-                                    ✕
-                                </button>
-                            </li>
-                        `).join('')}
+                        ${mealData.ideas[category].map((idea, index) => {
+                            const ideaText = typeof idea === 'string' ? idea : idea.text;
+                            const starred = typeof idea === 'string' ? false : idea.starred;
+                            return `
+                                <li style="display: flex; align-items: center; gap: 8px;">
+                                    <span onclick="toggleIdeaStar('${category}', ${index})" 
+                                          style="cursor: pointer; font-size: 1.2em; ${starred ? 'opacity: 1;' : 'opacity: 0.2;'}" 
+                                          title="Click to ${starred ? 'unstar' : 'star'} this idea">⭐</span>
+                                    <span style="flex: 1;">${ideaText}</span>
+                                    <button onclick="deleteIdea('${category}', ${index})" 
+                                            style="padding: 2px 8px; border: none; background: #ffcdd2; color: #c62828; border-radius: 5px; cursor: pointer; font-size: 0.8em;">
+                                        ✕
+                                    </button>
+                                </li>
+                            `;
+                        }).join('')}
                     </ul>
                 </div>
             `).join('');
+        }
+        
+        function toggleIdeaStar(category, index) {
+            const idea = mealData.ideas[category][index];
+            // Convert string to object if needed
+            if (typeof idea === 'string') {
+                mealData.ideas[category][index] = { text: idea, starred: true };
+            } else {
+                idea.starred = !idea.starred;
+            }
+            renderIdeas();
+            saveData();
         }
         
         function addNewIdea() {
@@ -1810,7 +1891,7 @@
                 mealData.ideas[category] = [];
             }
             
-            mealData.ideas[category].push(ideaText);
+            mealData.ideas[category].push({ text: ideaText, starred: false });
             document.getElementById('newIdeaText').value = '';
             renderIdeas();
             saveData();
